@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OPTIONAL: Better UI defaults */
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #f1f5f9; /* slate-100 */
+  color: #0f172a; /* slate-900 */
+}
+
+/* Smooth scroll for whole ERP */
+* {
+  scroll-behavior: smooth;
+}
+
+.input-soft {
+  @apply w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-sm
+  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+}
