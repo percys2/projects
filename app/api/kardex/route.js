@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
-  export async function GET(req) {
+export async function GET(req) {
   try {
-    const supabase = createClient(                        // ← CHANGED: Moved inside function
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY,            // ← CHANGED: Fixed variable name
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
       {
         auth: {
           autoRefreshToken: false,
@@ -19,7 +15,9 @@ const supabase = createClient(
     );
 
     const orgId = req.headers.get("x-org-id");
-    // ... rest stays the same
+    const productId = req.nextUrl.searchParams.get("productId");
+
+    const { data, error } = await supabase
       .from("inventory_movements")
       .select("*")
       .eq("org_id", orgId)

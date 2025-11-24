@@ -1,0 +1,4337 @@
+diff --git a/app/[orgSlug]/finance/page.jsx b/app/[orgSlug]/finance/page.jsx
+new file mode 100644
+index 0000000..d77ee56
+--- /dev/null
++++ b/app/[orgSlug]/finance/page.jsx
+@@ -0,0 +1,7 @@
++"use client";
++
++import FinanceScreen from "@/src/modules/finance/FinanceScreen";
++
++export default function FinancePage({ params }) {
++  return <FinanceScreen orgSlug={params.orgSlug} />;
++}
+diff --git a/app/[orgSlug]/hr/page.jsx b/app/[orgSlug]/hr/page.jsx
+index 4936bb8..b3ea2a1 100644
+--- a/app/[orgSlug]/hr/page.jsx
++++ b/app/[orgSlug]/hr/page.jsx
+@@ -1,10 +1,7 @@
+ "use client";
+ 
+-export default function HrPage() {
+-  return (
+-    <div>
+-      <h1 className="text-xl font-semibold">Recursos Humanos</h1>
+-      <p className="text-slate-500">Pronto disponible…</p>
+-    </div>
+-  );
++import HrScreen from "@/src/modules/hr/HrScreen";
++
++export default function HrPage({ params }) {
++  return <HrScreen orgSlug={params.orgSlug} />;
+ }
+diff --git a/app/[orgSlug]/sales/page.jsx b/app/[orgSlug]/sales/page.jsx
+new file mode 100644
+index 0000000..88796a6
+--- /dev/null
++++ b/app/[orgSlug]/sales/page.jsx
+@@ -0,0 +1,7 @@
++"use client";
++
++import SalesScreen from "@/src/modules/sales/SalesScreen";
++
++export default function SalesPage({ params }) {
++  return <SalesScreen orgSlug={params.orgSlug} />;
++}
+diff --git a/app/[orgSlug]/settings/page.jsx b/app/[orgSlug]/settings/page.jsx
+index f7335f0..7e21a6f 100644
+--- a/app/[orgSlug]/settings/page.jsx
++++ b/app/[orgSlug]/settings/page.jsx
+@@ -1,10 +1,7 @@
+ "use client";
+ 
+-export default function SettingsPage() {
+-  return (
+-    <div>
+-      <h1 className="text-xl font-semibold">Configuración</h1>
+-      <p className="text-slate-500">Ajustes del sistema.</p>
+-    </div>
+-  );
++import SettingsScreen from "@/src/modules/settings/SettingsScreen";
++
++export default function SettingsPage({ params }) {
++  return <SettingsScreen orgSlug={params.orgSlug} />;
+ }
+diff --git a/app/api/finance/kpis/route.js b/app/api/finance/kpis/route.js
+new file mode 100644
+index 0000000..eee5d65
+--- /dev/null
++++ b/app/api/finance/kpis/route.js
+@@ -0,0 +1,245 @@
++import { respond } from "@/src/lib/core/respond";
++import { getSlug } from "@/src/lib/core/getSlug";
++import { getOrgIdFromSlug } from "@/src/lib/core/getOrgId";
++import { supabase } from "@/src/lib/api/supabaseClient";
++
++/**
++ * GET - Calcular KPIs del Agroservicio
++ * Basado en datos del POS + Inventario + Kardex
++ */
++export async function GET(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const url = new URL(req.url);
++  const startDate = url.searchParams.get("start");
++  const endDate = url.searchParams.get("end");
++
++  try {
++    // 1. Obtener ventas del período
++    let salesQuery = supabase
++      .from("sales")
++      .select(`
++        *,
++        sales_items (
++          *,
++          products (
++            id,
++            name,
++            category,
++            cost_price,
++            sale_price
++          )
++        ),
++        clients (
++          id,
++          name
++        )
++      `)
++      .eq("org_id", org_id);
++
++    if (startDate) salesQuery = salesQuery.gte("sale_date", startDate);
++    if (endDate) salesQuery = salesQuery.lte("sale_date", endDate);
++
++    const { data: sales, error: salesError } = await salesQuery;
++    if (salesError) throw salesError;
++
++    // 2. Obtener gastos del período
++    let expensesQuery = supabase
++      .from("finance_transactions")
++      .select("*")
++      .eq("org_id", org_id)
++      .eq("type", "expense");
++
++    if (startDate) expensesQuery = expensesQuery.gte("date", startDate);
++    if (endDate) expensesQuery = expensesQuery.lte("date", endDate);
++
++    const { data: expenses, error: expensesError } = await expensesQuery;
++    if (expensesError) throw expensesError;
++
++    // 3. Calcular KPIs
++    const kpis = calculateKPIs(sales, expenses || []);
++
++    return respond({ kpis });
++  } catch (error) {
++    console.error("Error calculating KPIs:", error);
++    return respond({ error: error.message }, 500);
++  }
++}
++
++function calculateKPIs(sales, expenses) {
++  // Inicializar totales
++  let totalSales = 0;
++  let totalCOGS = 0;
++  let totalExpenses = 0;
++  
++  const categoryData = {};
++  const productData = {};
++  const customerData = {};
++  const dailySales = {};
++
++  // Procesar ventas
++  sales.forEach((sale) => {
++    const saleTotal = parseFloat(sale.total) || 0;
++    totalSales += saleTotal;
++
++    // Procesar items de la venta
++    sale.sales_items?.forEach((item) => {
++      const quantity = parseFloat(item.quantity) || 0;
++      const salePrice = parseFloat(item.sale_price) || 0;
++      const costPrice = parseFloat(item.products?.cost_price) || 0;
++      const category = item.products?.category || "Sin categoría";
++      const productId = item.product_id;
++      const productName = item.products?.name || "Producto desconocido";
++
++      const itemSales = quantity * salePrice;
++      const itemCOGS = quantity * costPrice;
++      const itemMargin = itemSales - itemCOGS;
++
++      totalCOGS += itemCOGS;
++
++      // Agrupar por categoría
++      if (!categoryData[category]) {
++        categoryData[category] = { sales: 0, cogs: 0, margin: 0 };
++      }
++      categoryData[category].sales += itemSales;
++      categoryData[category].cogs += itemCOGS;
++      categoryData[category].margin += itemMargin;
++
++      // Agrupar por producto
++      if (!productData[productId]) {
++        productData[productId] = {
++          product_id: productId,
++          product_name: productName,
++          quantity: 0,
++          total_sales: 0,
++          total_cost: 0,
++          margin: 0,
++        };
++      }
++      productData[productId].quantity += quantity;
++      productData[productId].total_sales += itemSales;
++      productData[productId].total_cost += itemCOGS;
++      productData[productId].margin += itemMargin;
++    });
++
++    // Agrupar por cliente
++    const clientId = sale.client_id;
++    const clientName = sale.clients?.name || "Cliente general";
++    if (!customerData[clientId]) {
++      customerData[clientId] = {
++        client_id: clientId,
++        client_name: clientName,
++        total_spent: 0,
++        purchase_count: 0,
++      };
++    }
++    customerData[clientId].total_spent += saleTotal;
++    customerData[clientId].purchase_count += 1;
++
++    // Agrupar por día
++    const saleDate = sale.sale_date?.split('T')[0];
++    if (!dailySales[saleDate]) {
++      dailySales[saleDate] = { inflow: 0, outflow: 0 };
++    }
++    dailySales[saleDate].inflow += saleTotal;
++  });
++
++  // Procesar gastos
++  expenses.forEach((expense) => {
++    const amount = parseFloat(expense.amount) || 0;
++    totalExpenses += amount;
++
++    const expenseDate = expense.date?.split('T')[0];
++    if (!dailySales[expenseDate]) {
++      dailySales[expenseDate] = { inflow: 0, outflow: 0 };
++    }
++    dailySales[expenseDate].outflow += amount;
++  });
++
++  // Calcular métricas derivadas
++  const netProfit = totalSales - totalCOGS - totalExpenses;
++  const netMarginPercent = totalSales > 0 ? (netProfit / totalSales) * 100 : 0;
++  const averageTicket = sales.length > 0 ? totalSales / sales.length : 0;
++  
++  // Inventario promedio (simplificado, asumimos inventario actual)
++  const avgInventory = totalCOGS * 0.3; // Aproximación
++  const inventoryTurnover = avgInventory > 0 ? totalCOGS / avgInventory : 0;
++
++  // Clientes únicos
++  const activeCustomers = Object.keys(customerData).length;
++  const newCustomers = Object.values(customerData).filter(c => c.purchase_count === 1).length;
++
++  // Ventas por día
++  const daysInPeriod = Object.keys(dailySales).length || 1;
++  const salesPerDay = totalSales / daysInPeriod;
++
++  // Preparar datos para respuesta
++  const marginByCategory = Object.entries(categoryData).map(([category, data]) => ({
++    category,
++    sales: data.sales,
++    cogs: data.cogs,
++    margin: data.margin,
++    marginPercent: data.sales > 0 ? (data.margin / data.sales) * 100 : 0,
++  }));
++
++  const topProducts = Object.values(productData)
++    .sort((a, b) => b.total_sales - a.total_sales);
++
++  const topCustomers = Object.values(customerData)
++    .sort((a, b) => b.total_spent - a.total_spent);
++
++  const productProfitability = Object.values(productData)
++    .map(p => ({
++      ...p,
++      avg_price: p.quantity > 0 ? p.total_sales / p.quantity : 0,
++      avg_cost: p.quantity > 0 ? p.total_cost / p.quantity : 0,
++      marginPercent: p.total_sales > 0 ? (p.margin / p.total_sales) * 100 : 0,
++    }))
++    .sort((a, b) => b.marginPercent - a.marginPercent);
++
++  const dailyCashFlow = Object.entries(dailySales)
++    .map(([date, data]) => ({
++      date,
++      inflow: data.inflow,
++      outflow: data.outflow,
++      net: data.inflow - data.outflow,
++    }))
++    .sort((a, b) => new Date(b.date) - new Date(a.date))
++    .slice(0, 7);
++
++  return {
++    // KPIs Financieros
++    totalSales,
++    totalCOGS,
++    totalExpenses,
++    netProfit,
++    netMarginPercent,
++    marginByCategory,
++
++    // KPIs Operativos
++    averageTicket,
++    totalTransactions: sales.length,
++    inventoryTurnover,
++    activeCustomers,
++    newCustomers,
++    salesPerDay,
++    topProducts,
++    topCustomers,
++
++    // Flujo de Caja
++    cashInflow: totalSales,
++    cashOutflow: totalExpenses,
++    netCashFlow: totalSales - totalExpenses,
++    dailyCashFlow,
++
++    // KPIs Específicos
++    productProfitability,
++    
++    // Nota: inventoryByLocation requeriría datos de sucursales en la BD
++    inventoryByLocation: null,
++  };
++}
+diff --git a/app/api/finance/route.js b/app/api/finance/route.js
+new file mode 100644
+index 0000000..43bf2c4
+--- /dev/null
++++ b/app/api/finance/route.js
+@@ -0,0 +1,109 @@
++import { respond } from "@/src/lib/core/respond";
++import { parseBody } from "@/src/lib/core/parseBody";
++import { getSlug } from "@/src/lib/core/getSlug";
++import { getOrgIdFromSlug } from "@/src/lib/core/getOrgId";
++import { supabase } from "@/src/lib/api/supabaseClient";
++
++/* =====================================
++   GET — LISTAR TRANSACCIONES FINANCIERAS
++   ===================================== */
++export async function GET(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const { data, error } = await supabase
++    .from("finance_transactions")
++    .select("*")
++    .eq("organization_id", org_id)
++    .order("date", { ascending: false });
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond({ transactions: data || [] });
++}
++
++/* =====================================
++   POST — CREAR TRANSACCIÓN
++   ===================================== */
++export async function POST(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const payload = {
++    ...body,
++    organization_id: org_id,
++  };
++
++  const { data, error } = await supabase
++    .from("finance_transactions")
++    .insert(payload)
++    .select()
++    .single();
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond(data, 201);
++}
++
++/* =====================================
++   PUT — ACTUALIZAR TRANSACCIÓN
++   ===================================== */
++export async function PUT(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const { id, ...updateData } = body;
++
++  const { data, error } = await supabase
++    .from("finance_transactions")
++    .update(updateData)
++    .eq("id", id)
++    .eq("organization_id", org_id)
++    .select()
++    .single();
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond(data);
++}
++
++/* =====================================
++   DELETE — ELIMINAR TRANSACCIÓN
++   ===================================== */
++export async function DELETE(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const { id } = body;
++
++  const { error } = await supabase
++    .from("finance_transactions")
++    .delete()
++    .eq("id", id)
++    .eq("organization_id", org_id);
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond({ message: "Deleted successfully" });
++}
+diff --git a/app/api/hr/attendance/route.js b/app/api/hr/attendance/route.js
+new file mode 100644
+index 0000000..6104a29
+--- /dev/null
++++ b/app/api/hr/attendance/route.js
+@@ -0,0 +1,58 @@
++import { respond } from "@/src/lib/core/respond";
++import { parseBody } from "@/src/lib/core/parseBody";
++import { getSlug } from "@/src/lib/core/getSlug";
++import { getOrgIdFromSlug } from "@/src/lib/core/getOrgId";
++import { supabase } from "@/src/lib/api/supabaseClient";
++
++/* =====================================
++   GET — LISTAR ASISTENCIAS
++   ===================================== */
++export async function GET(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const { data, error } = await supabase
++    .from("attendance")
++    .select("*")
++    .eq("organization_id", org_id)
++    .order("date", { ascending: false });
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond({ attendance: data || [] });
++}
++
++/* =====================================
++   POST — REGISTRAR ASISTENCIA
++   ===================================== */
++export async function POST(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const payload = {
++    ...body,
++    organization_id: org_id,
++  };
++
++  // Upsert: si ya existe registro para ese empleado y fecha, actualizar
++  const { data, error } = await supabase
++    .from("attendance")
++    .upsert(payload, {
++      onConflict: "employee_id,date,organization_id",
++    })
++    .select()
++    .single();
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond(data, 201);
++}
+diff --git a/app/api/hr/employees/route.js b/app/api/hr/employees/route.js
+new file mode 100644
+index 0000000..04e3f57
+--- /dev/null
++++ b/app/api/hr/employees/route.js
+@@ -0,0 +1,109 @@
++import { respond } from "@/src/lib/core/respond";
++import { parseBody } from "@/src/lib/core/parseBody";
++import { getSlug } from "@/src/lib/core/getSlug";
++import { getOrgIdFromSlug } from "@/src/lib/core/getOrgId";
++import { supabase } from "@/src/lib/api/supabaseClient";
++
++/* =====================================
++   GET — LISTAR EMPLEADOS
++   ===================================== */
++export async function GET(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const { data, error } = await supabase
++    .from("employees")
++    .select("*")
++    .eq("organization_id", org_id)
++    .order("full_name", { ascending: true });
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond({ employees: data || [] });
++}
++
++/* =====================================
++   POST — CREAR EMPLEADO
++   ===================================== */
++export async function POST(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const payload = {
++    ...body,
++    organization_id: org_id,
++  };
++
++  const { data, error } = await supabase
++    .from("employees")
++    .insert(payload)
++    .select()
++    .single();
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond(data, 201);
++}
++
++/* =====================================
++   PUT — ACTUALIZAR EMPLEADO
++   ===================================== */
++export async function PUT(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const { id, ...updateData } = body;
++
++  const { data, error } = await supabase
++    .from("employees")
++    .update(updateData)
++    .eq("id", id)
++    .eq("organization_id", org_id)
++    .select()
++    .single();
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond(data);
++}
++
++/* =====================================
++   DELETE — ELIMINAR EMPLEADO
++   ===================================== */
++export async function DELETE(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const { id } = body;
++
++  const { error } = await supabase
++    .from("employees")
++    .delete()
++    .eq("id", id)
++    .eq("organization_id", org_id);
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond({ message: "Deleted successfully" });
++}
+diff --git a/app/api/kardex/route.js b/app/api/kardex/route.js
+index c8ab3c2..e9097f9 100644
+--- a/app/api/kardex/route.js
++++ b/app/api/kardex/route.js
+@@ -1,15 +1,11 @@
+ import { NextResponse } from "next/server";
+ import { createClient } from "@supabase/supabase-js";
+ 
+-const supabase = createClient(
+-  process.env.NEXT_PUBLIC_SUPABASE_URL,
+-  process.env.SUPABASE_SERVICE_KEY
+-);
+-  export async function GET(req) {
++export async function GET(req) {
+   try {
+-    const supabase = createClient(                        // ← CHANGED: Moved inside function
++    const supabase = createClient(
+       process.env.NEXT_PUBLIC_SUPABASE_URL,
+-      process.env.SUPABASE_SERVICE_ROLE_KEY,            // ← CHANGED: Fixed variable name
++      process.env.SUPABASE_SERVICE_ROLE_KEY,
+       {
+         auth: {
+           autoRefreshToken: false,
+@@ -19,7 +15,9 @@ const supabase = createClient(
+     );
+ 
+     const orgId = req.headers.get("x-org-id");
+-    // ... rest stays the same
++    const productId = req.nextUrl.searchParams.get("productId");
++
++    const { data, error } = await supabase
+       .from("inventory_movements")
+       .select("*")
+       .eq("org_id", orgId)
+diff --git a/app/api/settings/route.js b/app/api/settings/route.js
+new file mode 100644
+index 0000000..f36a25e
+--- /dev/null
++++ b/app/api/settings/route.js
+@@ -0,0 +1,77 @@
++import { respond } from "@/src/lib/core/respond";
++import { parseBody } from "@/src/lib/core/parseBody";
++import { getSlug } from "@/src/lib/core/getSlug";
++import { getOrgIdFromSlug } from "@/src/lib/core/getOrgId";
++import { supabase } from "@/src/lib/api/supabaseClient";
++
++/* =====================================
++   GET — OBTENER CONFIGURACIÓN
++   ===================================== */
++export async function GET(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const { data, error } = await supabase
++    .from("organization_settings")
++    .select("*")
++    .eq("organization_id", org_id)
++    .single();
++
++  if (error && error.code !== "PGRST116") {
++    return respond({ error: error.message }, 500);
++  }
++
++  // Si no existe configuración, devolver valores por defecto
++  const defaultSettings = {
++    organization_id: org_id,
++    currency: "NIO",
++    timezone: "America/Managua",
++    language: "es",
++    labor_config: {
++      vacation_days_per_year: 30,
++      aguinaldo_months_per_year: 1,
++      severance_days_per_year: 30,
++      severance_max_months: 5,
++      inss_employee_rate: 0.07,
++      inss_employer_rate: 0.19,
++      ir_exempt_amount: 100000,
++    },
++  };
++
++  return respond({ settings: data || defaultSettings });
++}
++
++/* =====================================
++   PUT — ACTUALIZAR CONFIGURACIÓN
++   ===================================== */
++export async function PUT(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const payload = {
++    ...body,
++    organization_id: org_id,
++  };
++
++  // Upsert: crear o actualizar
++  const { data, error } = await supabase
++    .from("organization_settings")
++    .upsert(payload, {
++      onConflict: "organization_id",
++    })
++    .select()
++    .single();
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond(data);
++}
+diff --git a/app/api/settings/users/route.js b/app/api/settings/users/route.js
+new file mode 100644
+index 0000000..1285ffa
+--- /dev/null
++++ b/app/api/settings/users/route.js
+@@ -0,0 +1,115 @@
++import { respond } from "@/src/lib/core/respond";
++import { parseBody } from "@/src/lib/core/parseBody";
++import { getSlug } from "@/src/lib/core/getSlug";
++import { getOrgIdFromSlug } from "@/src/lib/core/getOrgId";
++import { supabase } from "@/src/lib/api/supabaseClient";
++
++/* =====================================
++   GET — LISTAR USUARIOS DE LA ORGANIZACIÓN
++   ===================================== */
++export async function GET(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const { data, error } = await supabase
++    .from("organization_members")
++    .select(`
++      id,
++      role,
++      user_id,
++      profiles (
++        id,
++        full_name,
++        email
++      )
++    `)
++    .eq("org_id", org_id);
++
++  if (error) return respond({ error: error.message }, 500);
++
++  // Transformar datos para el frontend
++  const users = data.map((member) => ({
++    id: member.id,
++    user_id: member.user_id,
++    full_name: member.profiles?.full_name || "",
++    email: member.profiles?.email || "",
++    role: member.role,
++  }));
++
++  return respond({ users });
++}
++
++/* =====================================
++   POST — AGREGAR USUARIO A LA ORGANIZACIÓN
++   ===================================== */
++export async function POST(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  // Nota: En producción, esto debería crear el usuario en auth.users primero
++  // Por ahora, asumimos que el usuario ya existe
++  return respond({ message: "User invitation feature coming soon" }, 501);
++}
++
++/* =====================================
++   PUT — ACTUALIZAR ROL DE USUARIO
++   ===================================== */
++export async function PUT(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const { id, role } = body;
++
++  const { data, error } = await supabase
++    .from("organization_members")
++    .update({ role })
++    .eq("id", id)
++    .eq("org_id", org_id)
++    .select()
++    .single();
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond(data);
++}
++
++/* =====================================
++   DELETE — ELIMINAR USUARIO DE LA ORGANIZACIÓN
++   ===================================== */
++export async function DELETE(req) {
++  const slug = getSlug(req);
++  if (!slug) return respond({ error: "Missing slug" }, 400);
++
++  const org_id = await getOrgIdFromSlug(slug);
++  if (!org_id) return respond({ error: "Invalid organization" }, 404);
++
++  const body = await parseBody(req);
++  if (!body) return respond({ error: "Invalid JSON body" }, 400);
++
++  const { id } = body;
++
++  const { error } = await supabase
++    .from("organization_members")
++    .delete()
++    .eq("id", id)
++    .eq("org_id", org_id);
++
++  if (error) return respond({ error: error.message }, 500);
++
++  return respond({ message: "User removed successfully" });
++}
+diff --git a/src/lib/api/supabaseClient.js b/src/lib/api/supabaseClient.js
+new file mode 100644
+index 0000000..45fc107
+--- /dev/null
++++ b/src/lib/api/supabaseClient.js
+@@ -0,0 +1,12 @@
++import { createClient } from '@supabase/supabase-js'
++
++export const supabase = createClient(
++  process.env.NEXT_PUBLIC_SUPABASE_URL,
++  process.env.SUPABASE_SERVICE_ROLE_KEY,
++  {
++    auth: {
++      autoRefreshToken: false,
++      persistSession: false
++    }
++  }
++)
+diff --git a/src/lib/utils/formatCurrency.js b/src/lib/utils/formatCurrency.js
+index e69de29..f3c7a73 100644
+--- a/src/lib/utils/formatCurrency.js
++++ b/src/lib/utils/formatCurrency.js
+@@ -0,0 +1,12 @@
++export function formatCurrency(amount) {
++  if (typeof amount !== 'number') {
++    amount = parseFloat(amount) || 0;
++  }
++  
++  return new Intl.NumberFormat('es-NI', {
++    style: 'currency',
++    currency: 'NIO',
++    minimumFractionDigits: 2,
++    maximumFractionDigits: 2,
++  }).format(amount);
++}
+diff --git a/src/lib/utils/formatDate.js b/src/lib/utils/formatDate.js
+index e69de29..497885b 100644
+--- a/src/lib/utils/formatDate.js
++++ b/src/lib/utils/formatDate.js
+@@ -0,0 +1,14 @@
++export function formatDate(dateString) {
++  if (!dateString) return '-';
++  
++  try {
++    const date = new Date(dateString);
++    return new Intl.DateTimeFormat('es-NI', {
++      year: 'numeric',
++      month: '2-digit',
++      day: '2-digit',
++    }).format(date);
++  } catch (error) {
++    return dateString;
++  }
++}
+diff --git a/src/modules/finance/FinanceScreen.jsx b/src/modules/finance/FinanceScreen.jsx
+new file mode 100644
+index 0000000..a1c8553
+--- /dev/null
++++ b/src/modules/finance/FinanceScreen.jsx
+@@ -0,0 +1,145 @@
++"use client";
++
++import React, { useState, useEffect } from "react";
++import { useFinanceData } from "./hooks/useFinanceData";
++import FinanceSummaryCards from "./components/FinanceSummaryCards";
++import TransactionsList from "./components/TransactionsList";
++import TransactionModal from "./components/TransactionModal";
++import FinanceReports from "./components/FinanceReports";
++import AgroservicioKPIs from "./components/AgroservicioKPIs";
++
++export default function FinanceScreen({ orgSlug }) {
++  const { 
++    transactions, 
++    summary, 
++    loading, 
++    addTransaction, 
++    updateTransaction, 
++    deleteTransaction,
++    refreshData 
++  } = useFinanceData(orgSlug);
++
++  const [isModalOpen, setIsModalOpen] = useState(false);
++  const [editingTransaction, setEditingTransaction] = useState(null);
++  const [activeTab, setActiveTab] = useState("transactions");
++
++  const handleAddTransaction = () => {
++    setEditingTransaction(null);
++    setIsModalOpen(true);
++  };
++
++  const handleEditTransaction = (transaction) => {
++    setEditingTransaction(transaction);
++    setIsModalOpen(true);
++  };
++
++  const handleSaveTransaction = async (transactionData) => {
++    if (editingTransaction) {
++      await updateTransaction(editingTransaction.id, transactionData);
++    } else {
++      await addTransaction(transactionData);
++    }
++    setIsModalOpen(false);
++    setEditingTransaction(null);
++  };
++
++  const handleDeleteTransaction = async (id) => {
++    if (confirm("¿Está seguro de eliminar esta transacción?")) {
++      await deleteTransaction(id);
++    }
++  };
++
++  if (loading) {
++    return (
++      <div className="flex items-center justify-center h-64">
++        <p className="text-slate-500">Cargando datos financieros...</p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="space-y-5 max-w-7xl mx-auto">
++      {/* Header */}
++      <div className="flex justify-between items-center">
++        <div>
++          <h1 className="text-lg font-semibold text-slate-800">Finanzas</h1>
++          <p className="text-xs text-slate-500">
++            Gestión de ingresos, gastos y reportes financieros
++          </p>
++        </div>
++        <button
++          onClick={handleAddTransaction}
++          className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800"
++        >
++          + Nueva Transacción
++        </button>
++      </div>
++
++      {/* Summary Cards */}
++      <FinanceSummaryCards summary={summary} />
++
++      {/* Tabs */}
++      <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
++        <div className="border-b">
++          <div className="flex">
++            <button
++              onClick={() => setActiveTab("transactions")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "transactions"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Transacciones
++            </button>
++            <button
++              onClick={() => setActiveTab("reports")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "reports"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Reportes
++            </button>
++            <button
++              onClick={() => setActiveTab("kpis")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "kpis"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              KPIs Agroservicio
++            </button>
++          </div>
++        </div>
++
++        <div className="p-4">
++          {activeTab === "transactions" ? (
++            <TransactionsList
++              transactions={transactions}
++              onEdit={handleEditTransaction}
++              onDelete={handleDeleteTransaction}
++            />
++          ) : activeTab === "reports" ? (
++            <FinanceReports transactions={transactions} summary={summary} />
++          ) : (
++            <AgroservicioKPIs orgSlug={orgSlug} />
++          )}
++        </div>
++      </div>
++
++      {/* Transaction Modal */}
++      <TransactionModal
++        isOpen={isModalOpen}
++        onClose={() => {
++          setIsModalOpen(false);
++          setEditingTransaction(null);
++        }}
++        onSave={handleSaveTransaction}
++        transaction={editingTransaction}
++      />
++    </div>
++  );
++}
+diff --git a/src/modules/finance/components/AgroservicioKPIs.jsx b/src/modules/finance/components/AgroservicioKPIs.jsx
+new file mode 100644
+index 0000000..ec2633a
+--- /dev/null
++++ b/src/modules/finance/components/AgroservicioKPIs.jsx
+@@ -0,0 +1,308 @@
++import React, { useState, useEffect } from "react";
++import { formatCurrency } from "@/src/lib/utils/formatCurrency";
++
++/**
++ * KPIs Financieros del Agroservicio
++ * Basado en datos del POS + Inventario + Kardex
++ */
++export default function AgroservicioKPIs({ orgSlug }) {
++  const [kpis, setKpis] = useState(null);
++  const [loading, setLoading] = useState(true);
++  const [dateRange, setDateRange] = useState({
++    start: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
++    end: new Date().toISOString().split('T')[0],
++  });
++
++  useEffect(() => {
++    fetchKPIs();
++  }, [orgSlug, dateRange]);
++
++  const fetchKPIs = async () => {
++    try {
++      setLoading(true);
++      const response = await fetch(
++        `/api/finance/kpis?slug=${orgSlug}&start=${dateRange.start}&end=${dateRange.end}`
++      );
++      const data = await response.json();
++      setKpis(data.kpis);
++    } catch (error) {
++      console.error("Error fetching KPIs:", error);
++    } finally {
++      setLoading(false);
++    }
++  };
++
++  if (loading) {
++    return <div className="text-center py-8">Cargando KPIs...</div>;
++  }
++
++  if (!kpis) {
++    return <div className="text-center py-8">No hay datos disponibles</div>;
++  }
++
++  return (
++    <div className="space-y-6">
++      {/* Filtro de Fechas */}
++      <div className="bg-white p-4 rounded-lg shadow-sm border">
++        <div className="flex gap-4 items-end">
++          <div>
++            <label className="block text-sm font-medium mb-1">Fecha Inicio</label>
++            <input
++              type="date"
++              value={dateRange.start}
++              onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
++              className="border rounded px-3 py-2 text-sm"
++            />
++          </div>
++          <div>
++            <label className="block text-sm font-medium mb-1">Fecha Fin</label>
++            <input
++              type="date"
++              value={dateRange.end}
++              onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
++              className="border rounded px-3 py-2 text-sm"
++            />
++          </div>
++          <button
++            onClick={fetchKPIs}
++            className="px-4 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++          >
++            Actualizar
++          </button>
++        </div>
++      </div>
++
++      {/* 1. KPIs Financieros */}
++      <div>
++        <h3 className="text-lg font-semibold mb-3">KPIs Financieros</h3>
++        
++        {/* Margen Bruto por Categoría */}
++        <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
++          <h4 className="font-medium mb-3">Margen Bruto por Categoría</h4>
++          <div className="space-y-2">
++            {kpis.marginByCategory?.map((cat) => (
++              <div key={cat.category} className="flex justify-between items-center p-2 bg-slate-50 rounded">
++                <span className="font-medium">{cat.category}</span>
++                <div className="text-right">
++                  <div className="text-sm text-slate-600">
++                    Ventas: {formatCurrency(cat.sales)} | COGS: {formatCurrency(cat.cogs)}
++                  </div>
++                  <div className="font-semibold text-green-600">
++                    Margen: {formatCurrency(cat.margin)} ({cat.marginPercent.toFixed(1)}%)
++                  </div>
++                </div>
++              </div>
++            ))}
++          </div>
++        </div>
++
++        {/* Utilidad Neta */}
++        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <div className="text-sm text-slate-600 mb-1">Ventas Totales</div>
++            <div className="text-2xl font-bold text-blue-600">
++              {formatCurrency(kpis.totalSales)}
++            </div>
++          </div>
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <div className="text-sm text-slate-600 mb-1">COGS (Costo de Ventas)</div>
++            <div className="text-2xl font-bold text-orange-600">
++              {formatCurrency(kpis.totalCOGS)}
++            </div>
++          </div>
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <div className="text-sm text-slate-600 mb-1">Gastos Operativos</div>
++            <div className="text-2xl font-bold text-red-600">
++              {formatCurrency(kpis.totalExpenses)}
++            </div>
++          </div>
++        </div>
++
++        <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-lg shadow-sm border-2 border-green-200">
++          <div className="text-sm text-green-700 mb-1">Utilidad Neta</div>
++          <div className="text-3xl font-bold text-green-700">
++            {formatCurrency(kpis.netProfit)}
++          </div>
++          <div className="text-sm text-green-600 mt-1">
++            Margen Neto: {kpis.netMarginPercent.toFixed(1)}%
++          </div>
++        </div>
++      </div>
++
++      {/* 2. KPIs Operativos */}
++      <div>
++        <h3 className="text-lg font-semibold mb-3">KPIs Operativos</h3>
++        
++        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <div className="text-sm text-slate-600 mb-1">Ticket Promedio</div>
++            <div className="text-xl font-bold">
++              {formatCurrency(kpis.averageTicket)}
++            </div>
++            <div className="text-xs text-slate-500 mt-1">
++              {kpis.totalTransactions} ventas
++            </div>
++          </div>
++
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <div className="text-sm text-slate-600 mb-1">Rotación de Inventario</div>
++            <div className="text-xl font-bold">
++              {kpis.inventoryTurnover.toFixed(2)}x
++            </div>
++            <div className="text-xs text-slate-500 mt-1">
++              veces por período
++            </div>
++          </div>
++
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <div className="text-sm text-slate-600 mb-1">Clientes Activos</div>
++            <div className="text-xl font-bold">
++              {kpis.activeCustomers}
++            </div>
++            <div className="text-xs text-slate-500 mt-1">
++              {kpis.newCustomers} nuevos
++            </div>
++          </div>
++
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <div className="text-sm text-slate-600 mb-1">Ventas por Día</div>
++            <div className="text-xl font-bold">
++              {formatCurrency(kpis.salesPerDay)}
++            </div>
++            <div className="text-xs text-slate-500 mt-1">
++              promedio diario
++            </div>
++          </div>
++        </div>
++
++        {/* Productos más vendidos */}
++        <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
++          <h4 className="font-medium mb-3">Top 10 Productos Más Vendidos</h4>
++          <div className="space-y-2">
++            {kpis.topProducts?.slice(0, 10).map((product, idx) => (
++              <div key={product.product_id} className="flex justify-between items-center p-2 bg-slate-50 rounded">
++                <div className="flex items-center gap-2">
++                  <span className="text-sm font-bold text-slate-400">#{idx + 1}</span>
++                  <span className="font-medium">{product.product_name}</span>
++                </div>
++                <div className="text-right">
++                  <div className="font-semibold">{formatCurrency(product.total_sales)}</div>
++                  <div className="text-xs text-slate-500">{product.quantity} unidades</div>
++                </div>
++              </div>
++            ))}
++          </div>
++        </div>
++
++        {/* Ranking de Clientes */}
++        <div className="bg-white p-4 rounded-lg shadow-sm border">
++          <h4 className="font-medium mb-3">Top 10 Clientes</h4>
++          <div className="space-y-2">
++            {kpis.topCustomers?.slice(0, 10).map((customer, idx) => (
++              <div key={customer.client_id} className="flex justify-between items-center p-2 bg-slate-50 rounded">
++                <div className="flex items-center gap-2">
++                  <span className="text-sm font-bold text-slate-400">#{idx + 1}</span>
++                  <span className="font-medium">{customer.client_name}</span>
++                </div>
++                <div className="text-right">
++                  <div className="font-semibold">{formatCurrency(customer.total_spent)}</div>
++                  <div className="text-xs text-slate-500">{customer.purchase_count} compras</div>
++                </div>
++              </div>
++            ))}
++          </div>
++        </div>
++      </div>
++
++      {/* 3. Flujo de Caja */}
++      <div>
++        <h3 className="text-lg font-semibold mb-3">Flujo de Caja</h3>
++        
++        <div className="bg-white p-4 rounded-lg shadow-sm border">
++          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
++            <div>
++              <div className="text-sm text-slate-600 mb-1">Entradas (Ventas)</div>
++              <div className="text-xl font-bold text-green-600">
++                {formatCurrency(kpis.cashInflow)}
++              </div>
++            </div>
++            <div>
++              <div className="text-sm text-slate-600 mb-1">Salidas (Gastos + Compras)</div>
++              <div className="text-xl font-bold text-red-600">
++                {formatCurrency(kpis.cashOutflow)}
++              </div>
++            </div>
++            <div>
++              <div className="text-sm text-slate-600 mb-1">Flujo Neto</div>
++              <div className={`text-xl font-bold ${kpis.netCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
++                {formatCurrency(kpis.netCashFlow)}
++              </div>
++            </div>
++          </div>
++
++          {/* Flujo de Caja Diario */}
++          <h4 className="font-medium mb-2 text-sm">Flujo Diario (últimos 7 días)</h4>
++          <div className="space-y-1">
++            {kpis.dailyCashFlow?.map((day) => (
++              <div key={day.date} className="flex justify-between items-center p-2 bg-slate-50 rounded text-sm">
++                <span>{new Date(day.date).toLocaleDateString('es-NI')}</span>
++                <div className="flex gap-4">
++                  <span className="text-green-600">+{formatCurrency(day.inflow)}</span>
++                  <span className="text-red-600">-{formatCurrency(day.outflow)}</span>
++                  <span className={`font-semibold ${day.net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
++                    {formatCurrency(day.net)}
++                  </span>
++                </div>
++              </div>
++            ))}
++          </div>
++        </div>
++      </div>
++
++      {/* 4. KPIs Específicos del Agroservicio */}
++      <div>
++        <h3 className="text-lg font-semibold mb-3">KPIs Específicos del Agroservicio</h3>
++        
++        {/* Rentabilidad por Producto */}
++        <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
++          <h4 className="font-medium mb-3">Rentabilidad por Producto (Top 10)</h4>
++          <div className="space-y-2">
++            {kpis.productProfitability?.slice(0, 10).map((product) => (
++              <div key={product.product_id} className="p-2 bg-slate-50 rounded">
++                <div className="flex justify-between items-center mb-1">
++                  <span className="font-medium">{product.product_name}</span>
++                  <span className="font-semibold text-green-600">
++                    {product.marginPercent.toFixed(1)}%
++                  </span>
++                </div>
++                <div className="flex justify-between text-xs text-slate-600">
++                  <span>Precio: {formatCurrency(product.avg_price)}</span>
++                  <span>Costo: {formatCurrency(product.avg_cost)}</span>
++                  <span>Margen: {formatCurrency(product.margin)}</span>
++                </div>
++              </div>
++            ))}
++          </div>
++        </div>
++
++        {/* Nivel de Inventario por Sucursal */}
++        {kpis.inventoryByLocation && (
++          <div className="bg-white p-4 rounded-lg shadow-sm border">
++            <h4 className="font-medium mb-3">Nivel de Inventario por Sucursal</h4>
++            <div className="space-y-2">
++              {kpis.inventoryByLocation.map((location) => (
++                <div key={location.location} className="flex justify-between items-center p-2 bg-slate-50 rounded">
++                  <span className="font-medium">{location.location}</span>
++                  <div className="text-right">
++                    <div className="font-semibold">{formatCurrency(location.inventory_value)}</div>
++                    <div className="text-xs text-slate-500">{location.product_count} productos</div>
++                  </div>
++                </div>
++              ))}
++            </div>
++          </div>
++        )}
++      </div>
++    </div>
++  );
++}
+diff --git a/src/modules/finance/components/FinanceReports.jsx b/src/modules/finance/components/FinanceReports.jsx
+new file mode 100644
+index 0000000..f8e88a5
+--- /dev/null
++++ b/src/modules/finance/components/FinanceReports.jsx
+@@ -0,0 +1,146 @@
++import React from "react";
++import { formatCurrency } from "@/src/lib/utils/formatCurrency";
++
++export default function FinanceReports({ transactions, summary }) {
++  // Group by category
++  const categoryTotals = transactions.reduce((acc, t) => {
++    const key = `${t.category}-${t.type}`;
++    if (!acc[key]) {
++      acc[key] = {
++        category: t.category,
++        type: t.type,
++        total: 0,
++        count: 0,
++      };
++    }
++    acc[key].total += t.amount;
++    acc[key].count += 1;
++    return acc;
++  }, {});
++
++  const categoryData = Object.values(categoryTotals).sort((a, b) => b.total - a.total);
++
++  // Group by month
++  const monthlyTotals = transactions.reduce((acc, t) => {
++    const month = new Date(t.date).toLocaleDateString("es-ES", {
++      year: "numeric",
++      month: "long",
++    });
++    if (!acc[month]) {
++      acc[month] = { income: 0, expenses: 0 };
++    }
++    if (t.type === "income") {
++      acc[month].income += t.amount;
++    } else {
++      acc[month].expenses += t.amount;
++    }
++    return acc;
++  }, {});
++
++  const monthlyData = Object.entries(monthlyTotals).map(([month, data]) => ({
++    month,
++    ...data,
++    profit: data.income - data.expenses,
++  }));
++
++  return (
++    <div className="space-y-6">
++      {/* Summary */}
++      <div>
++        <h3 className="font-semibold text-sm mb-3">Resumen General</h3>
++        <div className="grid grid-cols-3 gap-4">
++          <div className="bg-green-50 p-4 rounded border">
++            <p className="text-xs text-slate-600">Ingresos</p>
++            <p className="text-lg font-bold text-green-600">
++              {formatCurrency(summary.totalIncome)}
++            </p>
++          </div>
++          <div className="bg-red-50 p-4 rounded border">
++            <p className="text-xs text-slate-600">Gastos</p>
++            <p className="text-lg font-bold text-red-600">
++              {formatCurrency(summary.totalExpenses)}
++            </p>
++          </div>
++          <div className="bg-blue-50 p-4 rounded border">
++            <p className="text-xs text-slate-600">Utilidad</p>
++            <p className={`text-lg font-bold ${summary.netProfit >= 0 ? "text-blue-600" : "text-red-600"}`}>
++              {formatCurrency(summary.netProfit)}
++            </p>
++          </div>
++        </div>
++      </div>
++
++      {/* By Category */}
++      <div>
++        <h3 className="font-semibold text-sm mb-3">Por Categoría</h3>
++        <div className="border rounded overflow-hidden">
++          <table className="w-full text-sm">
++            <thead className="bg-slate-50">
++              <tr>
++                <th className="text-left p-3 font-medium">Categoría</th>
++                <th className="text-left p-3 font-medium">Tipo</th>
++                <th className="text-right p-3 font-medium">Transacciones</th>
++                <th className="text-right p-3 font-medium">Total</th>
++              </tr>
++            </thead>
++            <tbody>
++              {categoryData.map((item, index) => (
++                <tr key={index} className="border-t">
++                  <td className="p-3">{item.category}</td>
++                  <td className="p-3">
++                    <span
++                      className={`px-2 py-1 rounded text-xs ${
++                        item.type === "income"
++                          ? "bg-green-100 text-green-700"
++                          : "bg-red-100 text-red-700"
++                      }`}
++                    >
++                      {item.type === "income" ? "Ingreso" : "Gasto"}
++                    </span>
++                  </td>
++                  <td className="p-3 text-right">{item.count}</td>
++                  <td className="p-3 text-right font-medium">
++                    {formatCurrency(item.total)}
++                  </td>
++                </tr>
++              ))}
++            </tbody>
++          </table>
++        </div>
++      </div>
++
++      {/* By Month */}
++      <div>
++        <h3 className="font-semibold text-sm mb-3">Por Mes</h3>
++        <div className="border rounded overflow-hidden">
++          <table className="w-full text-sm">
++            <thead className="bg-slate-50">
++              <tr>
++                <th className="text-left p-3 font-medium">Mes</th>
++                <th className="text-right p-3 font-medium">Ingresos</th>
++                <th className="text-right p-3 font-medium">Gastos</th>
++                <th className="text-right p-3 font-medium">Utilidad</th>
++              </tr>
++            </thead>
++            <tbody>
++              {monthlyData.map((item, index) => (
++                <tr key={index} className="border-t">
++                  <td className="p-3 capitalize">{item.month}</td>
++                  <td className="p-3 text-right text-green-600">
++                    {formatCurrency(item.income)}
++                  </td>
++                  <td className="p-3 text-right text-red-600">
++                    {formatCurrency(item.expenses)}
++                  </td>
++                  <td className={`p-3 text-right font-medium ${item.profit >= 0 ? "text-blue-600" : "text-red-600"}`}>
++                    {formatCurrency(item.profit)}
++                  </td>
++                </tr>
++              ))}
++            </tbody>
++          </table>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/modules/finance/components/FinanceSummaryCards.jsx b/src/modules/finance/components/FinanceSummaryCards.jsx
+new file mode 100644
+index 0000000..a665f7d
+--- /dev/null
++++ b/src/modules/finance/components/FinanceSummaryCards.jsx
+@@ -0,0 +1,48 @@
++import React from "react";
++import { formatCurrency } from "@/src/lib/utils/formatCurrency";
++
++export default function FinanceSummaryCards({ summary }) {
++  const cards = [
++    {
++      title: "Ingresos Totales",
++      value: summary.totalIncome,
++      color: "text-green-600",
++      bgColor: "bg-green-50",
++    },
++    {
++      title: "Gastos Totales",
++      value: summary.totalExpenses,
++      color: "text-red-600",
++      bgColor: "bg-red-50",
++    },
++    {
++      title: "Utilidad Neta",
++      value: summary.netProfit,
++      color: summary.netProfit >= 0 ? "text-blue-600" : "text-red-600",
++      bgColor: summary.netProfit >= 0 ? "bg-blue-50" : "bg-red-50",
++    },
++    {
++      title: "Transacciones",
++      value: summary.transactionCount,
++      color: "text-slate-600",
++      bgColor: "bg-slate-50",
++      isCount: true,
++    },
++  ];
++
++  return (
++    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
++      {cards.map((card, index) => (
++        <div
++          key={index}
++          className={`${card.bgColor} rounded-lg p-4 border border-slate-200`}
++        >
++          <p className="text-xs text-slate-600 mb-1">{card.title}</p>
++          <p className={`text-2xl font-bold ${card.color}`}>
++            {card.isCount ? card.value : formatCurrency(card.value)}
++          </p>
++        </div>
++      ))}
++    </div>
++  );
++}
+diff --git a/src/modules/finance/components/TransactionModal.jsx b/src/modules/finance/components/TransactionModal.jsx
+new file mode 100644
+index 0000000..aa99440
+--- /dev/null
++++ b/src/modules/finance/components/TransactionModal.jsx
+@@ -0,0 +1,145 @@
++import React, { useState, useEffect } from "react";
++
++export default function TransactionModal({ isOpen, onClose, onSave, transaction }) {
++  const [formData, setFormData] = useState({
++    date: new Date().toISOString().split("T")[0],
++    description: "",
++    category: "",
++    type: "expense",
++    amount: 0,
++    notes: "",
++  });
++
++  useEffect(() => {
++    if (transaction) {
++      setFormData({
++        date: transaction.date || new Date().toISOString().split("T")[0],
++        description: transaction.description || "",
++        category: transaction.category || "",
++        type: transaction.type || "expense",
++        amount: transaction.amount || 0,
++        notes: transaction.notes || "",
++      });
++    } else {
++      setFormData({
++        date: new Date().toISOString().split("T")[0],
++        description: "",
++        category: "",
++        type: "expense",
++        amount: 0,
++        notes: "",
++      });
++    }
++  }, [transaction, isOpen]);
++
++  const handleSubmit = (e) => {
++    e.preventDefault();
++    onSave(formData);
++  };
++
++  const handleChange = (field, value) => {
++    setFormData((prev) => ({ ...prev, [field]: value }));
++  };
++
++  if (!isOpen) return null;
++
++  return (
++    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
++      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
++        <h2 className="text-xl font-bold mb-4">
++          {transaction ? "Editar Transacción" : "Nueva Transacción"}
++        </h2>
++
++        <form onSubmit={handleSubmit} className="space-y-4">
++          <div>
++            <label className="block text-sm font-medium mb-1">Fecha</label>
++            <input
++              type="date"
++              value={formData.date}
++              onChange={(e) => handleChange("date", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Tipo</label>
++            <select
++              value={formData.type}
++              onChange={(e) => handleChange("type", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              required
++            >
++              <option value="income">Ingreso</option>
++              <option value="expense">Gasto</option>
++            </select>
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Descripción</label>
++            <input
++              type="text"
++              value={formData.description}
++              onChange={(e) => handleChange("description", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="Ej: Venta de productos"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Categoría</label>
++            <input
++              type="text"
++              value={formData.category}
++              onChange={(e) => handleChange("category", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="Ej: Ventas, Sueldos, Servicios"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Monto (C$)</label>
++            <input
++              type="number"
++              step="0.01"
++              value={formData.amount}
++              onChange={(e) => handleChange("amount", parseFloat(e.target.value))}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="0.00"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Notas (opcional)</label>
++            <textarea
++              value={formData.notes}
++              onChange={(e) => handleChange("notes", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              rows="3"
++              placeholder="Información adicional..."
++            />
++          </div>
++
++          <div className="flex gap-3 pt-4">
++            <button
++              type="button"
++              onClick={onClose}
++              className="flex-1 px-4 py-2 border rounded text-sm hover:bg-slate-50"
++            >
++              Cancelar
++            </button>
++            <button
++              type="submit"
++              className="flex-1 px-4 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++            >
++              Guardar
++            </button>
++          </div>
++        </form>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/modules/finance/components/TransactionsList.jsx b/src/modules/finance/components/TransactionsList.jsx
+new file mode 100644
+index 0000000..af003cc
+--- /dev/null
++++ b/src/modules/finance/components/TransactionsList.jsx
+@@ -0,0 +1,73 @@
++import React from "react";
++import { formatCurrency } from "@/src/lib/utils/formatCurrency";
++import { formatDate } from "@/src/lib/utils/formatDate";
++
++export default function TransactionsList({ transactions, onEdit, onDelete }) {
++  if (transactions.length === 0) {
++    return (
++      <div className="text-center py-12">
++        <p className="text-slate-500">No hay transacciones registradas</p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="overflow-x-auto">
++      <table className="w-full">
++        <thead>
++          <tr className="border-b text-left text-xs text-slate-600">
++            <th className="pb-2 font-medium">Fecha</th>
++            <th className="pb-2 font-medium">Descripción</th>
++            <th className="pb-2 font-medium">Categoría</th>
++            <th className="pb-2 font-medium">Tipo</th>
++            <th className="pb-2 font-medium text-right">Monto</th>
++            <th className="pb-2 font-medium text-right">Acciones</th>
++          </tr>
++        </thead>
++        <tbody>
++          {transactions.map((transaction) => (
++            <tr key={transaction.id} className="border-b hover:bg-slate-50">
++              <td className="py-3 text-sm">
++                {formatDate(transaction.date)}
++              </td>
++              <td className="py-3 text-sm">{transaction.description}</td>
++              <td className="py-3 text-sm">
++                <span className="px-2 py-1 bg-slate-100 rounded text-xs">
++                  {transaction.category}
++                </span>
++              </td>
++              <td className="py-3 text-sm">
++                <span
++                  className={`px-2 py-1 rounded text-xs ${
++                    transaction.type === "income"
++                      ? "bg-green-100 text-green-700"
++                      : "bg-red-100 text-red-700"
++                  }`}
++                >
++                  {transaction.type === "income" ? "Ingreso" : "Gasto"}
++                </span>
++              </td>
++              <td className="py-3 text-sm text-right font-medium">
++                {formatCurrency(transaction.amount)}
++              </td>
++              <td className="py-3 text-sm text-right">
++                <button
++                  onClick={() => onEdit(transaction)}
++                  className="text-blue-600 hover:text-blue-800 mr-3 text-xs"
++                >
++                  Editar
++                </button>
++                <button
++                  onClick={() => onDelete(transaction.id)}
++                  className="text-red-600 hover:text-red-800 text-xs"
++                >
++                  Eliminar
++                </button>
++              </td>
++            </tr>
++          ))}
++        </tbody>
++      </table>
++    </div>
++  );
++}
+diff --git a/src/modules/finance/hooks/useFinanceData.js b/src/modules/finance/hooks/useFinanceData.js
+new file mode 100644
+index 0000000..5e4b0ec
+--- /dev/null
++++ b/src/modules/finance/hooks/useFinanceData.js
+@@ -0,0 +1,108 @@
++import { useState, useEffect } from "react";
++
++export function useFinanceData(orgSlug) {
++  const [transactions, setTransactions] = useState([]);
++  const [summary, setSummary] = useState({
++    totalIncome: 0,
++    totalExpenses: 0,
++    netProfit: 0,
++    transactionCount: 0,
++  });
++  const [loading, setLoading] = useState(true);
++
++  const fetchTransactions = async () => {
++    try {
++      const response = await fetch(`/api/finance?slug=${orgSlug}`);
++      if (response.ok) {
++        const data = await response.json();
++        setTransactions(data.transactions || []);
++        calculateSummary(data.transactions || []);
++      }
++    } catch (error) {
++      console.error("Error fetching transactions:", error);
++    } finally {
++      setLoading(false);
++    }
++  };
++
++  const calculateSummary = (transactionsList) => {
++    const income = transactionsList
++      .filter((t) => t.type === "income")
++      .reduce((sum, t) => sum + (t.amount || 0), 0);
++
++    const expenses = transactionsList
++      .filter((t) => t.type === "expense")
++      .reduce((sum, t) => sum + (t.amount || 0), 0);
++
++    setSummary({
++      totalIncome: income,
++      totalExpenses: expenses,
++      netProfit: income - expenses,
++      transactionCount: transactionsList.length,
++    });
++  };
++
++  const addTransaction = async (transactionData) => {
++    try {
++      const response = await fetch(`/api/finance?slug=${orgSlug}`, {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify(transactionData),
++      });
++
++      if (response.ok) {
++        await fetchTransactions();
++      }
++    } catch (error) {
++      console.error("Error adding transaction:", error);
++    }
++  };
++
++  const updateTransaction = async (id, transactionData) => {
++    try {
++      const response = await fetch(`/api/finance?slug=${orgSlug}`, {
++        method: "PUT",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id, ...transactionData }),
++      });
++
++      if (response.ok) {
++        await fetchTransactions();
++      }
++    } catch (error) {
++      console.error("Error updating transaction:", error);
++    }
++  };
++
++  const deleteTransaction = async (id) => {
++    try {
++      const response = await fetch(`/api/finance?slug=${orgSlug}`, {
++        method: "DELETE",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id }),
++      });
++
++      if (response.ok) {
++        await fetchTransactions();
++      }
++    } catch (error) {
++      console.error("Error deleting transaction:", error);
++    }
++  };
++
++  useEffect(() => {
++    if (orgSlug) {
++      fetchTransactions();
++    }
++  }, [orgSlug]);
++
++  return {
++    transactions,
++    summary,
++    loading,
++    addTransaction,
++    updateTransaction,
++    deleteTransaction,
++    refreshData: fetchTransactions,
++  };
++}
+diff --git a/src/modules/hr/HrScreen.jsx b/src/modules/hr/HrScreen.jsx
+new file mode 100644
+index 0000000..eb34064
+--- /dev/null
++++ b/src/modules/hr/HrScreen.jsx
+@@ -0,0 +1,147 @@
++"use client";
++
++import React, { useState, useEffect } from "react";
++import { useHrData } from "./hooks/useHrData";
++import EmployeesList from "./components/EmployeesList";
++import EmployeeModal from "./components/EmployeeModal";
++import AttendanceTracker from "./components/AttendanceTracker";
++import PayrollSummary from "./components/PayrollSummary";
++
++export default function HrScreen({ orgSlug }) {
++  const {
++    employees,
++    attendance,
++    loading,
++    addEmployee,
++    updateEmployee,
++    deleteEmployee,
++    markAttendance,
++  } = useHrData(orgSlug);
++
++  const [isModalOpen, setIsModalOpen] = useState(false);
++  const [editingEmployee, setEditingEmployee] = useState(null);
++  const [activeTab, setActiveTab] = useState("employees");
++
++  const handleAddEmployee = () => {
++    setEditingEmployee(null);
++    setIsModalOpen(true);
++  };
++
++  const handleEditEmployee = (employee) => {
++    setEditingEmployee(employee);
++    setIsModalOpen(true);
++  };
++
++  const handleSaveEmployee = async (employeeData) => {
++    if (editingEmployee) {
++      await updateEmployee(editingEmployee.id, employeeData);
++    } else {
++      await addEmployee(employeeData);
++    }
++    setIsModalOpen(false);
++    setEditingEmployee(null);
++  };
++
++  const handleDeleteEmployee = async (id) => {
++    if (confirm("¿Está seguro de eliminar este empleado?")) {
++      await deleteEmployee(id);
++    }
++  };
++
++  if (loading) {
++    return (
++      <div className="flex items-center justify-center h-64">
++        <p className="text-slate-500">Cargando datos de RRHH...</p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="space-y-5 max-w-7xl mx-auto">
++      {/* Header */}
++      <div className="flex justify-between items-center">
++        <div>
++          <h1 className="text-lg font-semibold text-slate-800">Recursos Humanos</h1>
++          <p className="text-xs text-slate-500">
++            Gestión de empleados, asistencia y nómina
++          </p>
++        </div>
++        <button
++          onClick={handleAddEmployee}
++          className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800"
++        >
++          + Nuevo Empleado
++        </button>
++      </div>
++
++      {/* Tabs */}
++      <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
++        <div className="border-b">
++          <div className="flex">
++            <button
++              onClick={() => setActiveTab("employees")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "employees"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Empleados
++            </button>
++            <button
++              onClick={() => setActiveTab("attendance")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "attendance"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Asistencia
++            </button>
++            <button
++              onClick={() => setActiveTab("payroll")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "payroll"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Nómina
++            </button>
++          </div>
++        </div>
++
++        <div className="p-4">
++          {activeTab === "employees" && (
++            <EmployeesList
++              employees={employees}
++              onEdit={handleEditEmployee}
++              onDelete={handleDeleteEmployee}
++            />
++          )}
++          {activeTab === "attendance" && (
++            <AttendanceTracker
++              employees={employees}
++              attendance={attendance}
++              onMarkAttendance={markAttendance}
++            />
++          )}
++          {activeTab === "payroll" && (
++            <PayrollSummary employees={employees} attendance={attendance} />
++          )}
++        </div>
++      </div>
++
++      {/* Employee Modal */}
++      <EmployeeModal
++        isOpen={isModalOpen}
++        onClose={() => {
++          setIsModalOpen(false);
++          setEditingEmployee(null);
++        }}
++        onSave={handleSaveEmployee}
++        employee={editingEmployee}
++      />
++    </div>
++  );
++}
+diff --git a/src/modules/hr/components/AttendanceTracker.jsx b/src/modules/hr/components/AttendanceTracker.jsx
+new file mode 100644
+index 0000000..df38300
+--- /dev/null
++++ b/src/modules/hr/components/AttendanceTracker.jsx
+@@ -0,0 +1,113 @@
++import React, { useState } from "react";
++import { formatDate } from "@/src/lib/utils/formatDate";
++
++export default function AttendanceTracker({ employees, attendance, onMarkAttendance }) {
++  const [selectedDate, setSelectedDate] = useState(
++    new Date().toISOString().split("T")[0]
++  );
++
++  const handleMarkAttendance = async (employeeId, status) => {
++    await onMarkAttendance({
++      employee_id: employeeId,
++      date: selectedDate,
++      status,
++    });
++  };
++
++  const getAttendanceForDate = (employeeId) => {
++    return attendance.find(
++      (a) => a.employee_id === employeeId && a.date === selectedDate
++    );
++  };
++
++  return (
++    <div className="space-y-4">
++      <div className="flex items-center gap-4">
++        <label className="text-sm font-medium">Fecha:</label>
++        <input
++          type="date"
++          value={selectedDate}
++          onChange={(e) => setSelectedDate(e.target.value)}
++          className="border rounded px-3 py-2 text-sm"
++        />
++      </div>
++
++      {employees.length === 0 ? (
++        <div className="text-center py-12">
++          <p className="text-slate-500">No hay empleados para registrar asistencia</p>
++        </div>
++      ) : (
++        <div className="overflow-x-auto">
++          <table className="w-full">
++            <thead>
++              <tr className="border-b text-left text-xs text-slate-600">
++                <th className="pb-2 font-medium">Empleado</th>
++                <th className="pb-2 font-medium">Puesto</th>
++                <th className="pb-2 font-medium">Estado</th>
++                <th className="pb-2 font-medium text-right">Acciones</th>
++              </tr>
++            </thead>
++            <tbody>
++              {employees.map((employee) => {
++                const attendanceRecord = getAttendanceForDate(employee.id);
++                return (
++                  <tr key={employee.id} className="border-b hover:bg-slate-50">
++                    <td className="py-3 text-sm font-medium">
++                      {employee.full_name}
++                    </td>
++                    <td className="py-3 text-sm">{employee.position}</td>
++                    <td className="py-3 text-sm">
++                      {attendanceRecord ? (
++                        <span
++                          className={`px-2 py-1 rounded text-xs ${
++                            attendanceRecord.status === "present"
++                              ? "bg-green-100 text-green-700"
++                              : attendanceRecord.status === "absent"
++                              ? "bg-red-100 text-red-700"
++                              : "bg-yellow-100 text-yellow-700"
++                          }`}
++                        >
++                          {attendanceRecord.status === "present"
++                            ? "Presente"
++                            : attendanceRecord.status === "absent"
++                            ? "Ausente"
++                            : "Permiso"}
++                        </span>
++                      ) : (
++                        <span className="text-slate-400 text-xs">
++                          Sin registrar
++                        </span>
++                      )}
++                    </td>
++                    <td className="py-3 text-sm text-right">
++                      <div className="flex gap-2 justify-end">
++                        <button
++                          onClick={() => handleMarkAttendance(employee.id, "present")}
++                          className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200"
++                        >
++                          Presente
++                        </button>
++                        <button
++                          onClick={() => handleMarkAttendance(employee.id, "absent")}
++                          className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200"
++                        >
++                          Ausente
++                        </button>
++                        <button
++                          onClick={() => handleMarkAttendance(employee.id, "leave")}
++                          className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs hover:bg-yellow-200"
++                        >
++                          Permiso
++                        </button>
++                      </div>
++                    </td>
++                  </tr>
++                );
++              })}
++            </tbody>
++          </table>
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/src/modules/hr/components/EmployeeModal.jsx b/src/modules/hr/components/EmployeeModal.jsx
+new file mode 100644
+index 0000000..55d8a3a
+--- /dev/null
++++ b/src/modules/hr/components/EmployeeModal.jsx
+@@ -0,0 +1,175 @@
++import React, { useState, useEffect } from "react";
++
++export default function EmployeeModal({ isOpen, onClose, onSave, employee }) {
++  const [formData, setFormData] = useState({
++    full_name: "",
++    position: "",
++    department: "",
++    email: "",
++    phone: "",
++    salary: 0,
++    hire_date: new Date().toISOString().split("T")[0],
++    status: "active",
++  });
++
++  useEffect(() => {
++    if (employee) {
++      setFormData({
++        full_name: employee.full_name || "",
++        position: employee.position || "",
++        department: employee.department || "",
++        email: employee.email || "",
++        phone: employee.phone || "",
++        salary: employee.salary || 0,
++        hire_date: employee.hire_date || new Date().toISOString().split("T")[0],
++        status: employee.status || "active",
++      });
++    } else {
++      setFormData({
++        full_name: "",
++        position: "",
++        department: "",
++        email: "",
++        phone: "",
++        salary: 0,
++        hire_date: new Date().toISOString().split("T")[0],
++        status: "active",
++      });
++    }
++  }, [employee, isOpen]);
++
++  const handleSubmit = (e) => {
++    e.preventDefault();
++    onSave(formData);
++  };
++
++  const handleChange = (field, value) => {
++    setFormData((prev) => ({ ...prev, [field]: value }));
++  };
++
++  if (!isOpen) return null;
++
++  return (
++    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
++      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
++        <h2 className="text-xl font-bold mb-4">
++          {employee ? "Editar Empleado" : "Nuevo Empleado"}
++        </h2>
++
++        <form onSubmit={handleSubmit} className="space-y-4">
++          <div>
++            <label className="block text-sm font-medium mb-1">Nombre Completo</label>
++            <input
++              type="text"
++              value={formData.full_name}
++              onChange={(e) => handleChange("full_name", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="Juan Pérez"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Puesto</label>
++            <input
++              type="text"
++              value={formData.position}
++              onChange={(e) => handleChange("position", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="Gerente de Ventas"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Departamento</label>
++            <input
++              type="text"
++              value={formData.department}
++              onChange={(e) => handleChange("department", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="Ventas"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Email</label>
++            <input
++              type="email"
++              value={formData.email}
++              onChange={(e) => handleChange("email", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="juan@ejemplo.com"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Teléfono</label>
++            <input
++              type="tel"
++              value={formData.phone}
++              onChange={(e) => handleChange("phone", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="8888-8888"
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Salario (C$)</label>
++            <input
++              type="number"
++              step="0.01"
++              value={formData.salary}
++              onChange={(e) => handleChange("salary", parseFloat(e.target.value))}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="0.00"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Fecha de Contratación</label>
++            <input
++              type="date"
++              value={formData.hire_date}
++              onChange={(e) => handleChange("hire_date", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              required
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Estado</label>
++            <select
++              value={formData.status}
++              onChange={(e) => handleChange("status", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              required
++            >
++              <option value="active">Activo</option>
++              <option value="inactive">Inactivo</option>
++            </select>
++          </div>
++
++          <div className="flex gap-3 pt-4">
++            <button
++              type="button"
++              onClick={onClose}
++              className="flex-1 px-4 py-2 border rounded text-sm hover:bg-slate-50"
++            >
++              Cancelar
++            </button>
++            <button
++              type="submit"
++              className="flex-1 px-4 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++            >
++              Guardar
++            </button>
++          </div>
++        </form>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/modules/hr/components/EmployeesList.jsx b/src/modules/hr/components/EmployeesList.jsx
+new file mode 100644
+index 0000000..e6ea8e2
+--- /dev/null
++++ b/src/modules/hr/components/EmployeesList.jsx
+@@ -0,0 +1,69 @@
++import React from "react";
++
++export default function EmployeesList({ employees, onEdit, onDelete }) {
++  if (employees.length === 0) {
++    return (
++      <div className="text-center py-12">
++        <p className="text-slate-500">No hay empleados registrados</p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="overflow-x-auto">
++      <table className="w-full">
++        <thead>
++          <tr className="border-b text-left text-xs text-slate-600">
++            <th className="pb-2 font-medium">Nombre</th>
++            <th className="pb-2 font-medium">Puesto</th>
++            <th className="pb-2 font-medium">Departamento</th>
++            <th className="pb-2 font-medium">Email</th>
++            <th className="pb-2 font-medium">Teléfono</th>
++            <th className="pb-2 font-medium text-right">Salario</th>
++            <th className="pb-2 font-medium">Estado</th>
++            <th className="pb-2 font-medium text-right">Acciones</th>
++          </tr>
++        </thead>
++        <tbody>
++          {employees.map((employee) => (
++            <tr key={employee.id} className="border-b hover:bg-slate-50">
++              <td className="py-3 text-sm font-medium">{employee.full_name}</td>
++              <td className="py-3 text-sm">{employee.position}</td>
++              <td className="py-3 text-sm">{employee.department}</td>
++              <td className="py-3 text-sm">{employee.email}</td>
++              <td className="py-3 text-sm">{employee.phone}</td>
++              <td className="py-3 text-sm text-right">
++                C$ {(employee.salary || 0).toFixed(2)}
++              </td>
++              <td className="py-3 text-sm">
++                <span
++                  className={`px-2 py-1 rounded text-xs ${
++                    employee.status === "active"
++                      ? "bg-green-100 text-green-700"
++                      : "bg-red-100 text-red-700"
++                  }`}
++                >
++                  {employee.status === "active" ? "Activo" : "Inactivo"}
++                </span>
++              </td>
++              <td className="py-3 text-sm text-right">
++                <button
++                  onClick={() => onEdit(employee)}
++                  className="text-blue-600 hover:text-blue-800 mr-3 text-xs"
++                >
++                  Editar
++                </button>
++                <button
++                  onClick={() => onDelete(employee.id)}
++                  className="text-red-600 hover:text-red-800 text-xs"
++                >
++                  Eliminar
++                </button>
++              </td>
++            </tr>
++          ))}
++        </tbody>
++      </table>
++    </div>
++  );
++}
+diff --git a/src/modules/hr/components/LiquidacionSimulator.jsx b/src/modules/hr/components/LiquidacionSimulator.jsx
+new file mode 100644
+index 0000000..eaf5b2d
+--- /dev/null
++++ b/src/modules/hr/components/LiquidacionSimulator.jsx
+@@ -0,0 +1,183 @@
++import React, { useState } from "react";
++import { calculateLiquidacion } from "../utils/nicaraguaLaborLaw";
++import { formatCurrency } from "@/src/lib/utils/formatCurrency";
++
++export default function LiquidacionSimulator({ employee, laborConfig, onClose }) {
++  const [terminationDate, setTerminationDate] = useState(
++    new Date().toISOString().split("T")[0]
++  );
++  const [terminationType, setTerminationType] = useState("sin_causa");
++  const [result, setResult] = useState(null);
++
++  const handleCalculate = () => {
++    const liquidacion = calculateLiquidacion({
++      employee,
++      terminationDate,
++      terminationType,
++      config: laborConfig,
++    });
++    setResult(liquidacion);
++  };
++
++  return (
++    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
++      <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
++        <div className="flex justify-between items-center mb-4">
++          <h2 className="text-xl font-bold">Simulador de Liquidación</h2>
++          <button
++            onClick={onClose}
++            className="text-slate-500 hover:text-slate-700 text-2xl"
++          >
++            ×
++          </button>
++        </div>
++
++        <div className="bg-blue-50 border border-blue-200 rounded p-4 mb-4">
++          <p className="text-sm text-blue-800">
++            <strong>Empleado:</strong> {employee.full_name}
++          </p>
++          <p className="text-sm text-blue-800">
++            <strong>Salario Mensual:</strong> {formatCurrency(employee.salary)}
++          </p>
++          <p className="text-sm text-blue-800">
++            <strong>Fecha de Contratación:</strong> {employee.hire_date}
++          </p>
++        </div>
++
++        <div className="space-y-4 mb-4">
++          <div>
++            <label className="block text-sm font-medium mb-1">
++              Fecha de Terminación
++            </label>
++            <input
++              type="date"
++              value={terminationDate}
++              onChange={(e) => setTerminationDate(e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">
++              Tipo de Terminación
++            </label>
++            <select
++              value={terminationType}
++              onChange={(e) => setTerminationType(e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++            >
++              <option value="sin_causa">Despido sin Causa</option>
++              <option value="con_causa">Despido con Causa</option>
++              <option value="renuncia">Renuncia Voluntaria</option>
++            </select>
++          </div>
++
++          <button
++            onClick={handleCalculate}
++            className="w-full px-4 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++          >
++            Calcular Liquidación
++          </button>
++        </div>
++
++        {result && (
++          <div className="border-t pt-4 space-y-4">
++            <div>
++              <h3 className="font-semibold text-sm mb-2">Información General</h3>
++              <div className="bg-slate-50 p-3 rounded text-sm space-y-1">
++                <p>
++                  <strong>Años Trabajados:</strong> {result.employee.years_worked}
++                </p>
++                <p>
++                  <strong>Salario Diario:</strong>{" "}
++                  {formatCurrency(result.employee.daily_salary)}
++                </p>
++              </div>
++            </div>
++
++            <div>
++              <h3 className="font-semibold text-sm mb-2">Desglose de Pagos</h3>
++              <div className="space-y-2">
++                <div className="flex justify-between p-2 bg-slate-50 rounded text-sm">
++                  <span>
++                    Salarios Pendientes ({result.breakdown.pending_salary.days}{" "}
++                    días)
++                  </span>
++                  <span className="font-medium">
++                    {formatCurrency(result.breakdown.pending_salary.amount)}
++                  </span>
++                </div>
++
++                <div className="flex justify-between p-2 bg-slate-50 rounded text-sm">
++                  <span>
++                    Aguinaldo Proporcional ({result.breakdown.aguinaldo.months.toFixed(2)}{" "}
++                    meses)
++                  </span>
++                  <span className="font-medium">
++                    {formatCurrency(result.breakdown.aguinaldo.amount)}
++                  </span>
++                </div>
++
++                <div className="flex justify-between p-2 bg-slate-50 rounded text-sm">
++                  <span>
++                    Vacaciones Pendientes ({result.breakdown.vacaciones.days_pending}{" "}
++                    días)
++                  </span>
++                  <span className="font-medium">
++                    {formatCurrency(result.breakdown.vacaciones.amount)}
++                  </span>
++                </div>
++
++                {result.breakdown.indemnizacion.applicable && (
++                  <div className="flex justify-between p-2 bg-green-50 rounded text-sm">
++                    <span>
++                      Indemnización ({result.breakdown.indemnizacion.months.toFixed(2)}{" "}
++                      meses)
++                    </span>
++                    <span className="font-medium text-green-700">
++                      {formatCurrency(result.breakdown.indemnizacion.amount)}
++                    </span>
++                  </div>
++                )}
++              </div>
++            </div>
++
++            <div>
++              <h3 className="font-semibold text-sm mb-2">Totales</h3>
++              <div className="space-y-2">
++                <div className="flex justify-between p-2 bg-slate-100 rounded text-sm">
++                  <span className="font-medium">Total Bruto</span>
++                  <span className="font-bold">
++                    {formatCurrency(result.totals.total_bruto)}
++                  </span>
++                </div>
++
++                <div className="flex justify-between p-2 bg-red-50 rounded text-sm">
++                  <span>Deducción INSS (7%)</span>
++                  <span className="text-red-600">
++                    -{formatCurrency(result.totals.inss_deduction)}
++                  </span>
++                </div>
++
++                <div className="flex justify-between p-3 bg-blue-100 rounded">
++                  <span className="font-bold">Total Neto a Pagar</span>
++                  <span className="font-bold text-lg text-blue-700">
++                    {formatCurrency(result.totals.total_neto)}
++                  </span>
++                </div>
++              </div>
++            </div>
++
++            <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
++              <p className="text-xs text-yellow-800">
++                <strong>Nota Legal:</strong> Este cálculo es una estimación basada
++                en la configuración del sistema. Debe ser validado por un contador
++                o asesor legal antes de procesar el pago final.
++              </p>
++            </div>
++          </div>
++        )}
++      </div>
++    </div>
++  );
++}
+diff --git a/src/modules/hr/components/PayrollSummary.jsx b/src/modules/hr/components/PayrollSummary.jsx
+new file mode 100644
+index 0000000..938dd0c
+--- /dev/null
++++ b/src/modules/hr/components/PayrollSummary.jsx
+@@ -0,0 +1,95 @@
++import React from "react";
++
++export default function PayrollSummary({ employees, attendance }) {
++  const calculatePayroll = () => {
++    const currentMonth = new Date().toISOString().slice(0, 7);
++    
++    return employees.map((employee) => {
++      const monthAttendance = attendance.filter(
++        (a) => a.employee_id === employee.id && a.date.startsWith(currentMonth)
++      );
++
++      const presentDays = monthAttendance.filter((a) => a.status === "present").length;
++      const absentDays = monthAttendance.filter((a) => a.status === "absent").length;
++      const leaveDays = monthAttendance.filter((a) => a.status === "leave").length;
++
++      const dailySalary = employee.salary / 30;
++      const deductions = dailySalary * absentDays;
++      const netSalary = employee.salary - deductions;
++
++      return {
++        ...employee,
++        presentDays,
++        absentDays,
++        leaveDays,
++        deductions,
++        netSalary,
++      };
++    });
++  };
++
++  const payrollData = calculatePayroll();
++  const totalPayroll = payrollData.reduce((sum, e) => sum + e.netSalary, 0);
++
++  return (
++    <div className="space-y-4">
++      <div className="bg-blue-50 p-4 rounded border">
++        <p className="text-xs text-slate-600">Nómina Total del Mes</p>
++        <p className="text-2xl font-bold text-blue-600">
++          C$ {totalPayroll.toFixed(2)}
++        </p>
++      </div>
++
++      {payrollData.length === 0 ? (
++        <div className="text-center py-12">
++          <p className="text-slate-500">No hay empleados para calcular nómina</p>
++        </div>
++      ) : (
++        <div className="overflow-x-auto">
++          <table className="w-full">
++            <thead>
++              <tr className="border-b text-left text-xs text-slate-600">
++                <th className="pb-2 font-medium">Empleado</th>
++                <th className="pb-2 font-medium">Puesto</th>
++                <th className="pb-2 font-medium text-right">Salario Base</th>
++                <th className="pb-2 font-medium text-center">Días Presente</th>
++                <th className="pb-2 font-medium text-center">Días Ausente</th>
++                <th className="pb-2 font-medium text-right">Deducciones</th>
++                <th className="pb-2 font-medium text-right">Salario Neto</th>
++              </tr>
++            </thead>
++            <tbody>
++              {payrollData.map((employee) => (
++                <tr key={employee.id} className="border-b hover:bg-slate-50">
++                  <td className="py-3 text-sm font-medium">
++                    {employee.full_name}
++                  </td>
++                  <td className="py-3 text-sm">{employee.position}</td>
++                  <td className="py-3 text-sm text-right">
++                    C$ {employee.salary.toFixed(2)}
++                  </td>
++                  <td className="py-3 text-sm text-center">
++                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
++                      {employee.presentDays}
++                    </span>
++                  </td>
++                  <td className="py-3 text-sm text-center">
++                    <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">
++                      {employee.absentDays}
++                    </span>
++                  </td>
++                  <td className="py-3 text-sm text-right text-red-600">
++                    C$ {employee.deductions.toFixed(2)}
++                  </td>
++                  <td className="py-3 text-sm text-right font-medium text-green-600">
++                    C$ {employee.netSalary.toFixed(2)}
++                  </td>
++                </tr>
++              ))}
++            </tbody>
++          </table>
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/src/modules/hr/hooks/useHrData.js b/src/modules/hr/hooks/useHrData.js
+new file mode 100644
+index 0000000..d9887c9
+--- /dev/null
++++ b/src/modules/hr/hooks/useHrData.js
+@@ -0,0 +1,118 @@
++import { useState, useEffect } from "react";
++
++export function useHrData(orgSlug) {
++  const [employees, setEmployees] = useState([]);
++  const [attendance, setAttendance] = useState([]);
++  const [loading, setLoading] = useState(true);
++
++  const fetchEmployees = async () => {
++    try {
++      const response = await fetch(`/api/hr/employees?slug=${orgSlug}`);
++      if (response.ok) {
++        const data = await response.json();
++        setEmployees(data.employees || []);
++      }
++    } catch (error) {
++      console.error("Error fetching employees:", error);
++    }
++  };
++
++  const fetchAttendance = async () => {
++    try {
++      const response = await fetch(`/api/hr/attendance?slug=${orgSlug}`);
++      if (response.ok) {
++        const data = await response.json();
++        setAttendance(data.attendance || []);
++      }
++    } catch (error) {
++      console.error("Error fetching attendance:", error);
++    }
++  };
++
++  const loadData = async () => {
++    setLoading(true);
++    await Promise.all([fetchEmployees(), fetchAttendance()]);
++    setLoading(false);
++  };
++
++  const addEmployee = async (employeeData) => {
++    try {
++      const response = await fetch(`/api/hr/employees?slug=${orgSlug}`, {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify(employeeData),
++      });
++
++      if (response.ok) {
++        await fetchEmployees();
++      }
++    } catch (error) {
++      console.error("Error adding employee:", error);
++    }
++  };
++
++  const updateEmployee = async (id, employeeData) => {
++    try {
++      const response = await fetch(`/api/hr/employees?slug=${orgSlug}`, {
++        method: "PUT",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id, ...employeeData }),
++      });
++
++      if (response.ok) {
++        await fetchEmployees();
++      }
++    } catch (error) {
++      console.error("Error updating employee:", error);
++    }
++  };
++
++  const deleteEmployee = async (id) => {
++    try {
++      const response = await fetch(`/api/hr/employees?slug=${orgSlug}`, {
++        method: "DELETE",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id }),
++      });
++
++      if (response.ok) {
++        await fetchEmployees();
++      }
++    } catch (error) {
++      console.error("Error deleting employee:", error);
++    }
++  };
++
++  const markAttendance = async (attendanceData) => {
++    try {
++      const response = await fetch(`/api/hr/attendance?slug=${orgSlug}`, {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify(attendanceData),
++      });
++
++      if (response.ok) {
++        await fetchAttendance();
++      }
++    } catch (error) {
++      console.error("Error marking attendance:", error);
++    }
++  };
++
++  useEffect(() => {
++    if (orgSlug) {
++      loadData();
++    }
++  }, [orgSlug]);
++
++  return {
++    employees,
++    attendance,
++    loading,
++    addEmployee,
++    updateEmployee,
++    deleteEmployee,
++    markAttendance,
++    refreshData: loadData,
++  };
++}
+diff --git a/src/modules/hr/utils/nicaraguaLaborLaw.js b/src/modules/hr/utils/nicaraguaLaborLaw.js
+new file mode 100644
+index 0000000..563ff78
+--- /dev/null
++++ b/src/modules/hr/utils/nicaraguaLaborLaw.js
+@@ -0,0 +1,288 @@
++/**
++ * Utilidades para cálculos de leyes laborales de Nicaragua
++ * 
++ * Basado en las leyes laborales vigentes de Nicaragua.
++ * Fórmulas validadas según Código del Trabajo de Nicaragua.
++ */
++
++/**
++ * Calcula el aguinaldo (13° mes)
++ * Período: 1 de diciembre anterior al 30 de noviembre
++ * 
++ * Fórmula cuando trabajó 12 meses completos: Aguinaldo = Salario Mensual Promedio
++ * Fórmula cuando NO trabajó 12 meses: Aguinaldo = (Salario Mensual * Días trabajados) / 365
++ * 
++ * @param {Object} params
++ * @param {number} params.monthlySalary - Salario mensual promedio
++ * @param {number} params.daysWorked - Días trabajados en el período (máx 365)
++ * @returns {number} Monto de aguinaldo
++ */
++export function calculateAguinaldo({ monthlySalary, daysWorked }) {
++  // Si trabajó 12 meses completos (365 días)
++  if (daysWorked >= 365) {
++    return monthlySalary;
++  }
++  
++  // Si trabajó menos de 12 meses → proporcional
++  return (monthlySalary * daysWorked) / 365;
++}
++
++/**
++ * Calcula el salario mensual promedio según tipo de salario
++ * @param {Object} params
++ * @param {string} params.salaryType - 'fijo' | 'variable' | 'mixto'
++ * @param {number} params.baseSalary - Salario base mensual
++ * @param {number[]} params.last3MonthsEarnings - Array con ingresos de últimos 3 meses (para variable/mixto)
++ * @returns {number} Salario mensual promedio
++ */
++export function calculateAverageMonthlySalary({ salaryType, baseSalary, last3MonthsEarnings = [] }) {
++  if (salaryType === 'fijo') {
++    return baseSalary;
++  }
++  
++  if (salaryType === 'variable' && last3MonthsEarnings.length > 0) {
++    const total = last3MonthsEarnings.reduce((sum, val) => sum + val, 0);
++    return total / last3MonthsEarnings.length;
++  }
++  
++  if (salaryType === 'mixto' && last3MonthsEarnings.length > 0) {
++    const variableAvg = last3MonthsEarnings.reduce((sum, val) => sum + val, 0) / last3MonthsEarnings.length;
++    return baseSalary + variableAvg;
++  }
++  
++  return baseSalary;
++}
++
++/**
++ * Calcula las vacaciones según ley de Nicaragua
++ * Primer año: 15 días continuos pagados
++ * Años siguientes: 15 días (no aumenta con antigüedad)
++ * 
++ * Si aún NO cumple 12 meses: Vacaciones = (15 días / 12 meses) * Meses trabajados
++ * Pago de Vacaciones = Salario Diario Promedio * Días de Vacaciones
++ * Salario Diario = Salario Mensual / 30
++ * 
++ * @param {Object} params
++ * @param {number} params.monthsWorked - Meses trabajados
++ * @param {number} params.dailySalary - Salario diario promedio
++ * @param {number} params.daysTaken - Días de vacaciones ya tomados
++ * @returns {Object} { daysAccrued, daysPending, amount }
++ */
++export function calculateVacaciones({ monthsWorked, dailySalary, daysTaken = 0 }) {
++  // Días acumulados proporcionalmente
++  let daysAccrued;
++  
++  if (monthsWorked >= 12) {
++    // Si ya cumplió 12 meses, tiene derecho a 15 días completos por año
++    const yearsCompleted = Math.floor(monthsWorked / 12);
++    const remainingMonths = monthsWorked % 12;
++    daysAccrued = (yearsCompleted * 15) + ((15 / 12) * remainingMonths);
++  } else {
++    // Si no ha cumplido 12 meses, se calcula proporcional
++    daysAccrued = (15 / 12) * monthsWorked;
++  }
++  
++  const daysPending = Math.max(0, daysAccrued - daysTaken);
++  const amount = dailySalary * daysPending;
++  
++  return {
++    daysAccrued: Math.round(daysAccrued * 100) / 100,
++    daysPending: Math.round(daysPending * 100) / 100,
++    amount,
++  };
++}
++
++/**
++ * Calcula la indemnización por despido sin causa según ley de Nicaragua
++ * 
++ * Regla:
++ * - 0-3 años: 1 mes de salario por año trabajado
++ * - Más de 3 años: 3 meses + 20 días por cada año adicional
++ * - Máximo: 5 meses de salario
++ * 
++ * Fórmulas:
++ * Si ≤ 3 años: Indemnización = Años trabajados * Salario Mensual Promedio
++ * Si > 3 años: Indemnización = (3 * Salario Mensual) + ((Años - 3) * (Salario Diario * 20))
++ * 
++ * @param {Object} params
++ * @param {number} params.monthlySalary - Salario mensual promedio
++ * @param {number} params.yearsWorked - Años trabajados (puede ser decimal)
++ * @returns {Object} { months, amount }
++ */
++export function calculateIndemnizacion({ monthlySalary, yearsWorked }) {
++  const dailySalary = monthlySalary / 30;
++  let indemnizacionAmount;
++  
++  if (yearsWorked <= 3) {
++    // 1 mes por año trabajado
++    indemnizacionAmount = yearsWorked * monthlySalary;
++  } else {
++    // 3 meses + 20 días por cada año adicional
++    const additionalYears = yearsWorked - 3;
++    indemnizacionAmount = (3 * monthlySalary) + (additionalYears * dailySalary * 20);
++  }
++  
++  // Aplicar tope máximo de 5 meses
++  const maxIndemnizacion = 5 * monthlySalary;
++  indemnizacionAmount = Math.min(indemnizacionAmount, maxIndemnizacion);
++  
++  const months = indemnizacionAmount / monthlySalary;
++  
++  return {
++    months: Math.round(months * 100) / 100,
++    amount: indemnizacionAmount,
++  };
++}
++
++/**
++ * Calcula las deducciones de INSS
++ * 
++ * IMPORTANTE: INSS NO se descuenta de:
++ * - Indemnización
++ * - Aguinaldo
++ * - Vacaciones acumuladas no gozadas
++ * 
++ * INSS SÍ se descuenta sobre:
++ * - Salarios normales pendientes
++ * 
++ * @param {Object} params
++ * @param {number} params.grossAmount - Monto bruto (solo salarios pendientes)
++ * @param {number} params.employeeRate - Tasa del empleado (default: 0.07 = 7%)
++ * @returns {number} Monto de deducción INSS
++ */
++export function calculateINSS({ grossAmount, employeeRate = 0.07 }) {
++  return grossAmount * employeeRate;
++}
++
++/**
++ * Calcula la liquidación completa de un empleado según leyes de Nicaragua
++ * 
++ * @param {Object} params
++ * @param {Object} params.employee - Datos del empleado
++ * @param {Date} params.terminationDate - Fecha de terminación
++ * @param {string} params.terminationType - Tipo: 'sin_causa' | 'con_causa' | 'renuncia'
++ * @param {Object} params.config - Configuración (opcional, para compatibilidad)
++ * @returns {Object} Desglose completo de liquidación
++ */
++export function calculateLiquidacion({
++  employee,
++  terminationDate,
++  terminationType,
++  config = {},
++}) {
++  const hireDate = new Date(employee.hire_date);
++  const endDate = new Date(terminationDate);
++  
++  // Calcular tiempo trabajado
++  const millisecondsPerDay = 1000 * 60 * 60 * 24;
++  const daysDiff = (endDate - hireDate) / millisecondsPerDay;
++  const yearsWorked = daysDiff / 365;
++  const monthsWorked = (daysDiff / 365) * 12;
++  
++  const monthlySalary = employee.salary || 0;
++  const dailySalary = monthlySalary / 30;
++  
++  // 1. Salarios pendientes (días del mes actual)
++  const currentMonthDays = endDate.getDate();
++  const pendingSalary = dailySalary * currentMonthDays;
++  
++  // 2. Aguinaldo proporcional
++  // Calcular días trabajados desde el último período de aguinaldo (1 dic - 30 nov)
++  const currentYear = endDate.getFullYear();
++  const lastAguinaldoStart = new Date(currentYear - 1, 11, 1); // 1 dic año anterior
++  const aguinaldoPeriodStart = lastAguinaldoStart > hireDate ? lastAguinaldoStart : hireDate;
++  const daysInAguinaldoPeriod = Math.min(365, (endDate - aguinaldoPeriodStart) / millisecondsPerDay);
++  
++  const aguinaldo = calculateAguinaldo({
++    monthlySalary,
++    daysWorked: daysInAguinaldoPeriod,
++  });
++  
++  // 3. Vacaciones pendientes (15 días por año, proporcional)
++  const vacaciones = calculateVacaciones({
++    monthsWorked,
++    dailySalary,
++    daysTaken: employee.vacation_days_taken || 0,
++  });
++  
++  // 4. Indemnización (solo si es despido sin causa)
++  let indemnizacion = { months: 0, amount: 0 };
++  if (terminationType === 'sin_causa') {
++    indemnizacion = calculateIndemnizacion({
++      monthlySalary,
++      yearsWorked,
++    });
++  }
++  
++  // 5. Cálculo de deducciones
++  // INSS solo se descuenta sobre salarios pendientes
++  // NO se descuenta sobre aguinaldo, vacaciones, ni indemnización
++  const inssDeduction = calculateINSS({
++    grossAmount: pendingSalary,
++    employeeRate: config.inss_employee_rate || 0.07,
++  });
++  
++  // IR NO aplica sobre indemnización, vacaciones, ni preaviso
++  const irDeduction = 0;
++  
++  // 6. Totales
++  const totalBruto = pendingSalary + aguinaldo + vacaciones.amount + indemnizacion.amount;
++  const totalDeducciones = inssDeduction + irDeduction;
++  const totalNeto = totalBruto - totalDeducciones;
++  
++  return {
++    employee: {
++      name: employee.full_name,
++      hire_date: hireDate.toISOString().split('T')[0],
++      termination_date: endDate.toISOString().split('T')[0],
++      years_worked: Math.round(yearsWorked * 100) / 100,
++      monthly_salary: monthlySalary,
++      daily_salary: dailySalary,
++    },
++    breakdown: {
++      pending_salary: {
++        days: currentMonthDays,
++        amount: pendingSalary,
++        inss_applies: true,
++      },
++      aguinaldo: {
++        days: Math.round(daysInAguinaldoPeriod),
++        amount: aguinaldo,
++        inss_applies: false,
++      },
++      vacaciones: {
++        days_accrued: vacaciones.daysAccrued,
++        days_taken: employee.vacation_days_taken || 0,
++        days_pending: vacaciones.daysPending,
++        amount: vacaciones.amount,
++        inss_applies: false,
++      },
++      indemnizacion: {
++        applicable: terminationType === 'sin_causa',
++        months: indemnizacion.months,
++        amount: indemnizacion.amount,
++        inss_applies: false,
++        ir_applies: false,
++      },
++    },
++    deductions: {
++      inss: {
++        base: pendingSalary,
++        rate: config.inss_employee_rate || 0.07,
++        amount: inssDeduction,
++        note: 'Solo sobre salarios pendientes',
++      },
++      ir: {
++        amount: irDeduction,
++        note: 'No aplica sobre indemnización, vacaciones ni preaviso',
++      },
++    },
++    totals: {
++      total_bruto: totalBruto,
++      total_deducciones: totalDeducciones,
++      total_neto: totalNeto,
++    },
++    termination_type: terminationType,
++    legal_note: 'Cálculo basado en el Código del Trabajo de Nicaragua. Validar con contador o asesor legal.',
++  };
++}
+diff --git a/src/modules/sales/SalesScreen.jsx b/src/modules/sales/SalesScreen.jsx
+new file mode 100644
+index 0000000..755b2b9
+--- /dev/null
++++ b/src/modules/sales/SalesScreen.jsx
+@@ -0,0 +1,132 @@
++"use client";
++
++import React, { useState, useEffect } from "react";
++import { useSalesData } from "./hooks/useSalesData";
++import SalesForm from "./views/SalesForm";
++import SalesList from "./components/SalesList";
++import SalesStats from "./components/SalesStats";
++
++export default function SalesScreen({ orgSlug }) {
++  const { sales, stats, loading, addSale, updateSale, deleteSale } = useSalesData(orgSlug);
++  const [showForm, setShowForm] = useState(false);
++  const [editingSale, setEditingSale] = useState(null);
++  const [activeTab, setActiveTab] = useState("list");
++
++  const handleSaveSale = async (saleData) => {
++    if (editingSale) {
++      await updateSale(editingSale.id, saleData);
++    } else {
++      await addSale(saleData);
++    }
++    setShowForm(false);
++    setEditingSale(null);
++  };
++
++  const handleEditSale = (sale) => {
++    setEditingSale(sale);
++    setShowForm(true);
++  };
++
++  const handleDeleteSale = async (id) => {
++    if (confirm("¿Está seguro de eliminar esta venta?")) {
++      await deleteSale(id);
++    }
++  };
++
++  const handleNewSale = () => {
++    setEditingSale(null);
++    setShowForm(true);
++  };
++
++  if (loading) {
++    return (
++      <div className="flex items-center justify-center h-64">
++        <p className="text-slate-500">Cargando ventas...</p>
++      </div>
++    );
++  }
++
++  if (showForm) {
++    return (
++      <div className="max-w-4xl mx-auto">
++        <div className="mb-4">
++          <button
++            onClick={() => {
++              setShowForm(false);
++              setEditingSale(null);
++            }}
++            className="text-sm text-slate-600 hover:text-slate-900"
++          >
++            ← Volver a la lista
++          </button>
++        </div>
++        <SalesForm onSave={handleSaveSale} initialData={editingSale} />
++      </div>
++    );
++  }
++
++  return (
++    <div className="space-y-5 max-w-7xl mx-auto">
++      {/* Header */}
++      <div className="flex justify-between items-center">
++        <div>
++          <h1 className="text-lg font-semibold text-slate-800">Ventas</h1>
++          <p className="text-xs text-slate-500">
++            Gestión de ventas, márgenes y reportes
++          </p>
++        </div>
++        <button
++          onClick={handleNewSale}
++          className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800"
++        >
++          + Nueva Venta
++        </button>
++      </div>
++
++      {/* Stats */}
++      <SalesStats stats={stats} />
++
++      {/* Tabs */}
++      <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
++        <div className="border-b">
++          <div className="flex">
++            <button
++              onClick={() => setActiveTab("list")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "list"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Lista de Ventas
++            </button>
++            <button
++              onClick={() => setActiveTab("stats")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "stats"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Estadísticas
++            </button>
++          </div>
++        </div>
++
++        <div className="p-4">
++          {activeTab === "list" ? (
++            <SalesList
++              sales={sales}
++              onEdit={handleEditSale}
++              onDelete={handleDeleteSale}
++            />
++          ) : (
++            <div className="py-8 text-center text-slate-500">
++              <p>Estadísticas detalladas próximamente</p>
++            </div>
++          )}
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/modules/sales/components/SalesList.jsx b/src/modules/sales/components/SalesList.jsx
+new file mode 100644
+index 0000000..dbed31d
+--- /dev/null
++++ b/src/modules/sales/components/SalesList.jsx
+@@ -0,0 +1,68 @@
++import React from "react";
++import { formatDate } from "@/src/lib/utils/formatDate";
++
++export default function SalesList({ sales, onEdit, onDelete }) {
++  if (sales.length === 0) {
++    return (
++      <div className="text-center py-12">
++        <p className="text-slate-500">No hay ventas registradas</p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="overflow-x-auto">
++      <table className="w-full">
++        <thead>
++          <tr className="border-b text-left text-xs text-slate-600">
++            <th className="pb-2 font-medium">Fecha</th>
++            <th className="pb-2 font-medium">Factura</th>
++            <th className="pb-2 font-medium">Cliente</th>
++            <th className="pb-2 font-medium">Producto</th>
++            <th className="pb-2 font-medium text-right">Cantidad</th>
++            <th className="pb-2 font-medium text-right">Subtotal</th>
++            <th className="pb-2 font-medium text-right">Margen</th>
++            <th className="pb-2 font-medium text-right">%</th>
++            <th className="pb-2 font-medium text-right">Acciones</th>
++          </tr>
++        </thead>
++        <tbody>
++          {sales.map((sale) => (
++            <tr key={sale.id} className="border-b hover:bg-slate-50">
++              <td className="py-3 text-sm">
++                {sale.fecha ? formatDate(sale.fecha) : "-"}
++              </td>
++              <td className="py-3 text-sm">{sale.factura || "-"}</td>
++              <td className="py-3 text-sm">{sale.nombre || "-"}</td>
++              <td className="py-3 text-sm">{sale.descripcion || "-"}</td>
++              <td className="py-3 text-sm text-right">{sale.cantidad || 0}</td>
++              <td className="py-3 text-sm text-right font-medium">
++                C$ {(sale.subtotal || 0).toFixed(2)}
++              </td>
++              <td className="py-3 text-sm text-right text-green-600">
++                C$ {(sale.margen || 0).toFixed(2)}
++              </td>
++              <td className="py-3 text-sm text-right">
++                {((sale.porcentaje || 0) * 100).toFixed(1)}%
++              </td>
++              <td className="py-3 text-sm text-right">
++                <button
++                  onClick={() => onEdit(sale)}
++                  className="text-blue-600 hover:text-blue-800 mr-3 text-xs"
++                >
++                  Editar
++                </button>
++                <button
++                  onClick={() => onDelete(sale.id)}
++                  className="text-red-600 hover:text-red-800 text-xs"
++                >
++                  Eliminar
++                </button>
++              </td>
++            </tr>
++          ))}
++        </tbody>
++      </table>
++    </div>
++  );
++}
+diff --git a/src/modules/sales/components/SalesStats.jsx b/src/modules/sales/components/SalesStats.jsx
+new file mode 100644
+index 0000000..dc67220
+--- /dev/null
++++ b/src/modules/sales/components/SalesStats.jsx
+@@ -0,0 +1,44 @@
++import React from "react";
++
++export default function SalesStats({ stats }) {
++  const cards = [
++    {
++      title: "Total Ventas",
++      value: stats.totalSales,
++      color: "text-blue-600",
++      bgColor: "bg-blue-50",
++    },
++    {
++      title: "Ingresos Totales",
++      value: `C$ ${stats.totalRevenue.toFixed(2)}`,
++      color: "text-green-600",
++      bgColor: "bg-green-50",
++    },
++    {
++      title: "Margen Total",
++      value: `C$ ${stats.totalMargin.toFixed(2)}`,
++      color: "text-purple-600",
++      bgColor: "bg-purple-50",
++    },
++    {
++      title: "Margen Promedio",
++      value: `${(stats.averageMargin * 100).toFixed(1)}%`,
++      color: "text-orange-600",
++      bgColor: "bg-orange-50",
++    },
++  ];
++
++  return (
++    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
++      {cards.map((card, index) => (
++        <div
++          key={index}
++          className={`${card.bgColor} rounded-lg p-4 border border-slate-200`}
++        >
++          <p className="text-xs text-slate-600 mb-1">{card.title}</p>
++          <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
++        </div>
++      ))}
++    </div>
++  );
++}
+diff --git a/src/modules/sales/hooks/useSalesData.js b/src/modules/sales/hooks/useSalesData.js
+new file mode 100644
+index 0000000..e987113
+--- /dev/null
++++ b/src/modules/sales/hooks/useSalesData.js
+@@ -0,0 +1,106 @@
++import { useState, useEffect } from "react";
++
++export function useSalesData(orgSlug) {
++  const [sales, setSales] = useState([]);
++  const [stats, setStats] = useState({
++    totalSales: 0,
++    totalRevenue: 0,
++    totalMargin: 0,
++    averageMargin: 0,
++  });
++  const [loading, setLoading] = useState(true);
++
++  const fetchSales = async () => {
++    try {
++      const response = await fetch(`/api/sales?slug=${orgSlug}`);
++      if (response.ok) {
++        const data = await response.json();
++        setSales(data || []);
++        calculateStats(data || []);
++      }
++    } catch (error) {
++      console.error("Error fetching sales:", error);
++    } finally {
++      setLoading(false);
++    }
++  };
++
++  const calculateStats = (salesList) => {
++    const totalRevenue = salesList.reduce((sum, s) => sum + (s.subtotal || 0), 0);
++    const totalMargin = salesList.reduce((sum, s) => sum + (s.margen || 0), 0);
++    const avgMargin = salesList.length > 0 
++      ? salesList.reduce((sum, s) => sum + (s.porcentaje || 0), 0) / salesList.length
++      : 0;
++
++    setStats({
++      totalSales: salesList.length,
++      totalRevenue,
++      totalMargin,
++      averageMargin: avgMargin,
++    });
++  };
++
++  const addSale = async (saleData) => {
++    try {
++      const response = await fetch(`/api/sales?slug=${orgSlug}`, {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify(saleData),
++      });
++
++      if (response.ok) {
++        await fetchSales();
++      }
++    } catch (error) {
++      console.error("Error adding sale:", error);
++    }
++  };
++
++  const updateSale = async (id, saleData) => {
++    try {
++      const response = await fetch(`/api/sales?slug=${orgSlug}`, {
++        method: "PUT",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id, ...saleData }),
++      });
++
++      if (response.ok) {
++        await fetchSales();
++      }
++    } catch (error) {
++      console.error("Error updating sale:", error);
++    }
++  };
++
++  const deleteSale = async (id) => {
++    try {
++      const response = await fetch(`/api/sales?slug=${orgSlug}`, {
++        method: "DELETE",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id }),
++      });
++
++      if (response.ok) {
++        await fetchSales();
++      }
++    } catch (error) {
++      console.error("Error deleting sale:", error);
++    }
++  };
++
++  useEffect(() => {
++    if (orgSlug) {
++      fetchSales();
++    }
++  }, [orgSlug]);
++
++  return {
++    sales,
++    stats,
++    loading,
++    addSale,
++    updateSale,
++    deleteSale,
++    refreshData: fetchSales,
++  };
++}
+diff --git a/src/modules/settings/SettingsScreen.jsx b/src/modules/settings/SettingsScreen.jsx
+new file mode 100644
+index 0000000..1ecf76d
+--- /dev/null
++++ b/src/modules/settings/SettingsScreen.jsx
+@@ -0,0 +1,103 @@
++"use client";
++
++import React, { useState, useEffect } from "react";
++import { useSettingsData } from "./hooks/useSettingsData";
++import OrganizationSettings from "./components/OrganizationSettings";
++import UserManagement from "./components/UserManagement";
++import SystemPreferences from "./components/SystemPreferences";
++import LaborLawConfig from "./components/LaborLawConfig";
++
++export default function SettingsScreen({ orgSlug }) {
++  const { settings, users, loading, updateSettings, addUser, updateUser, deleteUser } = useSettingsData(orgSlug);
++  const [activeTab, setActiveTab] = useState("organization");
++
++  if (loading) {
++    return (
++      <div className="flex items-center justify-center h-64">
++        <p className="text-slate-500">Cargando configuración...</p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="space-y-5 max-w-7xl mx-auto">
++      {/* Header */}
++      <div className="flex justify-between items-center">
++        <div>
++          <h1 className="text-lg font-semibold text-slate-800">Configuración</h1>
++          <p className="text-xs text-slate-500">
++            Ajustes del sistema, usuarios y preferencias
++          </p>
++        </div>
++      </div>
++
++      {/* Tabs */}
++      <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
++        <div className="border-b">
++          <div className="flex">
++            <button
++              onClick={() => setActiveTab("organization")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "organization"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Organización
++            </button>
++            <button
++              onClick={() => setActiveTab("users")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "users"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Usuarios
++            </button>
++            <button
++              onClick={() => setActiveTab("preferences")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "preferences"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Preferencias
++            </button>
++            <button
++              onClick={() => setActiveTab("labor")}
++              className={`px-6 py-3 text-sm font-medium ${
++                activeTab === "labor"
++                  ? "border-b-2 border-slate-900 text-slate-900"
++                  : "text-slate-500 hover:text-slate-700"
++              }`}
++            >
++              Leyes Laborales
++            </button>
++          </div>
++        </div>
++
++        <div className="p-6">
++          {activeTab === "organization" && (
++            <OrganizationSettings settings={settings} onUpdate={updateSettings} />
++          )}
++          {activeTab === "users" && (
++            <UserManagement
++              users={users}
++              onAdd={addUser}
++              onUpdate={updateUser}
++              onDelete={deleteUser}
++            />
++          )}
++          {activeTab === "preferences" && (
++            <SystemPreferences settings={settings} onUpdate={updateSettings} />
++          )}
++          {activeTab === "labor" && (
++            <LaborLawConfig settings={settings} onUpdate={updateSettings} />
++          )}
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/modules/settings/components/LaborLawConfig.jsx b/src/modules/settings/components/LaborLawConfig.jsx
+new file mode 100644
+index 0000000..6c6af7b
+--- /dev/null
++++ b/src/modules/settings/components/LaborLawConfig.jsx
+@@ -0,0 +1,163 @@
++import React, { useState, useEffect } from "react";
++
++export default function LaborLawConfig({ settings, onUpdate }) {
++  const [formData, setFormData] = useState({
++    vacation_days_per_year: 30,
++    aguinaldo_months_per_year: 1,
++    severance_days_per_year: 30,
++    severance_max_months: 5,
++    inss_employee_rate: 0.07,
++    inss_employer_rate: 0.19,
++    ir_exempt_amount: 100000,
++  });
++
++  useEffect(() => {
++    if (settings && settings.labor_config) {
++      setFormData({
++        vacation_days_per_year: settings.labor_config.vacation_days_per_year || 30,
++        aguinaldo_months_per_year: settings.labor_config.aguinaldo_months_per_year || 1,
++        severance_days_per_year: settings.labor_config.severance_days_per_year || 30,
++        severance_max_months: settings.labor_config.severance_max_months || 5,
++        inss_employee_rate: settings.labor_config.inss_employee_rate || 0.07,
++        inss_employer_rate: settings.labor_config.inss_employer_rate || 0.19,
++        ir_exempt_amount: settings.labor_config.ir_exempt_amount || 100000,
++      });
++    }
++  }, [settings]);
++
++  const handleSubmit = (e) => {
++    e.preventDefault();
++    onUpdate({ labor_config: formData });
++  };
++
++  const handleChange = (field, value) => {
++    setFormData((prev) => ({ ...prev, [field]: value }));
++  };
++
++  return (
++    <div className="max-w-2xl">
++      <h3 className="text-lg font-semibold mb-2">Configuración de Leyes Laborales</h3>
++      <p className="text-sm text-slate-600 mb-4">
++        Configure los parámetros para cálculos de prestaciones, aguinaldo, vacaciones e indemnizaciones según las leyes de Nicaragua.
++      </p>
++
++      <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mb-4">
++        <p className="text-sm text-yellow-800">
++          <strong>Importante:</strong> Estos valores deben ser configurados por su contador o asesor legal para asegurar el cumplimiento de las leyes laborales vigentes en Nicaragua.
++        </p>
++      </div>
++      
++      <form onSubmit={handleSubmit} className="space-y-4">
++        <div className="border-b pb-4">
++          <h4 className="font-medium text-sm mb-3">Vacaciones</h4>
++          <div>
++            <label className="block text-sm font-medium mb-1">Días de Vacaciones por Año</label>
++            <input
++              type="number"
++              step="1"
++              value={formData.vacation_days_per_year}
++              onChange={(e) => handleChange("vacation_days_per_year", parseInt(e.target.value))}
++              className="w-full border rounded px-3 py-2 text-sm"
++            />
++            <p className="text-xs text-slate-500 mt-1">Días de vacaciones que acumula un empleado por año de servicio</p>
++          </div>
++        </div>
++
++        <div className="border-b pb-4">
++          <h4 className="font-medium text-sm mb-3">Aguinaldo (13vo Mes)</h4>
++          <div>
++            <label className="block text-sm font-medium mb-1">Meses de Aguinaldo por Año</label>
++            <input
++              type="number"
++              step="0.01"
++              value={formData.aguinaldo_months_per_year}
++              onChange={(e) => handleChange("aguinaldo_months_per_year", parseFloat(e.target.value))}
++              className="w-full border rounded px-3 py-2 text-sm"
++            />
++            <p className="text-xs text-slate-500 mt-1">Generalmente 1 mes de salario por año completo de servicio</p>
++          </div>
++        </div>
++
++        <div className="border-b pb-4">
++          <h4 className="font-medium text-sm mb-3">Indemnización / Severance</h4>
++          <div className="space-y-3">
++            <div>
++              <label className="block text-sm font-medium mb-1">Días de Indemnización por Año</label>
++              <input
++                type="number"
++                step="1"
++                value={formData.severance_days_per_year}
++                onChange={(e) => handleChange("severance_days_per_year", parseInt(e.target.value))}
++                className="w-full border rounded px-3 py-2 text-sm"
++              />
++              <p className="text-xs text-slate-500 mt-1">Días de salario por año de servicio en caso de despido sin causa</p>
++            </div>
++            <div>
++              <label className="block text-sm font-medium mb-1">Máximo de Meses de Indemnización</label>
++              <input
++                type="number"
++                step="1"
++                value={formData.severance_max_months}
++                onChange={(e) => handleChange("severance_max_months", parseInt(e.target.value))}
++                className="w-full border rounded px-3 py-2 text-sm"
++              />
++              <p className="text-xs text-slate-500 mt-1">Tope máximo de meses de indemnización</p>
++            </div>
++          </div>
++        </div>
++
++        <div className="border-b pb-4">
++          <h4 className="font-medium text-sm mb-3">INSS (Seguro Social)</h4>
++          <div className="grid grid-cols-2 gap-4">
++            <div>
++              <label className="block text-sm font-medium mb-1">Tasa Empleado (%)</label>
++              <input
++                type="number"
++                step="0.01"
++                value={formData.inss_employee_rate * 100}
++                onChange={(e) => handleChange("inss_employee_rate", parseFloat(e.target.value) / 100)}
++                className="w-full border rounded px-3 py-2 text-sm"
++              />
++              <p className="text-xs text-slate-500 mt-1">Generalmente 7%</p>
++            </div>
++            <div>
++              <label className="block text-sm font-medium mb-1">Tasa Empleador (%)</label>
++              <input
++                type="number"
++                step="0.01"
++                value={formData.inss_employer_rate * 100}
++                onChange={(e) => handleChange("inss_employer_rate", parseFloat(e.target.value) / 100)}
++                className="w-full border rounded px-3 py-2 text-sm"
++              />
++              <p className="text-xs text-slate-500 mt-1">Generalmente 19%</p>
++            </div>
++          </div>
++        </div>
++
++        <div className="border-b pb-4">
++          <h4 className="font-medium text-sm mb-3">IR (Impuesto sobre la Renta)</h4>
++          <div>
++            <label className="block text-sm font-medium mb-1">Monto Exento Anual (C$)</label>
++            <input
++              type="number"
++              step="0.01"
++              value={formData.ir_exempt_amount}
++              onChange={(e) => handleChange("ir_exempt_amount", parseFloat(e.target.value))}
++              className="w-full border rounded px-3 py-2 text-sm"
++            />
++            <p className="text-xs text-slate-500 mt-1">Monto anual exento de impuesto sobre la renta</p>
++          </div>
++        </div>
++
++        <div className="pt-4">
++          <button
++            type="submit"
++            className="px-6 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++          >
++            Guardar Configuración
++          </button>
++        </div>
++      </form>
++    </div>
++  );
++}
+diff --git a/src/modules/settings/components/OrganizationSettings.jsx b/src/modules/settings/components/OrganizationSettings.jsx
+new file mode 100644
+index 0000000..d349497
+--- /dev/null
++++ b/src/modules/settings/components/OrganizationSettings.jsx
+@@ -0,0 +1,121 @@
++import React, { useState, useEffect } from "react";
++
++export default function OrganizationSettings({ settings, onUpdate }) {
++  const [formData, setFormData] = useState({
++    organization_name: "",
++    organization_slug: "",
++    address: "",
++    phone: "",
++    email: "",
++    tax_id: "",
++  });
++
++  useEffect(() => {
++    if (settings) {
++      setFormData({
++        organization_name: settings.organization_name || "",
++        organization_slug: settings.organization_slug || "",
++        address: settings.address || "",
++        phone: settings.phone || "",
++        email: settings.email || "",
++        tax_id: settings.tax_id || "",
++      });
++    }
++  }, [settings]);
++
++  const handleSubmit = (e) => {
++    e.preventDefault();
++    onUpdate(formData);
++  };
++
++  const handleChange = (field, value) => {
++    setFormData((prev) => ({ ...prev, [field]: value }));
++  };
++
++  return (
++    <div className="max-w-2xl">
++      <h3 className="text-lg font-semibold mb-4">Información de la Organización</h3>
++      
++      <form onSubmit={handleSubmit} className="space-y-4">
++        <div>
++          <label className="block text-sm font-medium mb-1">Nombre de la Organización</label>
++          <input
++            type="text"
++            value={formData.organization_name}
++            onChange={(e) => handleChange("organization_name", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm"
++            placeholder="AgroCentro S.A."
++          />
++        </div>
++
++        <div>
++          <label className="block text-sm font-medium mb-1">Slug (URL)</label>
++          <input
++            type="text"
++            value={formData.organization_slug}
++            onChange={(e) => handleChange("organization_slug", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm bg-slate-50"
++            placeholder="agrocentro"
++            disabled
++          />
++          <p className="text-xs text-slate-500 mt-1">El slug no se puede cambiar después de creado</p>
++        </div>
++
++        <div>
++          <label className="block text-sm font-medium mb-1">Dirección</label>
++          <input
++            type="text"
++            value={formData.address}
++            onChange={(e) => handleChange("address", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm"
++            placeholder="Managua, Nicaragua"
++          />
++        </div>
++
++        <div className="grid grid-cols-2 gap-4">
++          <div>
++            <label className="block text-sm font-medium mb-1">Teléfono</label>
++            <input
++              type="tel"
++              value={formData.phone}
++              onChange={(e) => handleChange("phone", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="2222-2222"
++            />
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Email</label>
++            <input
++              type="email"
++              value={formData.email}
++              onChange={(e) => handleChange("email", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++              placeholder="info@agrocentro.com"
++            />
++          </div>
++        </div>
++
++        <div>
++          <label className="block text-sm font-medium mb-1">RUC / Número de Identificación Fiscal</label>
++          <input
++            type="text"
++            value={formData.tax_id}
++            onChange={(e) => handleChange("tax_id", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm"
++            placeholder="J0310000000000"
++          />
++        </div>
++
++        <div className="pt-4">
++          <button
++            type="submit"
++            className="px-6 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++          >
++            Guardar Cambios
++          </button>
++        </div>
++      </form>
++    </div>
++  );
++}
+diff --git a/src/modules/settings/components/SystemPreferences.jsx b/src/modules/settings/components/SystemPreferences.jsx
+new file mode 100644
+index 0000000..0c619a9
+--- /dev/null
++++ b/src/modules/settings/components/SystemPreferences.jsx
+@@ -0,0 +1,129 @@
++import React, { useState, useEffect } from "react";
++
++export default function SystemPreferences({ settings, onUpdate }) {
++  const [formData, setFormData] = useState({
++    currency: "NIO",
++    timezone: "America/Managua",
++    language: "es",
++    date_format: "DD/MM/YYYY",
++    decimal_separator: ",",
++    thousand_separator: ".",
++  });
++
++  useEffect(() => {
++    if (settings) {
++      setFormData({
++        currency: settings.currency || "NIO",
++        timezone: settings.timezone || "America/Managua",
++        language: settings.language || "es",
++        date_format: settings.date_format || "DD/MM/YYYY",
++        decimal_separator: settings.decimal_separator || ",",
++        thousand_separator: settings.thousand_separator || ".",
++      });
++    }
++  }, [settings]);
++
++  const handleSubmit = (e) => {
++    e.preventDefault();
++    onUpdate(formData);
++  };
++
++  const handleChange = (field, value) => {
++    setFormData((prev) => ({ ...prev, [field]: value }));
++  };
++
++  return (
++    <div className="max-w-2xl">
++      <h3 className="text-lg font-semibold mb-4">Preferencias del Sistema</h3>
++      
++      <form onSubmit={handleSubmit} className="space-y-4">
++        <div>
++          <label className="block text-sm font-medium mb-1">Moneda</label>
++          <select
++            value={formData.currency}
++            onChange={(e) => handleChange("currency", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm"
++          >
++            <option value="NIO">Córdoba (C$)</option>
++            <option value="USD">Dólar ($)</option>
++            <option value="EUR">Euro (€)</option>
++          </select>
++        </div>
++
++        <div>
++          <label className="block text-sm font-medium mb-1">Zona Horaria</label>
++          <select
++            value={formData.timezone}
++            onChange={(e) => handleChange("timezone", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm"
++          >
++            <option value="America/Managua">América/Managua (GMT-6)</option>
++            <option value="America/Mexico_City">América/Ciudad de México (GMT-6)</option>
++            <option value="America/New_York">América/Nueva York (GMT-5)</option>
++          </select>
++        </div>
++
++        <div>
++          <label className="block text-sm font-medium mb-1">Idioma</label>
++          <select
++            value={formData.language}
++            onChange={(e) => handleChange("language", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm"
++          >
++            <option value="es">Español</option>
++            <option value="en">English</option>
++          </select>
++        </div>
++
++        <div>
++          <label className="block text-sm font-medium mb-1">Formato de Fecha</label>
++          <select
++            value={formData.date_format}
++            onChange={(e) => handleChange("date_format", e.target.value)}
++            className="w-full border rounded px-3 py-2 text-sm"
++          >
++            <option value="DD/MM/YYYY">DD/MM/YYYY</option>
++            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
++            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
++          </select>
++        </div>
++
++        <div className="grid grid-cols-2 gap-4">
++          <div>
++            <label className="block text-sm font-medium mb-1">Separador Decimal</label>
++            <select
++              value={formData.decimal_separator}
++              onChange={(e) => handleChange("decimal_separator", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++            >
++              <option value=",">, (coma)</option>
++              <option value=".">. (punto)</option>
++            </select>
++          </div>
++
++          <div>
++            <label className="block text-sm font-medium mb-1">Separador de Miles</label>
++            <select
++              value={formData.thousand_separator}
++              onChange={(e) => handleChange("thousand_separator", e.target.value)}
++              className="w-full border rounded px-3 py-2 text-sm"
++            >
++              <option value=".">. (punto)</option>
++              <option value=",">, (coma)</option>
++              <option value=" "> (espacio)</option>
++            </select>
++          </div>
++        </div>
++
++        <div className="pt-4">
++          <button
++            type="submit"
++            className="px-6 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++          >
++            Guardar Cambios
++          </button>
++        </div>
++      </form>
++    </div>
++  );
++}
+diff --git a/src/modules/settings/components/UserManagement.jsx b/src/modules/settings/components/UserManagement.jsx
+new file mode 100644
+index 0000000..100f7d2
+--- /dev/null
++++ b/src/modules/settings/components/UserManagement.jsx
+@@ -0,0 +1,124 @@
++import React, { useState } from "react";
++
++export default function UserManagement({ users, onAdd, onUpdate, onDelete }) {
++  const [showAddForm, setShowAddForm] = useState(false);
++  const [newUser, setNewUser] = useState({
++    email: "",
++    full_name: "",
++    role: "user",
++  });
++
++  const handleAddUser = (e) => {
++    e.preventDefault();
++    onAdd(newUser);
++    setNewUser({ email: "", full_name: "", role: "user" });
++    setShowAddForm(false);
++  };
++
++  return (
++    <div>
++      <div className="flex justify-between items-center mb-4">
++        <h3 className="text-lg font-semibold">Gestión de Usuarios</h3>
++        <button
++          onClick={() => setShowAddForm(!showAddForm)}
++          className="px-4 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++        >
++          {showAddForm ? "Cancelar" : "+ Agregar Usuario"}
++        </button>
++      </div>
++
++      {showAddForm && (
++        <div className="bg-slate-50 p-4 rounded mb-4">
++          <form onSubmit={handleAddUser} className="space-y-3">
++            <div>
++              <label className="block text-sm font-medium mb-1">Email</label>
++              <input
++                type="email"
++                value={newUser.email}
++                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
++                className="w-full border rounded px-3 py-2 text-sm"
++                placeholder="usuario@ejemplo.com"
++                required
++              />
++            </div>
++            <div>
++              <label className="block text-sm font-medium mb-1">Nombre Completo</label>
++              <input
++                type="text"
++                value={newUser.full_name}
++                onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
++                className="w-full border rounded px-3 py-2 text-sm"
++                placeholder="Juan Pérez"
++                required
++              />
++            </div>
++            <div>
++              <label className="block text-sm font-medium mb-1">Rol</label>
++              <select
++                value={newUser.role}
++                onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
++                className="w-full border rounded px-3 py-2 text-sm"
++              >
++                <option value="admin">Administrador</option>
++                <option value="manager">Gerente</option>
++                <option value="user">Usuario</option>
++              </select>
++            </div>
++            <button
++              type="submit"
++              className="px-4 py-2 bg-slate-900 text-white rounded text-sm hover:bg-slate-800"
++            >
++              Agregar Usuario
++            </button>
++          </form>
++        </div>
++      )}
++
++      {users.length === 0 ? (
++        <div className="text-center py-12 text-slate-500">
++          No hay usuarios registrados
++        </div>
++      ) : (
++        <div className="overflow-x-auto">
++          <table className="w-full">
++            <thead>
++              <tr className="border-b text-left text-xs text-slate-600">
++                <th className="pb-2 font-medium">Nombre</th>
++                <th className="pb-2 font-medium">Email</th>
++                <th className="pb-2 font-medium">Rol</th>
++                <th className="pb-2 font-medium">Estado</th>
++                <th className="pb-2 font-medium text-right">Acciones</th>
++              </tr>
++            </thead>
++            <tbody>
++              {users.map((user) => (
++                <tr key={user.id} className="border-b hover:bg-slate-50">
++                  <td className="py-3 text-sm font-medium">{user.full_name}</td>
++                  <td className="py-3 text-sm">{user.email}</td>
++                  <td className="py-3 text-sm">
++                    <span className="px-2 py-1 bg-slate-100 rounded text-xs">
++                      {user.role === "admin" ? "Administrador" : user.role === "manager" ? "Gerente" : "Usuario"}
++                    </span>
++                  </td>
++                  <td className="py-3 text-sm">
++                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
++                      Activo
++                    </span>
++                  </td>
++                  <td className="py-3 text-sm text-right">
++                    <button
++                      onClick={() => onDelete(user.id)}
++                      className="text-red-600 hover:text-red-800 text-xs"
++                    >
++                      Eliminar
++                    </button>
++                  </td>
++                </tr>
++              ))}
++            </tbody>
++          </table>
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/src/modules/settings/hooks/useSettingsData.js b/src/modules/settings/hooks/useSettingsData.js
+new file mode 100644
+index 0000000..9f8a4a6
+--- /dev/null
++++ b/src/modules/settings/hooks/useSettingsData.js
+@@ -0,0 +1,135 @@
++import { useState, useEffect } from "react";
++
++export function useSettingsData(orgSlug) {
++  const [settings, setSettings] = useState({
++    organization_name: "",
++    organization_slug: "",
++    currency: "NIO",
++    timezone: "America/Managua",
++    language: "es",
++    labor_config: {
++      vacation_days_per_year: 30,
++      aguinaldo_months_per_year: 1,
++      severance_days_per_year: 30,
++      severance_max_months: 5,
++      inss_employee_rate: 0.07,
++      inss_employer_rate: 0.19,
++      ir_exempt_amount: 100000,
++    },
++  });
++  const [users, setUsers] = useState([]);
++  const [loading, setLoading] = useState(true);
++
++  const fetchSettings = async () => {
++    try {
++      const response = await fetch(`/api/settings?slug=${orgSlug}`);
++      if (response.ok) {
++        const data = await response.json();
++        if (data.settings) {
++          setSettings(data.settings);
++        }
++      }
++    } catch (error) {
++      console.error("Error fetching settings:", error);
++    }
++  };
++
++  const fetchUsers = async () => {
++    try {
++      const response = await fetch(`/api/settings/users?slug=${orgSlug}`);
++      if (response.ok) {
++        const data = await response.json();
++        setUsers(data.users || []);
++      }
++    } catch (error) {
++      console.error("Error fetching users:", error);
++    }
++  };
++
++  const loadData = async () => {
++    setLoading(true);
++    await Promise.all([fetchSettings(), fetchUsers()]);
++    setLoading(false);
++  };
++
++  const updateSettings = async (settingsData) => {
++    try {
++      const response = await fetch(`/api/settings?slug=${orgSlug}`, {
++        method: "PUT",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify(settingsData),
++      });
++
++      if (response.ok) {
++        await fetchSettings();
++      }
++    } catch (error) {
++      console.error("Error updating settings:", error);
++    }
++  };
++
++  const addUser = async (userData) => {
++    try {
++      const response = await fetch(`/api/settings/users?slug=${orgSlug}`, {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify(userData),
++      });
++
++      if (response.ok) {
++        await fetchUsers();
++      }
++    } catch (error) {
++      console.error("Error adding user:", error);
++    }
++  };
++
++  const updateUser = async (id, userData) => {
++    try {
++      const response = await fetch(`/api/settings/users?slug=${orgSlug}`, {
++        method: "PUT",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id, ...userData }),
++      });
++
++      if (response.ok) {
++        await fetchUsers();
++      }
++    } catch (error) {
++      console.error("Error updating user:", error);
++    }
++  };
++
++  const deleteUser = async (id) => {
++    try {
++      const response = await fetch(`/api/settings/users?slug=${orgSlug}`, {
++        method: "DELETE",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ id }),
++      });
++
++      if (response.ok) {
++        await fetchUsers();
++      }
++    } catch (error) {
++      console.error("Error deleting user:", error);
++    }
++  };
++
++  useEffect(() => {
++    if (orgSlug) {
++      loadData();
++    }
++  }, [orgSlug]);
++
++  return {
++    settings,
++    users,
++    loading,
++    updateSettings,
++    addUser,
++    updateUser,
++    deleteUser,
++    refreshData: loadData,
++  };
++}
