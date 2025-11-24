@@ -1,75 +1,84 @@
-import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createClient } from '@/src/lib/supabase/middleware-client'
+import { NextResponse } from 'next/server'
 
-export async function proxy(request) {
-  const { pathname } = request.nextUrl;
-
-  // Rutas públicas sin protección
-  const publicRoutes = ["/", "/login", "/register"];
+export async function proxy(request) {  // ← CHANGED: middleware → proxy
+  const { pathname } = request.nextUrl
+  // ... rest of the code stays the same
+  
+  // Public routes that don't require authentication
+  const publicRoutes = ['/', '/login', '/register', '/api/auth/register', '/api/auth/logout']
   if (publicRoutes.includes(pathname)) {
-    return NextResponse.next();
+    return NextResponse.next()
   }
 
-  // Crear respuesta y Supabase Server Client
-  const response = NextResponse.next();
+  // Create Supabase client and get response
+  const { supabase, response: supabaseResponse } = createClient(request)
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
-        },
-      },
-    }
-  );
-
-  // Obtener usuario logueado
+  // Get user session
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
-  // Si NO hay usuario → redirigir a login
+  // If no user, redirect to login
   if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = '/login'
+    return NextResponse.redirect(redirectUrl)
   }
 
-  // Extraer slug de URL → /masatepe/dashboard
-  const parts = pathname.split("/").filter(Boolean);
-  const orgSlug = parts[0];
+  // Extract orgSlug from URL (e.g., /acme/dashboard -> acme)
+  const pathParts = pathname.split('/').filter(Boolean)
+  const orgSlug = pathParts[0]
 
-  // Si no hay slug, continuar
-  if (!orgSlug) return response;
-
-  // Validar que el usuario es miembro de esa organización
-  const { data: membership } = await supabase
-    .from("organization_members")
-    .select("org_id, organizations(slug)")
-    .eq("user_id", user.id)
-    .eq("organizations.slug", orgSlug)
-    .single();
-
-  // Si no pertenece → volver a login
-  if (!membership) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+  if (!orgSlug) {
+    return NextResponse.next()
   }
 
-  return response;
+  // Get user's organization membership
+  const { data: membership, error: membershipError } = await supabase
+    .from('organization_members')
+    .select('org_id, role, organizations(id, slug)')
+    .eq('user_id', user.id)
+    .eq('organizations.slug', orgSlug)
+    .single()
+
+  if (membershipError || !membership) {
+    // User doesn't belong to this organization
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = '/login'
+    return NextResponse.redirect(redirectUrl)
+  }
+
+  // Clone the response and add tenant context headers
+  const response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  // Set tenant context headers for API routes
+  response.headers.set('x-org-id', membership.org_id)
+  response.headers.set('x-org-slug', orgSlug)
+  response.headers.set('x-user-id', user.id)
+  response.headers.set('x-user-role', membership.role)
+
+  // Copy cookies from supabaseResponse
+  supabaseResponse.cookies.getAll().forEach((cookie) => {
+    response.cookies.set(cookie.name, cookie.value, cookie)
+  })
+
+  return response
 }
 
-// Matcher limpio, sin regex prohibidos
 export const config = {
   matcher: [
-    "/((?!_next|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (public folder)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
-};
+}

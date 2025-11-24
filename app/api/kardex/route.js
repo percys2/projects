@@ -5,20 +5,21 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 );
-
-export async function GET(req) {
+  export async function GET(req) {
   try {
+    const supabase = createClient(                        // ← CHANGED: Moved inside function
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,            // ← CHANGED: Fixed variable name
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    );
+
     const orgId = req.headers.get("x-org-id");
-    const productId = req.headers.get("x-product-id");
-
-    if (!orgId || !productId) {
-      return NextResponse.json(
-        { error: "Missing orgId or productId" },
-        { status: 400 }
-      );
-    }
-
-    const { data, error } = await supabase
+    // ... rest stays the same
       .from("inventory_movements")
       .select("*")
       .eq("org_id", orgId)

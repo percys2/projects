@@ -63,14 +63,13 @@ export async function POST(request) {
     const userId = authData.user.id;
 
     // STEP 2 — Profile
-    const { error: profileError } = await supabaseAdmin
-      .from("profiles")
-      .insert({
-        id: userId,
-        first_name: firstName,
-        last_name: lastName,
-        email,
-      });
+  const { error: profileError } = await supabaseAdmin
+  .from("profiles")
+  .insert({
+    id: userId,
+    full_name: `${firstName} ${lastName}`,  // ← CHANGED: Combined into full_name
+    email,
+  });
 
     if (profileError) {
       await supabaseAdmin.auth.admin.deleteUser(userId);
