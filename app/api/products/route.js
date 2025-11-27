@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 export async function GET(req) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const orgSlug = req.headers.get("x-org-slug");
 
   const { data: org } = await supabase

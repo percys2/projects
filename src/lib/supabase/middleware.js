@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 
-export function createSupabaseEdgeClient(request, response) {
+export function createMiddlewareSupabaseClient(request, response) {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -19,3 +19,5 @@ export function createSupabaseEdgeClient(request, response) {
     }
   );
 }
+
+export const createSupabaseEdgeClient = createMiddlewareSupabaseClient;

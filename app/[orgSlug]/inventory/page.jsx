@@ -1,7 +1,9 @@
 "use client";
 
+import { use } from "react";
 import InventoryScreen from "@/src/modules/inventory/inventoryScreen";
 
 export default function InventoryPage({ params }) {
-  return <InventoryScreen orgId={params.orgId} />;
+  const { orgSlug } = use(params);
+  return <InventoryScreen orgSlug={orgSlug} />;
 }

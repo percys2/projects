@@ -18,7 +18,7 @@ export default function InventoryGrid({
   onEntry,
   onExit,
   onTransfer,
-  orgId, // Necesario para el Kardex
+  orgSlug,
 }) {
   const safeProducts = Array.isArray(products) ? products : [];
 
@@ -204,7 +204,7 @@ export default function InventoryGrid({
 
                         {/* KARDEX */}
                         <a
-                          href={`/app/${orgId}/inventory/${p.productId}/kardex`}
+                          href={`/${orgSlug}/inventory/${p.productId}/kardex`}
                           className="px-2 py-1 text-[11px] bg-purple-600 text-white rounded hover:bg-purple-700"
                         >
                           Kardex

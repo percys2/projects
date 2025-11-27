@@ -5,12 +5,11 @@ import KardexTable from "./kardexTable";
 import { exportKardexPDF } from "./utils/exportKardexPDF";
 import { exportKardexExcel } from "./utils/exportKardexExcel";
 
-export default function KardexScreen({ orgId, products = [], branches = [] }) {
-  // -----------------------------
-  // Estados
-  // -----------------------------
+export default function KardexScreen({ orgSlug }) {
   const [loading, setLoading] = useState(false);
   const [movements, setMovements] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [branches, setBranches] = useState([]);
 
   const [selectedProduct, setSelectedProduct] = useState("all");
   const [selectedBranch, setSelectedBranch] = useState("all");
@@ -24,9 +23,30 @@ export default function KardexScreen({ orgId, products = [], branches = [] }) {
 
   const [error, setError] = useState(null);
 
-  // -----------------------------
-  // CARGAR KARDEX
-  // -----------------------------
+  useEffect(() => {
+    async function loadFilters() {
+      try {
+        const [prodRes, branchRes] = await Promise.all([
+          fetch("/api/products", { headers: { "x-org-slug": orgSlug } }),
+          fetch("/api/branches", { headers: { "x-org-slug": orgSlug } }),
+        ]);
+        
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          setProducts(prodData.products || prodData || []);
+        }
+        if (branchRes.ok) {
+          const branchData = await branchRes.json();
+          setBranches(branchData.branches || branchData || []);
+        }
+      } catch (err) {
+        console.error("Error loading filters:", err);
+      }
+    }
+    
+    if (orgSlug) loadFilters();
+  }, [orgSlug]);
+
   async function loadKardex() {
     try {
       setLoading(true);
@@ -42,7 +62,7 @@ export default function KardexScreen({ orgId, products = [], branches = [] }) {
 
       const res = await fetch(`/api/kardex?${params.toString()}`, {
         headers: {
-          "x-org-id": orgId,
+          "x-org-slug": orgSlug,
           "x-product-id": selectedProduct,
           "x-branch-id": selectedBranch,
           "x-movement-type": movementType,
@@ -62,14 +82,10 @@ export default function KardexScreen({ orgId, products = [], branches = [] }) {
     }
   }
 
-  // Ejecutar load cuando cambien filtros o páginas
   useEffect(() => {
-    loadKardex();
-  }, [selectedProduct, selectedBranch, movementType, dateStart, dateEnd, page]);
+    if (orgSlug) loadKardex();
+  }, [orgSlug, selectedProduct, selectedBranch, movementType, dateStart, dateEnd, page]);
 
-  // -----------------------------
-  // PDF
-  // -----------------------------
   function handlePrint() {
     const org = {
       name: "AgroCentro Nica",
@@ -80,14 +96,8 @@ export default function KardexScreen({ orgId, products = [], branches = [] }) {
 
     exportKardexPDF({
       org,
-      product:
-        selectedProduct !== "all"
-          ? products.find((p) => p.id === selectedProduct)
-          : null,
-      branch:
-        selectedBranch !== "all"
-          ? branches.find((b) => b.id === selectedBranch)
-          : null,
+      product: selectedProduct !== "all" ? products.find((p) => p.id === selectedProduct) : null,
+      branch: selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : null,
       movements,
       dateStart,
       dateEnd,
@@ -95,90 +105,41 @@ export default function KardexScreen({ orgId, products = [], branches = [] }) {
     });
   }
 
-  // -----------------------------
-  // EXCEL
-  // -----------------------------
   function handleExportExcel() {
-    const org = {
-      name: "AgroCentro Nica",
-      ruc: "401-010200-1002D",
-    };
+    const org = { name: "AgroCentro Nica", ruc: "401-010200-1002D" };
 
     exportKardexExcel({
       org,
-      product:
-        selectedProduct !== "all"
-          ? products.find((p) => p.id === selectedProduct)
-          : null,
-      branch:
-        selectedBranch !== "all"
-          ? branches.find((b) => b.id === selectedBranch)
-          : null,
+      product: selectedProduct !== "all" ? products.find((p) => p.id === selectedProduct) : null,
+      branch: selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : null,
       movements,
       dateStart,
       dateEnd,
     });
   }
 
-  // -----------------------------
-  // RENDER
-  // -----------------------------
   return (
     <div className="space-y-6">
-      {/* -------------------------- */}
-      {/* FILTROS                   */}
-      {/* -------------------------- */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
-
-        {/* PRODUCTO */}
         <div>
           <label className="text-xs font-semibold text-slate-600">Producto</label>
-          <select
-            value={selectedProduct}
-            onChange={(e) => {
-              setPage(0);
-              setSelectedProduct(e.target.value);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          >
+          <select value={selectedProduct} onChange={(e) => { setPage(0); setSelectedProduct(e.target.value); }} className="w-full p-2 text-xs border rounded-lg">
             <option value="all">Todos</option>
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
+            {products.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
           </select>
         </div>
 
-        {/* SUCURSAL */}
         <div>
           <label className="text-xs font-semibold text-slate-600">Sucursal</label>
-          <select
-            value={selectedBranch}
-            onChange={(e) => {
-              setPage(0);
-              setSelectedBranch(e.target.value);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          >
+          <select value={selectedBranch} onChange={(e) => { setPage(0); setSelectedBranch(e.target.value); }} className="w-full p-2 text-xs border rounded-lg">
             <option value="all">Todas</option>
-            {branches.map((b) => (
-              <option key={b.id} value={b.id}>{b.name}</option>
-            ))}
+            {branches.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
           </select>
         </div>
 
-        {/* TIPO DE MOVIMIENTO */}
         <div>
-          <label className="text-xs font-semibold text-slate-600">
-            Movimiento
-          </label>
-          <select
-            value={movementType}
-            onChange={(e) => {
-              setPage(0);
-              setMovementType(e.target.value);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          >
+          <label className="text-xs font-semibold text-slate-600">Movimiento</label>
+          <select value={movementType} onChange={(e) => { setPage(0); setMovementType(e.target.value); }} className="w-full p-2 text-xs border rounded-lg">
             <option value="all">Todos</option>
             <option value="entrada">Entradas</option>
             <option value="salida">Salidas</option>
@@ -188,44 +149,17 @@ export default function KardexScreen({ orgId, products = [], branches = [] }) {
           </select>
         </div>
 
-        {/* FECHAS */}
         <div>
           <label className="text-xs font-semibold text-slate-600">Desde</label>
-          <input
-            type="date"
-            value={dateStart}
-            onChange={(e) => {
-              setPage(0);
-              setDateStart(e.target.value);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          />
-
-          <label className="text-xs font-semibold text-slate-600 mt-2 block">
-            Hasta
-          </label>
-          <input
-            type="date"
-            value={dateEnd}
-            onChange={(e) => {
-              setPage(0);
-              setDateEnd(e.target.value);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          />
+          <input type="date" value={dateStart} onChange={(e) => { setPage(0); setDateStart(e.target.value); }} className="w-full p-2 text-xs border rounded-lg" />
+          <label className="text-xs font-semibold text-slate-600 mt-2 block">Hasta</label>
+          <input type="date" value={dateEnd} onChange={(e) => { setPage(0); setDateEnd(e.target.value); }} className="w-full p-2 text-xs border rounded-lg" />
         </div>
       </div>
 
-      {/* ESTADOS */}
-      {loading && (
-        <p className="text-center text-slate-500 text-sm">Cargando...</p>
-      )}
+      {loading && <p className="text-center text-slate-500 text-sm">Cargando...</p>}
+      {error && <p className="text-center text-red-600 text-sm">{error}</p>}
 
-      {error && (
-        <p className="text-center text-red-600 text-sm">{error}</p>
-      )}
-
-      {/* TABLA */}
       {!loading && (
         <KardexTable
           data={movements}
@@ -233,16 +167,8 @@ export default function KardexScreen({ orgId, products = [], branches = [] }) {
           setPage={setPage}
           limit={limit}
           org={{}}
-          product={
-            selectedProduct !== "all"
-              ? products.find((p) => p.id === selectedProduct)
-              : null
-          }
-          branch={
-            selectedBranch !== "all"
-              ? branches.find((b) => b.id === selectedBranch)
-              : null
-          }
+          product={selectedProduct !== "all" ? products.find((p) => p.id === selectedProduct) : null}
+          branch={selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : null}
           onPrint={handlePrint}
           onExportExcel={handleExportExcel}
         />

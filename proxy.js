@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { createSupabaseEdgeClient } from "@/src/lib/supabase/edge-client";
+import { createMiddlewareSupabaseClient } from "@/src/lib/supabase/middleware";
 
 export async function proxy(request) {
   const response = NextResponse.next();
 
-  const supabase = createSupabaseEdgeClient(request, response);
+  const supabase = createMiddlewareSupabaseClient(request, response);
 
   const { data: { user } } = await supabase.auth.getUser();
 

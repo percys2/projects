@@ -1,10 +1,9 @@
 "use client";
 
-export default function HrPage() {
-  return (
-    <div>
-      <h1 className="text-xl font-semibold">Recursos Humanos</h1>
-      <p className="text-slate-500">Pronto disponible…</p>
-    </div>
-  );
+import { use } from "react";
+import HrScreen from "@/src/modules/hr/HrScreen";
+
+export default function HrPage({ params }) {
+  const { orgSlug } = use(params);
+  return <HrScreen orgSlug={orgSlug} />;
 }

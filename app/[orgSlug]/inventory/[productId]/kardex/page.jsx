@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "@/src/lib/supabase/client";
+import { createBrowserSupabaseClient } from "@/src/lib/supabase/browser";
 import Link from "next/link";
 
 export default function KardexPage({ params }) {
@@ -11,30 +11,27 @@ export default function KardexPage({ params }) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  /* ============================================================
-     CARGAR DATOS DEL PRODUCTO
-  ============================================================ */
- async function loadProduct() {
-  const supabase = createClient();
-  const { data } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", productId)
-    .single();
-  setProduct(data);
-}
-  /* ============================================================
-     CARGAR MOVIMIENTOS DEL KARDEX
-  ============================================================ */
-async function loadKardex() {
-  const supabase = createClient();
-  const { data } = await supabase
-    .from("kardex")
-    .select("*")
-    .eq("product_id", productId)
-    .order("created_at");
-  setKardex(data || []);
-}
+  async function loadProduct() {
+    const supabase = createBrowserSupabaseClient();
+    const { data } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", productId)
+      .single();
+    setProduct(data);
+  }
+
+  async function loadKardex() {
+    const supabase = createBrowserSupabaseClient();
+    const { data } = await supabase
+      .from("kardex")
+      .select("*")
+      .eq("product_id", productId)
+      .order("created_at");
+    setRecords(data || []);
+    setLoading(false);
+  }
+
   useEffect(() => {
     loadProduct();
     loadKardex();
@@ -44,10 +41,6 @@ async function loadKardex() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 p-5">
-
-      {/* --------------------------------------------------------
-          HEADER
-      -------------------------------------------------------- */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-slate-800">
@@ -59,16 +52,13 @@ async function loadKardex() {
         </div>
 
         <Link
-          href={`/app/${orgSlug}/inventory`}
+          href={`/${orgSlug}/inventory`}
           className="px-3 py-2 text-xs bg-slate-800 text-white rounded-lg hover:bg-slate-700"
         >
           ← Volver al inventario
         </Link>
       </div>
 
-      {/* --------------------------------------------------------
-          RESUMEN DEL PRODUCTO
-      -------------------------------------------------------- */}
       <div className="bg-white rounded-xl border shadow p-4 text-sm">
         <p><span className="font-semibold">SKU:</span> {product?.sku}</p>
         <p><span className="font-semibold">Categoría:</span> {product?.category}</p>
@@ -78,9 +68,6 @@ async function loadKardex() {
         <p><span className="font-semibold">Precio:</span> C$ {product?.price}</p>
       </div>
 
-      {/* --------------------------------------------------------
-          TABLA DEL KARDEX
-      -------------------------------------------------------- */}
       <div className="bg-white rounded-xl border shadow p-4 overflow-auto">
         <table className="min-w-full text-sm">
           <thead>
@@ -104,32 +91,17 @@ async function loadKardex() {
                 <td className="px-3 py-2">
                   {new Date(r.created_at).toLocaleString("es-NI")}
                 </td>
-
                 <td className="px-3 py-2 font-semibold">
-                  {r.type === "entrada" && (
-                    <span className="text-emerald-600">Entrada</span>
-                  )}
-                  {r.type === "salida" && (
-                    <span className="text-red-600">Salida</span>
-                  )}
-                  {r.type === "traslado" && (
-                    <span className="text-blue-600">Traslado</span>
-                  )}
+                  {r.type === "entrada" && <span className="text-emerald-600">Entrada</span>}
+                  {r.type === "salida" && <span className="text-red-600">Salida</span>}
+                  {r.type === "traslado" && <span className="text-blue-600">Traslado</span>}
                 </td>
-
                 <td className="px-3 py-2 text-right">{r.qty}</td>
                 <td className="px-3 py-2">{r.branch}</td>
                 <td className="px-3 py-2">{r.from_branch || "—"}</td>
                 <td className="px-3 py-2">{r.to_branch || "—"}</td>
-
-                <td className="px-3 py-2 text-right">
-                  {r.cost ? `C$ ${r.cost}` : "—"}
-                </td>
-
-                <td className="px-3 py-2 text-right">
-                  {r.price ? `C$ ${r.price}` : "—"}
-                </td>
-
+                <td className="px-3 py-2 text-right">{r.cost ? `C$ ${r.cost}` : "—"}</td>
+                <td className="px-3 py-2 text-right">{r.price ? `C$ ${r.price}` : "—"}</td>
                 <td className="px-3 py-2">{r.created_by || "—"}</td>
                 <td className="px-3 py-2">{r.description}</td>
               </tr>
@@ -143,7 +115,6 @@ async function loadKardex() {
           </p>
         )}
       </div>
-
     </div>
   );
 }

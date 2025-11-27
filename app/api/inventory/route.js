@@ -3,14 +3,14 @@ import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 export async function GET(req) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
 
     const orgSlug = req.headers.get("x-org-slug");
     if (!orgSlug) {
       return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
     }
 
-    // 1️⃣ Obtener org_id real desde el slug
+    // 1. Obtener org_id real desde el slug
     const { data: org, error: orgError } = await supabase
       .from("organizations")
       .select("id")
@@ -21,7 +21,7 @@ export async function GET(req) {
 
     const orgId = org.id;
 
-    // 2️⃣ Inventario agrupado por producto + sucursal
+    // 2. Inventario agrupado por producto + sucursal
     const { data: inventory, error: invError } = await supabase
       .from("inventory")
       .select(`
@@ -48,13 +48,13 @@ export async function GET(req) {
 
     if (invError) throw invError;
 
-    // 3️⃣ Categorías
+    // 3. Categorías
     const { data: categories } = await supabase
       .from("categories")
       .select("name")
       .eq("org_id", orgId);
 
-    // 4️⃣ Sucursales
+    // 4. Sucursales
     const { data: branches } = await supabase
       .from("branches")
       .select("name")

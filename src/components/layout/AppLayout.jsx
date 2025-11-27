@@ -5,13 +5,10 @@ import { useRouter, usePathname } from "next/navigation";
 const menuItems = [
   { key: "dashboard", label: "Dashboard" },
   { key: "inventory", label: "Inventario" },
-
-  // ➕ NUEVO MÓDULO KARDEX
-  { key: "kardex", label: "kardex" },
-
+  { key: "kardex", label: "Kardex" },
   { key: "pos", label: "Punto de Venta" },
-  { key: "clients", label: "Clientes / CRM" },
-  { key: "delivery", label: "Reparto" },
+  { key: "crm", label: "CRM Ventas" },
+  { key: "sales", label: "Ventas" },
   { key: "finance", label: "Finanzas" },
   { key: "hr", label: "RRHH" },
   { key: "settings", label: "Configuración" },
@@ -64,7 +61,7 @@ export default function AppLayout({ children, orgSlug }) {
             onClick={handleLogout}
             className="w-full text-left text-sm text-red-400 hover:text-red-300 hover:bg-slate-800 px-2 py-1 rounded transition-colors"
           >
-            🚪 Cerrar sesión
+            Cerrar sesión
           </button>
         </div>
       </aside>

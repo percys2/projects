@@ -1,96 +1,169 @@
-import { respond } from "@/src/lib/core/respond";
-import { parseBody } from "@/src/lib/core/parseBody";
-import { supabase } from "@/src/lib/api/supabaseClient";
+import { NextResponse } from "next/server";
+import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
-/* =====================================
-   GET — LISTAR VENTAS
-   ===================================== */
 export async function GET(req) {
-  const orgId = req.headers.get("x-org-id");
-  if (!orgId) return respond({ error: "Missing org ID" }, 400);
+  try {
+    const supabase = await createServerSupabaseClient();
+    const orgSlug = req.headers.get("x-org-slug");
 
-  const { data, error } = await supabase
-    .from("sales")
-    .select("*")
-    .eq("org_id", orgId)
-    .order("created_at", { ascending: false });
+    if (!orgSlug) {
+      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    }
 
-  if (error) return respond({ error: error.message }, 500);
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
 
-  return respond(data);
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
+
+    const orgId = org.id;
+
+    const { searchParams } = new URL(req.url);
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    const limit = Number(searchParams.get("limit") || 100);
+    const offset = Number(searchParams.get("offset") || 0);
+
+    let query = supabase
+      .from("sales")
+      .select(`
+        id,
+        org_id,
+        branch_id,
+        factura,
+        fecha,
+        client_id,
+        user_id,
+        subtotal,
+        descuento,
+        iva,
+        total,
+        margen,
+        potential_sale,
+        created_at,
+        clients (
+          id,
+          first_name,
+          last_name,
+          phone,
+          address,
+          city
+        ),
+        sales_items (
+          id,
+          product_id,
+          quantity,
+          price,
+          subtotal,
+          cost,
+          margin,
+          products (id, name, sku, category)
+        )
+      `)
+      .eq("org_id", orgId)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (startDate) query = query.gte("fecha", startDate);
+    if (endDate) query = query.lte("fecha", endDate);
+
+    const { data: sales, error } = await query;
+
+    if (error) throw error;
+
+    const totals = (sales || []).reduce((acc, sale) => {
+      acc.totalRevenue += Number(sale.total) || 0;
+      acc.totalMargin += Number(sale.margen) || 0;
+      acc.totalItems += (sale.sales_items || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+      acc.totalCost += (sale.sales_items || []).reduce((sum, item) => sum + (Number(item.cost || 0) * Number(item.quantity || 0)), 0);
+      return acc;
+    }, { totalRevenue: 0, totalItems: 0, totalMargin: 0, totalCost: 0 });
+
+    return NextResponse.json({
+      success: true,
+      sales: sales || [],
+      count: sales?.length || 0,
+      totals,
+    });
+  } catch (error) {
+    console.error("Sales API error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
 
-/* =====================================
-   POST — CREAR VENTA
-   ===================================== */
-export async function POST(req) {
-  const orgId = req.headers.get("x-org-id");
-  if (!orgId) return respond({ error: "Missing org ID" }, 400);
-
-  const body = await parseBody(req);
-  if (!body) return respond({ error: "Invalid JSON body" }, 400);
-
-  const payload = {
-    ...body,
-    org_id: orgId,
-  };
-
-  const { data, error } = await supabase
-    .from("sales")
-    .insert(payload)
-    .select()
-    .single();
-
-  if (error) return respond({ error: error.message }, 500);
-
-  return respond(data, 201);
-}
-
-/* =====================================
-   PUT — ACTUALIZAR VENTA
-   ===================================== */
 export async function PUT(req) {
-  const orgId = req.headers.get("x-org-id");
-  if (!orgId) return respond({ error: "Missing org ID" }, 400);
+  try {
+    const supabase = await createServerSupabaseClient();
+    const orgSlug = req.headers.get("x-org-slug");
 
-  const body = await parseBody(req);
-  if (!body) return respond({ error: "Invalid JSON body" }, 400);
+    if (!orgSlug) {
+      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    }
 
-  const { id, ...updateData } = body;
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
 
-  const { data, error } = await supabase
-    .from("sales")
-    .update(updateData)
-    .eq("id", id)
-    .eq("org_id", orgId)
-    .select()
-    .single();
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
 
-  if (error) return respond({ error: error.message }, 500);
+    const body = await req.json();
+    const { id, ...updateData } = body;
 
-  return respond(data);
+    const { data, error } = await supabase
+      .from("sales")
+      .update(updateData)
+      .eq("id", id)
+      .eq("org_id", org.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, sale: data });
+  } catch (error) {
+    console.error("Sales update error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
 
-/* =====================================
-   DELETE — ELIMINAR VENTA
-   ===================================== */
 export async function DELETE(req) {
-  const orgId = req.headers.get("x-org-id");
-  if (!orgId) return respond({ error: "Missing org ID" }, 400);
+  try {
+    const supabase = await createServerSupabaseClient();
+    const orgSlug = req.headers.get("x-org-slug");
 
-  const body = await parseBody(req);
-  if (!body) return respond({ error: "Invalid JSON body" }, 400);
+    if (!orgSlug) {
+      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    }
 
-  const { id } = body;
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
 
-  const { error } = await supabase
-    .from("sales")
-    .delete()
-    .eq("id", id)
-    .eq("org_id", orgId);
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
 
-  if (error) return respond({ error: error.message }, 500);
+    const body = await req.json();
+    const { id } = body;
 
-  return respond({ message: "Deleted successfully" });
+    await supabase.from("sales_items").delete().eq("sale_id", id);
+    const { error } = await supabase.from("sales").delete().eq("id", id).eq("org_id", org.id);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, message: "Venta eliminada" });
+  } catch (error) {
+    console.error("Sales delete error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
-

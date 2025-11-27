@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 export async function POST(req) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const body = await req.json();
 
   const { orgId, productId, branchId, qty, type } = body;
@@ -15,7 +15,7 @@ export async function POST(req) {
   }
 
   try {
-    // 1️⃣ Registrar movimiento
+    // 1. Registrar movimiento
     const { error: movError } = await supabase
       .from("inventory_movements")
       .insert({
@@ -29,7 +29,7 @@ export async function POST(req) {
 
     if (movError) throw movError;
 
-    // 2️⃣ Actualizar inventario
+    // 2. Actualizar inventario
     const delta = type === "salida" ? -qty : qty;
 
     const { error: invError } = await supabase.rpc("adjust_inventory", {

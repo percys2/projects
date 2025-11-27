@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 // =============================
-// 🔥 EXPORTA ESTO (evita el error)
+// EXPORTA ESTO (evita el error)
 // =============================
 export const CATEGORIES = [
   "Alimentos",
@@ -13,8 +13,8 @@ export const CATEGORIES = [
   "Otros",
 ];
 
-// Este hook ahora recibe `orgId` desde el server
-export function useInventory(orgId) {
+// Este hook ahora recibe `orgSlug` desde el server
+export function useInventory(orgSlug) {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,7 @@ export function useInventory(orgId) {
       try {
         const res = await fetch("/api/inventory", {
           headers: {
-            "x-org-id": orgId
+            "x-org-slug": orgSlug
           }
         });
 
@@ -64,8 +64,8 @@ export function useInventory(orgId) {
       }
     }
 
-    if (orgId) load();
-  }, [orgId]);
+    if (orgSlug) load();
+  }, [orgSlug]);
 
   const getStock = (p) => p.stock ?? 0;
 

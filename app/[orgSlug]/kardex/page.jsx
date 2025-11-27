@@ -1,10 +1,10 @@
-import { createClient } from "@/src/lib/supabase/server-client";
-import KardexScreen from "@/src/modules/Kardex/kardexScreen";
+import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import KardexScreen from "@/src/modules/kardex/kardexScreen";
 import { redirect } from "next/navigation";
 
 export default async function KardexPage({ params }) {
-  const supabase = createClient();
-  const { orgSlug } = params;
+  const { orgSlug } = await params;
+  const supabase = await createServerSupabaseClient();
 
   // User session
   const { data: { session } } = await supabase.auth.getSession();

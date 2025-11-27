@@ -10,8 +10,8 @@ import InventoryEntryModal from "./components/InventoryEntryModal";
 import InventoryExitModal from "./components/InventoryExitModal";
 import InventoryTransferModal from "./components/InventoryTransferModal";
 
-export default function InventoryScreen({ orgId }) {
-  const inv = useInventory(orgId);
+export default function InventoryScreen({ orgSlug }) {
+  const inv = useInventory(orgSlug);
 
   /* ============================================================
      ENTRADA
@@ -38,7 +38,7 @@ export default function InventoryScreen({ orgId }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        orgId,
+        orgSlug,
         productId: entryProduct.productId,
         branchId: entryProduct.branchId,
         type: "entrada",
@@ -72,7 +72,7 @@ export default function InventoryScreen({ orgId }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        orgId,
+        orgSlug,
         productId: exitProduct.productId,
         branchId: exitProduct.branchId,
         type: "salida",
@@ -112,7 +112,7 @@ export default function InventoryScreen({ orgId }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        orgId,
+        orgSlug,
         productId,
         type: "traslado",
         qty,
@@ -180,7 +180,7 @@ export default function InventoryScreen({ orgId }) {
             onEntry={openEntry}
             onExit={openExit}
             onTransfer={openTransfer}
-            orgId={orgId} // necesario para KARDEX
+            orgSlug={orgSlug}
           />
         </div>
       </div>

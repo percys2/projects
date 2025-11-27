@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/src/lib/supabase/server-client";
+import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 export async function GET(req, { params }) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const productId = params.productId;
     const orgId = req.headers.get("x-org-id");
 
