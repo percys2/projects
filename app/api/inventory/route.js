@@ -10,7 +10,6 @@ export async function GET(req) {
       return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
     }
 
-    // 1. Obtener org_id real desde el slug
     const { data: org, error: orgError } = await supabase
       .from("organizations")
       .select("id")
@@ -21,7 +20,6 @@ export async function GET(req) {
 
     const orgId = org.id;
 
-    // 2. Inventario agrupado por producto + sucursal
     const { data: inventory, error: invError } = await supabase
       .from("inventory")
       .select(`
@@ -48,22 +46,20 @@ export async function GET(req) {
 
     if (invError) throw invError;
 
-    // 3. Categorías
     const { data: categories } = await supabase
       .from("categories")
       .select("name")
       .eq("org_id", orgId);
 
-    // 4. Sucursales
     const { data: branches } = await supabase
       .from("branches")
-      .select("name")
+      .select("id, name")
       .eq("org_id", orgId);
 
     return NextResponse.json({
       inventory,
       categories: categories?.map((c) => c.name) ?? [],
-      branches: branches?.map((b) => b.name) ?? [],
+      branches: branches || [],
     });
 
   } catch (err) {

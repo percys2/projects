@@ -2,9 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-// =============================
-// EXPORTA ESTO (evita el error)
-// =============================
 export const CATEGORIES = [
   "Alimentos",
   "Medicinas",
@@ -13,58 +10,59 @@ export const CATEGORIES = [
   "Otros",
 ];
 
-// Este hook ahora recibe `orgSlug` desde el server
 export function useInventory(orgSlug) {
   const [inventory, setInventory] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // UI filters
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("TODOS");
   const [branch, setBranch] = useState("TODAS");
   const [lowStockOnly, setLowStockOnly] = useState(false);
 
-  // Modal / edición
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("/api/inventory", {
-          headers: {
-            "x-org-slug": orgSlug
-          }
-        });
+  async function loadInventory() {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/inventory", {
+        headers: { "x-org-slug": orgSlug }
+      });
 
-        const json = await res.json();
-        if (json.inventory) {
-          setInventory(
-            json.inventory.map((item) => ({
-              id: item.id,
-              productId: item.products.id,
-              name: item.products.name,
-              sku: item.products.id,
-              category: item.products.category,
-              branch: item.branches?.name || "Sin sucursal",
-              stock: item.quantity,
-              minStock: item.products.min_stock,
-              cost: item.cost,
-              price: item.price,
-              unitWeight: item.products.unit_weight,
-              expiresAt: item.expiration_date,
-              lot: item.lot_number
-            }))
-          );
-        }
-      } catch (err) {
-        console.error("Inventory fetch error:", err);
-      } finally {
-        setLoading(false);
+      const json = await res.json();
+      if (json.inventory) {
+        setInventory(
+          json.inventory.map((item) => ({
+            id: item.id,
+            productId: item.products?.id,
+            branchId: item.branches?.id,
+            name: item.products?.name,
+            sku: item.products?.sku || item.products?.id,
+            category: item.products?.category,
+            branch: item.branches?.name || "Sin sucursal",
+            stock: item.quantity,
+            minStock: item.products?.min_stock,
+            cost: item.cost,
+            price: item.price,
+            unitWeight: item.products?.unit_weight,
+            expiresAt: item.expiration_date,
+            lot: item.lot_number
+          }))
+        );
       }
+      if (json.branches) {
+        setBranches(json.branches);
+      }
+    } catch (err) {
+      console.error("Inventory fetch error:", err);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    if (orgSlug) load();
+  useEffect(() => {
+    if (orgSlug) loadInventory();
   }, [orgSlug]);
 
   const getStock = (p) => p.stock ?? 0;
@@ -141,22 +139,75 @@ export function useInventory(orgSlug) {
     setEditingProduct(null);
   }
 
-  function saveProductLocal(data) {
-    setInventory((prev) =>
-      prev.map(p => (p.id === data.id ? { ...p, ...data } : p))
-    );
+  async function saveProduct(data) {
+    try {
+      const method = data.productId ? "PUT" : "POST";
+      const res = await fetch("/api/products", {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          id: data.productId,
+          name: data.name,
+          sku: data.sku,
+          category: data.category,
+          unitWeight: data.unitWeight,
+          minStock: data.minStock,
+          cost: data.cost,
+          price: data.price,
+          expiresAt: data.expiresAt,
+          branchId: data.branchId,
+        }),
+      });
 
-    closeModal();
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al guardar producto");
+      }
+
+      await loadInventory();
+      closeModal();
+      return { success: true };
+    } catch (err) {
+      console.error("Save product error:", err);
+      return { success: false, error: err.message };
+    }
   }
 
-  function deleteProductLocal(id) {
-    setInventory((prev) => prev.filter((p) => p.id !== id));
+  async function deleteProduct(id) {
+    try {
+      const product = inventory.find(p => p.id === id);
+      if (!product) return { success: false, error: "Producto no encontrado" };
+
+      const res = await fetch("/api/products", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({ id: product.productId }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al eliminar producto");
+      }
+
+      setInventory((prev) => prev.filter((p) => p.id !== id));
+      return { success: true };
+    } catch (err) {
+      console.error("Delete product error:", err);
+      return { success: false, error: err.message };
+    }
   }
 
   return {
     products: inventory,
     filteredProducts,
     stats,
+    branches,
 
     search,
     setSearch,
@@ -173,9 +224,11 @@ export function useInventory(orgSlug) {
     openEditProduct,
     closeModal,
 
-    saveProduct: saveProductLocal,
-    deleteProduct: deleteProductLocal,
+    saveProduct,
+    deleteProduct,
+    loadInventory,
 
     loading,
+    setProducts: setInventory,
   };
 }

@@ -1,9 +1,27 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 
+// Create Supabase client for Route Handlers (correct version)
+function getSupabase() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      cookies: {
+        get() {},
+        set() {},
+        remove() {}
+      }
+    }
+  );
+}
+
+// ---------------------------------------------
+// GET — LIST EMPLOYEES
+// ---------------------------------------------
 export async function GET(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getSupabase();
     const orgSlug = req.headers.get("x-org-slug");
 
     if (!orgSlug) {
@@ -33,9 +51,12 @@ export async function GET(req) {
   }
 }
 
+// ---------------------------------------------
+// POST — CREATE EMPLOYEE
+// ---------------------------------------------
 export async function POST(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getSupabase();
     const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
@@ -87,9 +108,12 @@ export async function POST(req) {
   }
 }
 
+// ---------------------------------------------
+// PUT — UPDATE EMPLOYEE
+// ---------------------------------------------
 export async function PUT(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getSupabase();
     const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
@@ -138,6 +162,42 @@ export async function PUT(req) {
     return NextResponse.json({ employee });
   } catch (err) {
     console.error("HR PUT error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+// ---------------------------------------------
+// DELETE — REMOVE EMPLOYEE
+// ---------------------------------------------
+export async function DELETE(req) {
+  try {
+    const supabase = getSupabase();
+    const orgSlug = req.headers.get("x-org-slug");
+    const body = await req.json();
+
+    if (!orgSlug || !body.id) {
+      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+    }
+
+    const { data: org, error: orgError } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
+
+    if (orgError) throw orgError;
+
+    const { error } = await supabase
+      .from("employees")
+      .delete()
+      .eq("id", body.id)
+      .eq("org_id", org.id);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("HR DELETE error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

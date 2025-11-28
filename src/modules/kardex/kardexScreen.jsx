@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import KardexTable from "./kardexTable";
 import { exportKardexPDF } from "./utils/exportKardexPDF";
 import { exportKardexExcel } from "./utils/exportKardexExcel";
+import InventoryEntryModal from "../inventory/components/InventoryEntryModal";
+import InventoryExitModal from "../inventory/components/InventoryExitModal";
+import InventoryTransferModal from "../inventory/components/InventoryTransferModal";
 
 export default function KardexScreen({ orgSlug }) {
   const [loading, setLoading] = useState(false);
@@ -22,6 +25,10 @@ export default function KardexScreen({ orgSlug }) {
   const limit = 50;
 
   const [error, setError] = useState(null);
+
+  const [entryOpen, setEntryOpen] = useState(false);
+  const [exitOpen, setExitOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
 
   useEffect(() => {
     async function loadFilters() {
@@ -118,8 +125,155 @@ export default function KardexScreen({ orgSlug }) {
     });
   }
 
+  const getSelectedProductData = () => {
+    if (selectedProduct === "all") return null;
+    const prod = products.find((p) => p.id === selectedProduct);
+    if (!prod) return null;
+    const br = selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : branches[0];
+    return {
+      id: prod.id,
+      productId: prod.id,
+      name: prod.name,
+      branch: br?.name || "Sin sucursal",
+      branchId: br?.id || "",
+      stock: 0,
+      cost: 0,
+      price: 0,
+    };
+  };
+
+  const canMakeMovement = selectedProduct !== "all" && selectedBranch !== "all";
+
+  const handleEntrySubmit = async (data) => {
+    try {
+      const res = await fetch("/api/inventory/movements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          productId: data.productId,
+          branchId: selectedBranch,
+          type: "entrada",
+          qty: data.qty,
+          cost: data.cost,
+          price: data.price,
+          expiresAt: data.expiresAt,
+          lot: data.lot,
+          notes: data.note || "Entrada desde Kardex",
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Error al registrar entrada");
+        return;
+      }
+
+      await loadKardex();
+      setEntryOpen(false);
+    } catch (err) {
+      console.error("Entry error:", err);
+      alert("Error al registrar entrada");
+    }
+  };
+
+  const handleExitSubmit = async (data) => {
+    try {
+      const res = await fetch("/api/inventory/movements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          productId: data.productId,
+          branchId: selectedBranch,
+          type: "salida",
+          qty: data.qty,
+          notes: data.note || data.reason || "Salida desde Kardex",
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Error al registrar salida");
+        return;
+      }
+
+      await loadKardex();
+      setExitOpen(false);
+    } catch (err) {
+      console.error("Exit error:", err);
+      alert("Error al registrar salida");
+    }
+  };
+
+  const handleTransferSubmit = async ({ productId, qty, fromBranchId, toBranchId }) => {
+    try {
+      const res = await fetch("/api/inventory/movements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          productId,
+          type: "transferencia",
+          qty,
+          from_branch: fromBranchId || selectedBranch,
+          to_branch: toBranchId,
+          notes: "Traslado desde Kardex",
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Error al registrar traslado");
+        return;
+      }
+
+      await loadKardex();
+      setTransferOpen(false);
+    } catch (err) {
+      console.error("Transfer error:", err);
+      alert("Error al registrar traslado");
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-3 p-4 bg-white border rounded-xl shadow-sm">
+        <span className="text-sm font-semibold text-slate-700">Movimientos:</span>
+        <button
+          onClick={() => setEntryOpen(true)}
+          disabled={!canMakeMovement}
+          className={`px-3 py-1.5 text-xs rounded-lg ${canMakeMovement ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+        >
+          + Entrada
+        </button>
+        <button
+          onClick={() => setExitOpen(true)}
+          disabled={!canMakeMovement}
+          className={`px-3 py-1.5 text-xs rounded-lg ${canMakeMovement ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+        >
+          - Salida
+        </button>
+        <button
+          onClick={() => setTransferOpen(true)}
+          disabled={!canMakeMovement}
+          className={`px-3 py-1.5 text-xs rounded-lg ${canMakeMovement ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+        >
+          Traslado
+        </button>
+        {!canMakeMovement && (
+          <span className="text-[11px] text-slate-500 italic">
+            Selecciona un producto y sucursal para hacer movimientos
+          </span>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
         <div>
           <label className="text-xs font-semibold text-slate-600">Producto</label>
@@ -173,6 +327,28 @@ export default function KardexScreen({ orgSlug }) {
           onExportExcel={handleExportExcel}
         />
       )}
+
+      <InventoryEntryModal
+        isOpen={entryOpen}
+        onClose={() => setEntryOpen(false)}
+        product={getSelectedProductData()}
+        onSubmit={handleEntrySubmit}
+      />
+
+      <InventoryExitModal
+        isOpen={exitOpen}
+        onClose={() => setExitOpen(false)}
+        product={getSelectedProductData()}
+        onSubmit={handleExitSubmit}
+      />
+
+      <InventoryTransferModal
+        isOpen={transferOpen}
+        onClose={() => setTransferOpen(false)}
+        product={getSelectedProductData()}
+        onSubmit={handleTransferSubmit}
+        branches={branches}
+      />
     </div>
   );
 }

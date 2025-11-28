@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { calculateNetSalary, calculateVacationDays, calculateAguinaldo } from "../services/laborConfig";
+import {
+  calculateNetSalary,
+  calculateVacationDays,
+  calculateAguinaldo,
+} from "../services/laborConfig";
 
 export function useHr(orgSlug) {
   const [employees, setEmployees] = useState([]);
@@ -18,7 +22,12 @@ export function useHr(orgSlug) {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [payrollModalOpen, setPayrollModalOpen] = useState(false);
 
+  // -------------------------------------------------------
+  // LOAD EMPLOYEES
+  // -------------------------------------------------------
   useEffect(() => {
+    if (!orgSlug) return;
+
     async function loadEmployees() {
       try {
         setLoading(true);
@@ -26,9 +35,11 @@ export function useHr(orgSlug) {
           headers: { "x-org-slug": orgSlug },
         });
 
-        if (!res.ok) throw new Error("Error al cargar empleados");
-
         const data = await res.json();
+        console.log("GET employees response:", data);
+
+        if (!res.ok) throw new Error(data.error || "Error al cargar empleados");
+
         setEmployees(data.employees || []);
       } catch (err) {
         console.error("HR fetch error:", err);
@@ -38,9 +49,12 @@ export function useHr(orgSlug) {
       }
     }
 
-    if (orgSlug) loadEmployees();
+    loadEmployees();
   }, [orgSlug]);
 
+  // -------------------------------------------------------
+  // FILTERED EMPLOYEES
+  // -------------------------------------------------------
   const filteredEmployees = useMemo(() => {
     return employees.filter((emp) => {
       const matchesSearch =
@@ -51,8 +65,7 @@ export function useHr(orgSlug) {
       const matchesDepartment =
         department === "TODOS" || emp.department === department;
 
-      const matchesStatus =
-        status === "TODOS" || emp.status === status;
+      const matchesStatus = status === "TODOS" || emp.status === status;
 
       return matchesSearch && matchesDepartment && matchesStatus;
     });
@@ -60,9 +73,12 @@ export function useHr(orgSlug) {
 
   const departments = useMemo(() => {
     const depts = new Set(employees.map((e) => e.department).filter(Boolean));
-    return ["TODOS", ...Array.from(depts)];
+    return ["TODOS", ...depts];
   }, [employees]);
 
+  // -------------------------------------------------------
+  // STATS
+  // -------------------------------------------------------
   const stats = useMemo(() => {
     const active = employees.filter((e) => e.status === "activo").length;
     const totalPayroll = employees
@@ -76,6 +92,9 @@ export function useHr(orgSlug) {
     };
   }, [employees]);
 
+  // -------------------------------------------------------
+  // MODALS
+  // -------------------------------------------------------
   function openNewEmployee() {
     setEditingEmployee(null);
     setIsModalOpen(true);
@@ -91,9 +110,13 @@ export function useHr(orgSlug) {
     setEditingEmployee(null);
   }
 
+  // -------------------------------------------------------
+  // SAVE EMPLOYEE
+  // -------------------------------------------------------
   async function saveEmployee(data) {
     try {
       const method = data.id ? "PUT" : "POST";
+
       const res = await fetch("/api/hr/employees", {
         method,
         headers: {
@@ -103,16 +126,19 @@ export function useHr(orgSlug) {
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) throw new Error("Error al guardar empleado");
+      const responseBody = await res.json();
+      console.log("SAVE RESPONSE:", responseBody);
 
-      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(responseBody.error || "Error al guardar empleado");
+      }
 
       if (data.id) {
         setEmployees((prev) =>
-          prev.map((e) => (e.id === data.id ? result.employee : e))
+          prev.map((e) => (e.id === data.id ? responseBody.employee : e))
         );
       } else {
-        setEmployees((prev) => [...prev, result.employee]);
+        setEmployees((prev) => [...prev, responseBody.employee]);
       }
 
       closeModal();
@@ -123,8 +149,13 @@ export function useHr(orgSlug) {
     }
   }
 
+  // -------------------------------------------------------
+  // DELETE EMPLOYEE (DEBUG VERSION)
+  // -------------------------------------------------------
   async function deleteEmployee(id) {
     try {
+      console.log("Deleting employee ID:", id, " orgSlug:", orgSlug);
+
       const res = await fetch("/api/hr/employees", {
         method: "DELETE",
         headers: {
@@ -134,9 +165,15 @@ export function useHr(orgSlug) {
         body: JSON.stringify({ id }),
       });
 
-      if (!res.ok) throw new Error("Error al eliminar empleado");
+      const responseBody = await res.json();
+      console.log("DELETE RESPONSE:", responseBody);
+
+      if (!res.ok) {
+        throw new Error(responseBody.error || "Error al eliminar empleado");
+      }
 
       setEmployees((prev) => prev.filter((e) => e.id !== id));
+
       return { success: true };
     } catch (err) {
       console.error("Delete employee error:", err);
@@ -144,6 +181,9 @@ export function useHr(orgSlug) {
     }
   }
 
+  // -------------------------------------------------------
+  // PAYROLL CALCULATIONS
+  // -------------------------------------------------------
   function openPayrollModal(employee) {
     setSelectedEmployee(employee);
     setPayrollModalOpen(true);
@@ -160,11 +200,14 @@ export function useHr(orgSlug) {
   }
 
   function calculateEmployeeVacation(employee) {
-    if (!employee?.hire_date) return { accrued: 0, used: 0, available: 0 };
+    if (!employee?.hire_date)
+      return { accrued: 0, used: 0, available: 0 };
 
     const hireDate = new Date(employee.hire_date);
     const now = new Date();
-    const monthsWorked = Math.floor((now - hireDate) / (1000 * 60 * 60 * 24 * 30));
+    const monthsWorked = Math.floor(
+      (now - hireDate) / (1000 * 60 * 60 * 24 * 30)
+    );
 
     const accrued = calculateVacationDays(monthsWorked);
     const used = employee.vacation_days_used || 0;
@@ -182,7 +225,9 @@ export function useHr(orgSlug) {
 
     const hireDate = new Date(employee.hire_date);
     const now = new Date();
-    const monthsWorked = Math.floor((now - hireDate) / (1000 * 60 * 60 * 24 * 30));
+    const monthsWorked = Math.floor(
+      (now - hireDate) / (1000 * 60 * 60 * 24 * 30)
+    );
 
     return calculateAguinaldo(employee.salary, Math.min(monthsWorked, 12));
   }

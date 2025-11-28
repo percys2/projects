@@ -25,30 +25,37 @@ export default function InventoryScreen({ orgSlug }) {
   };
 
   const handleEntrySubmit = async (data) => {
-    // actualizar inventario local
-    inv.saveProduct({
-      ...entryProduct,
-      stock: entryProduct.stock + data.qty,
-      cost: data.cost ?? entryProduct.cost,
-      expiresAt: data.expiresAt ?? entryProduct.expiresAt,
-    });
+    try {
+      const res = await fetch("/api/inventory/movements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          productId: entryProduct.productId,
+          branchId: entryProduct.branchId,
+          type: "entrada",
+          qty: data.qty,
+          cost: data.cost,
+          price: entryProduct.price,
+          expiresAt: data.expiresAt,
+          lot: data.lot,
+          notes: data.note || "Entrada manual",
+        }),
+      });
 
-    // registrar movimiento
-    await fetch("/api/inventory/movements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        orgSlug,
-        productId: entryProduct.productId,
-        branchId: entryProduct.branchId,
-        type: "entrada",
-        qty: data.qty,
-        cost: data.cost,
-        expiresAt: data.expiresAt,
-        lot: data.lot,
-        notes: "Entrada manual",
-      }),
-    });
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Error al registrar entrada");
+        return;
+      }
+
+      await inv.loadInventory();
+    } catch (err) {
+      console.error("Entry error:", err);
+      alert("Error al registrar entrada");
+    }
   };
 
   /* ============================================================
@@ -63,23 +70,33 @@ export default function InventoryScreen({ orgSlug }) {
   };
 
   const handleExitSubmit = async (data) => {
-    inv.saveProduct({
-      ...exitProduct,
-      stock: exitProduct.stock - data.qty,
-    });
+    try {
+      const res = await fetch("/api/inventory/movements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          productId: exitProduct.productId,
+          branchId: exitProduct.branchId,
+          type: "salida",
+          qty: data.qty,
+          notes: data.note || "Salida manual",
+        }),
+      });
 
-    await fetch("/api/inventory/movements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        orgSlug,
-        productId: exitProduct.productId,
-        branchId: exitProduct.branchId,
-        type: "salida",
-        qty: data.qty,
-        notes: "Salida manual",
-      }),
-    });
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Error al registrar salida");
+        return;
+      }
+
+      await inv.loadInventory();
+    } catch (err) {
+      console.error("Exit error:", err);
+      alert("Error al registrar salida");
+    }
   };
 
   /* ============================================================
@@ -93,34 +110,35 @@ export default function InventoryScreen({ orgSlug }) {
     setTransferOpen(true);
   };
 
-  const handleTransferSubmit = async ({ productId, qty, from, to }) => {
-    // actualizar inventario local
-    const updated = inv.products.map((p) => {
-      if (p.id === productId && p.branch === from)
-        return { ...p, stock: p.stock - qty };
+  const handleTransferSubmit = async ({ productId, qty, from, to, fromBranchId, toBranchId }) => {
+    try {
+      const res = await fetch("/api/inventory/movements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          productId,
+          type: "transferencia",
+          qty,
+          from_branch: fromBranchId || from,
+          to_branch: toBranchId || to,
+          notes: "Traslado entre sucursales",
+        }),
+      });
 
-      if (p.id === productId && p.branch === to)
-        return { ...p, stock: p.stock + qty };
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Error al registrar traslado");
+        return;
+      }
 
-      return p;
-    });
-
-    inv.setProducts(updated);
-
-    // registrar movimiento
-    await fetch("/api/inventory/movements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        orgSlug,
-        productId,
-        type: "traslado",
-        qty,
-        from_branch: from,
-        to_branch: to,
-        notes: "Traslado entre sucursales",
-      }),
-    });
+      await inv.loadInventory();
+    } catch (err) {
+      console.error("Transfer error:", err);
+      alert("Error al registrar traslado");
+    }
   };
 
   /* ============================================================
@@ -192,6 +210,8 @@ export default function InventoryScreen({ orgSlug }) {
         onClose={inv.closeModal}
         onSave={inv.saveProduct}
         product={inv.editingProduct}
+        categories={["Alimentos", "Medicinas", "Accesorios", "Herramientas", "Otros"]}
+        branches={inv.branches}
       />
 
       <InventoryEntryModal
@@ -213,6 +233,7 @@ export default function InventoryScreen({ orgSlug }) {
         onClose={() => setTransferOpen(false)}
         product={transferProduct}
         onSubmit={handleTransferSubmit}
+        branches={inv.branches}
       />
     </div>
   );

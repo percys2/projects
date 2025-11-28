@@ -12,11 +12,12 @@ export default function ProductFormModal({
 }) {
   const [form, setForm] = useState({
     id: null,
+    productId: null,
     name: "",
     sku: "",
     category: "",
     branch: "",
-    stock: 0,
+    branchId: "",
     minStock: 0,
     cost: 0,
     price: 0,
@@ -24,30 +25,31 @@ export default function ProductFormModal({
     expiresAt: "",
   });
 
-  // FIXED — no infinite loop
   useEffect(() => {
     if (!isOpen) return;
 
+    const defaultBranch = branches[0];
     setForm({
       id: product?.id ?? null,
+      productId: product?.productId ?? null,
       name: product?.name ?? "",
       sku: product?.sku ?? "",
       category: product?.category ?? categories[0] ?? "",
-      branch: product?.branch ?? branches[0] ?? "",
-      stock: product?.stock ?? 0,
+      branch: product?.branch ?? defaultBranch?.name ?? "",
+      branchId: product?.branchId ?? defaultBranch?.id ?? "",
       minStock: product?.minStock ?? 0,
       cost: product?.cost ?? 0,
       price: product?.price ?? 0,
       unit: product?.unit ?? "LB",
       expiresAt: product?.expiresAt ?? "",
     });
-  }, [isOpen, product]);
+  }, [isOpen, product, branches, categories]);
 
   if (!isOpen) return null;
 
   function handleChange(e) {
     const { name, value } = e.target;
-    const numeric = ["stock", "minStock", "cost", "price"];
+    const numeric = ["minStock", "cost", "price"];
 
     setForm((prev) => ({
       ...prev,
@@ -65,7 +67,6 @@ export default function ProductFormModal({
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-6">
-        {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-base font-semibold text-slate-800">
             {product ? "Editar producto" : "Nuevo producto"}
@@ -78,7 +79,6 @@ export default function ProductFormModal({
           </button>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <Field label="Nombre">
             <input
@@ -127,12 +127,20 @@ export default function ProductFormModal({
             <Field label="Bodega">
               <select
                 name="branch"
-                value={form.branch}
-                onChange={handleChange}
+                value={form.branchId}
+                onChange={(e) => {
+                  const selectedBranch = branches.find(b => b.id === e.target.value);
+                  setForm(prev => ({
+                    ...prev,
+                    branch: selectedBranch?.name || "",
+                    branchId: e.target.value,
+                  }));
+                }}
                 className="input-soft"
               >
+                <option value="">Seleccionar...</option>
                 {branches.map((b) => (
-                  <option key={b}>{b}</option>
+                  <option key={b.id} value={b.id}>{b.name}</option>
                 ))}
               </select>
             </Field>
@@ -151,9 +159,8 @@ export default function ProductFormModal({
             </Field>
           </div>
 
-          <div className="grid grid-cols-4 gap-3">
-            <NumberField label="Stock" name="stock" value={form.stock} onChange={handleChange} />
-            <NumberField label="Min" name="minStock" value={form.minStock} onChange={handleChange} />
+          <div className="grid grid-cols-3 gap-3">
+            <NumberField label="Stock Min" name="minStock" value={form.minStock} onChange={handleChange} />
             <NumberField label="Costo" name="cost" value={form.cost} onChange={handleChange} />
             <NumberField label="Precio" name="price" value={form.price} onChange={handleChange} />
           </div>

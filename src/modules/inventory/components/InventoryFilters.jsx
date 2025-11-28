@@ -87,9 +87,10 @@ export default function InventoryFilters({
           "
         >
           <option value="TODAS">Todas</option>
-          {branches.map((b) => (
-            <option key={b} value={b}>{b}</option>
-          ))}
+          {branches.map((b) => {
+            const name = typeof b === "string" ? b : b.name;
+            return <option key={name} value={name}>{name}</option>;
+          })}
         </select>
       </div>
 
