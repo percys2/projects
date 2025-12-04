@@ -1,0 +1,3 @@
+{
+  "/[orgSlug]/kardex/page": "app/[orgSlug]/kardex/page.js"
+}

@@ -1,0 +1,10 @@
+var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/clients/route.js")
+R.c("server/chunks/e1421_next_1cecd299._.js")
+R.c("server/chunks/e1421_@opentelemetry_api_build_esm_a1d19ae3._.js")
+R.c("server/chunks/e1421_@supabase_storage-js_dist_module_f7be87b5._.js")
+R.c("server/chunks/e1421_@supabase_auth-js_dist_module_6ce4246f._.js")
+R.c("server/chunks/e1421_75bdab3d._.js")
+R.c("server/chunks/[root-of-the-server]__171d7de7._.js")
+R.c("server/chunks/b7dfa__next-internal_server_app_api_clients_route_actions_a622e22a.js")
+R.m("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/Desktop/proyectos coding/agro-erp-production-2/app/api/clients/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/Desktop/proyectos coding/agro-erp-production-2/app/api/clients/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

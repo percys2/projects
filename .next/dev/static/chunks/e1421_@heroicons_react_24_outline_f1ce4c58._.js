@@ -1,0 +1,6782 @@
+(globalThis.TURBOPACK || (globalThis.TURBOPACK = [])).push([typeof document === "object" ? document.currentScript : undefined,
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AcademicCapIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function AcademicCapIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(AcademicCapIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AdjustmentsHorizontalIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function AdjustmentsHorizontalIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(AdjustmentsHorizontalIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AdjustmentsVerticalIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function AdjustmentsVerticalIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(AdjustmentsVerticalIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArchiveBoxArrowDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArchiveBoxArrowDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0-3-3m3 3 3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArchiveBoxArrowDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArchiveBoxXMarkIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArchiveBoxXMarkIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m6 4.125 2.25 2.25m0 0 2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArchiveBoxXMarkIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArchiveBoxIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArchiveBoxIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArchiveBoxIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowDownCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowDownCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowDownLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m19.5 4.5-15 15m0 0h11.25m-11.25 0V8.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowDownLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownOnSquareStackIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowDownOnSquareStackIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowDownOnSquareStackIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownOnSquareIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowDownOnSquareIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowDownOnSquareIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowDownRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m4.5 4.5 15 15m0 0V8.25m0 11.25H8.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowDownRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownTrayIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowDownTrayIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowDownTrayIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLeftCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLeftCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftEndOnRectangleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLeftEndOnRectangleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLeftEndOnRectangleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftOnRectangleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+/** @deprecated */ function ArrowLeftOnRectangleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLeftOnRectangleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftStartOnRectangleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLeftStartOnRectangleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLeftStartOnRectangleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLongDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLongDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLongLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLongLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLongRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLongRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowLongUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowLongUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowPathRoundedSquareIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowPathRoundedSquareIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowPathRoundedSquareIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowPathIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowPathIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowPathIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowRightCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowRightCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightEndOnRectangleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowRightEndOnRectangleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowRightEndOnRectangleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightOnRectangleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+/** @deprecated */ function ArrowRightOnRectangleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowRightOnRectangleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightStartOnRectangleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowRightStartOnRectangleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowRightStartOnRectangleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+/** @deprecated */ function ArrowSmallDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 4.5v15m0 0 6.75-6.75M12 19.5l-6.75-6.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowSmallDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+/** @deprecated */ function ArrowSmallLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 12h-15m0 0 6.75 6.75M4.5 12l6.75-6.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowSmallLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+/** @deprecated */ function ArrowSmallRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowSmallRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+/** @deprecated */ function ArrowSmallUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 19.5v-15m0 0-6.75 6.75M12 4.5l6.75 6.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowSmallUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTopRightOnSquareIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTopRightOnSquareIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTopRightOnSquareIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTrendingDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTrendingDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTrendingDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTrendingUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTrendingUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTrendingUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnDownLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnDownLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m7.49 12-3.75 3.75m0 0 3.75 3.75m-3.75-3.75h16.5V4.499"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnDownLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnDownRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnDownRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m16.49 12 3.75 3.75m0 0-3.75 3.75m3.75-3.75H3.74V4.499"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnDownRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnLeftDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnLeftDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m11.99 16.5-3.75 3.75m0 0L4.49 16.5m3.75 3.75V3.75h11.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnLeftDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnLeftUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnLeftUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M11.99 7.5 8.24 3.75m0 0L4.49 7.5m3.75-3.75v16.499h11.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnLeftUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnRightDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnRightDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m11.99 16.5 3.75 3.75m0 0 3.75-3.75m-3.75 3.75V3.75H4.49"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnRightDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnRightUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnRightUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m11.99 7.5 3.75-3.75m0 0 3.75 3.75m-3.75-3.75v16.499H4.49"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnRightUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnUpLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnUpLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.49 12 3.74 8.248m0 0 3.75-3.75m-3.75 3.75h16.5V19.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnUpLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnUpRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowTurnUpRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m16.49 12 3.75-3.751m0 0-3.75-3.75m3.75 3.75H3.74V19.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowTurnUpRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUpCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUpCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUpLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m19.5 19.5-15-15m0 0v11.25m0-11.25h11.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUpLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpOnSquareStackIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUpOnSquareStackIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m0-3-3-3m0 0-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUpOnSquareStackIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpOnSquareIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUpOnSquareIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUpOnSquareIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUpRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUpRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpTrayIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUpTrayIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUpTrayIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUturnDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m15 15-6 6m0 0-6-6m6 6V9a6 6 0 0 1 12 0v3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUturnDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUturnLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUturnLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUturnRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m15 15 6-6m0 0-6-6m6 6H9a6 6 0 0 0 0 12h3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUturnRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowUturnUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m9 9 6-6m0 0 6 6m-6-6v12a6 6 0 0 1-12 0v-3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowUturnUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsPointingInIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowsPointingInIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowsPointingInIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsPointingOutIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowsPointingOutIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowsPointingOutIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsRightLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowsRightLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowsRightLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsUpDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ArrowsUpDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ArrowsUpDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AtSymbolIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function AtSymbolIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(AtSymbolIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BackspaceIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BackspaceIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 9.75 14.25 12m0 0 2.25 2.25M14.25 12l2.25-2.25M14.25 12 12 14.25m-2.58 4.92-6.374-6.375a1.125 1.125 0 0 1 0-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 0 1 2.25 2.25v10.5a2.25 2.25 0 0 1-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BackspaceIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BackwardIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BackwardIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21 16.811c0 .864-.933 1.406-1.683.977l-7.108-4.061a1.125 1.125 0 0 1 0-1.954l7.108-4.061A1.125 1.125 0 0 1 21 8.689v8.122ZM11.25 16.811c0 .864-.933 1.406-1.683.977l-7.108-4.061a1.125 1.125 0 0 1 0-1.954l7.108-4.061a1.125 1.125 0 0 1 1.683.977v8.122Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BackwardIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BanknotesIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BanknotesIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BanknotesIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars2Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Bars2Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 9h16.5m-16.5 6.75h16.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Bars2Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3BottomLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Bars3BottomLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Bars3BottomLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3BottomRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Bars3BottomRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 6.75h16.5M3.75 12h16.5M12 17.25h8.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Bars3BottomRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3CenterLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Bars3CenterLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Bars3CenterLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Bars3Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Bars3Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars4Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Bars4Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Bars4Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BarsArrowDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BarsArrowDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BarsArrowDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BarsArrowUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BarsArrowUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BarsArrowUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Battery0Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Battery0Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21 10.5h.375c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125H21M3.75 18h15A2.25 2.25 0 0 0 21 15.75v-6a2.25 2.25 0 0 0-2.25-2.25h-15A2.25 2.25 0 0 0 1.5 9.75v6A2.25 2.25 0 0 0 3.75 18Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Battery0Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Battery100Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Battery100Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21 10.5h.375c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125H21M4.5 10.5H18V15H4.5v-4.5ZM3.75 18h15A2.25 2.25 0 0 0 21 15.75v-6a2.25 2.25 0 0 0-2.25-2.25h-15A2.25 2.25 0 0 0 1.5 9.75v6A2.25 2.25 0 0 0 3.75 18Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Battery100Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Battery50Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Battery50Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21 10.5h.375c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125H21M4.5 10.5h6.75V15H4.5v-4.5ZM3.75 18h15A2.25 2.25 0 0 0 21 15.75v-6a2.25 2.25 0 0 0-2.25-2.25h-15A2.25 2.25 0 0 0 1.5 9.75v6A2.25 2.25 0 0 0 3.75 18Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Battery50Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BeakerIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BeakerIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BeakerIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellAlertIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BellAlertIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BellAlertIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellSlashIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BellSlashIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BellSlashIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellSnoozeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BellSnoozeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M10.5 8.25h3l-3 4.5h3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BellSnoozeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BellIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BellIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BoldIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BoldIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinejoin: "round",
+        d: "M6.75 3.744h-.753v8.25h7.125a4.125 4.125 0 0 0 0-8.25H6.75Zm0 0v.38m0 16.122h6.747a4.5 4.5 0 0 0 0-9.001h-7.5v9h.753Zm0 0v-.37m0-15.751h6a3.75 3.75 0 1 1 0 7.5h-6m0-7.5v7.5m0 0v8.25m0-8.25h6.375a4.125 4.125 0 0 1 0 8.25H6.75m.747-15.38h4.875a3.375 3.375 0 0 1 0 6.75H7.497v-6.75Zm0 7.5h5.25a3.75 3.75 0 0 1 0 7.5h-5.25v-7.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BoldIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BoltSlashIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BoltSlashIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M11.412 15.655 9.75 21.75l3.745-4.012M9.257 13.5H3.75l2.659-2.849m2.048-2.194L14.25 2.25 12 10.5h8.25l-4.707 5.043M8.457 8.457 3 3m5.457 5.457 7.086 7.086m0 0L21 21"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BoltSlashIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BoltIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BoltIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BoltIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookOpenIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BookOpenIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BookOpenIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookmarkSlashIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BookmarkSlashIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m3 3 1.664 1.664M21 21l-1.5-1.5m-5.485-1.242L12 17.25 4.5 21V8.742m.164-4.078a2.15 2.15 0 0 1 1.743-1.342 48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185V19.5M4.664 4.664 19.5 19.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BookmarkSlashIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookmarkSquareIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BookmarkSquareIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0 1 20.25 6v12A2.25 2.25 0 0 1 18 20.25H6A2.25 2.25 0 0 1 3.75 18V6A2.25 2.25 0 0 1 6 3.75h1.5m9 0h-9"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BookmarkSquareIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookmarkIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BookmarkIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BookmarkIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BriefcaseIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BriefcaseIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BriefcaseIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BugAntIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BugAntIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 12.75c1.148 0 2.278.08 3.383.237 1.037.146 1.866.966 1.866 2.013 0 3.728-2.35 6.75-5.25 6.75S6.75 18.728 6.75 15c0-1.046.83-1.867 1.866-2.013A24.204 24.204 0 0 1 12 12.75Zm0 0c2.883 0 5.647.508 8.207 1.44a23.91 23.91 0 0 1-1.152 6.06M12 12.75c-2.883 0-5.647.508-8.208 1.44.125 2.104.52 4.136 1.153 6.06M12 12.75a2.25 2.25 0 0 0 2.248-2.354M12 12.75a2.25 2.25 0 0 1-2.248-2.354M12 8.25c.995 0 1.971-.08 2.922-.236.403-.066.74-.358.795-.762a3.778 3.778 0 0 0-.399-2.25M12 8.25c-.995 0-1.97-.08-2.922-.236-.402-.066-.74-.358-.795-.762a3.734 3.734 0 0 1 .4-2.253M12 8.25a2.25 2.25 0 0 0-2.248 2.146M12 8.25a2.25 2.25 0 0 1 2.248 2.146M8.683 5a6.032 6.032 0 0 1-1.155-1.002c.07-.63.27-1.222.574-1.747m.581 2.749A3.75 3.75 0 0 1 15.318 5m0 0c.427-.283.815-.62 1.155-.999a4.471 4.471 0 0 0-.575-1.752M4.921 6a24.048 24.048 0 0 0-.392 3.314c1.668.546 3.416.914 5.223 1.082M19.08 6c.205 1.08.337 2.187.392 3.314a23.882 23.882 0 0 1-5.223 1.082"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BugAntIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingLibraryIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BuildingLibraryIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BuildingLibraryIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingOffice2Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BuildingOffice2Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BuildingOffice2Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingOfficeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BuildingOfficeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BuildingOfficeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingStorefrontIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function BuildingStorefrontIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(BuildingStorefrontIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CakeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CakeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75-1.5.75a3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0L3 16.5m15-3.379a48.474 48.474 0 0 0-6-.371c-2.032 0-4.034.126-6 .371m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.169c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 0 1 3 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 0 1 6 13.12M12.265 3.11a.375.375 0 1 1-.53 0L12 2.845l.265.265Zm-3 0a.375.375 0 1 1-.53 0L9 2.845l.265.265Zm6 0a.375.375 0 1 1-.53 0L15 2.845l.265.265Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CakeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalculatorIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CalculatorIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CalculatorIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalendarDateRangeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CalendarDateRangeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CalendarDateRangeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalendarDaysIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CalendarDaysIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CalendarDaysIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalendarIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CalendarIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CalendarIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CameraIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CameraIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CameraIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChartBarSquareIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChartBarSquareIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChartBarSquareIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChartBarIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChartBarIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChartBarIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChartPieIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChartPieIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChartPieIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleBottomCenterTextIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChatBubbleBottomCenterTextIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChatBubbleBottomCenterTextIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleBottomCenterIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChatBubbleBottomCenterIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChatBubbleBottomCenterIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleLeftEllipsisIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChatBubbleLeftEllipsisIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChatBubbleLeftEllipsisIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleLeftRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChatBubbleLeftRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChatBubbleLeftRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChatBubbleLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChatBubbleLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleOvalLeftEllipsisIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChatBubbleOvalLeftEllipsisIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChatBubbleOvalLeftEllipsisIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleOvalLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChatBubbleOvalLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChatBubbleOvalLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CheckBadgeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CheckBadgeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CheckBadgeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CheckCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CheckCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CheckCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CheckIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CheckIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m4.5 12.75 6 6 9-13.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CheckIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronDoubleDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronDoubleDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronDoubleLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronDoubleLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronDoubleRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronDoubleRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronDoubleUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m4.5 18.75 7.5-7.5 7.5 7.5"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m4.5 12.75 7.5-7.5 7.5 7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronDoubleUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m19.5 8.25-7.5 7.5-7.5-7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronLeftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronLeftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 19.5 8.25 12l7.5-7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronLeftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronRightIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronRightIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m8.25 4.5 7.5 7.5-7.5 7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronRightIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronUpDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronUpDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronUpDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ChevronUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m4.5 15.75 7.5-7.5 7.5 7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ChevronUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CircleStackIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CircleStackIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CircleStackIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardDocumentCheckIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ClipboardDocumentCheckIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ClipboardDocumentCheckIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardDocumentListIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ClipboardDocumentListIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ClipboardDocumentListIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardDocumentIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ClipboardDocumentIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ClipboardDocumentIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ClipboardIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ClipboardIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClockIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ClockIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ClockIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CloudArrowDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CloudArrowDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 9.75v6.75m0 0-3-3m3 3 3-3m-8.25 6a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CloudArrowDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CloudArrowUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CloudArrowUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CloudArrowUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CloudIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CloudIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.25 15Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CloudIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CodeBracketSquareIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CodeBracketSquareIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M14.25 9.75 16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CodeBracketSquareIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CodeBracketIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CodeBracketIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CodeBracketIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Cog6ToothIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Cog6ToothIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Cog6ToothIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Cog8ToothIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function Cog8ToothIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(Cog8ToothIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CogIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CogIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CogIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CommandLineIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CommandLineIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CommandLineIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ComputerDesktopIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ComputerDesktopIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ComputerDesktopIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CpuChipIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CpuChipIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CpuChipIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CreditCardIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CreditCardIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CreditCardIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CubeTransparentIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CubeTransparentIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m21 7.5-2.25-1.313M21 7.5v2.25m0-2.25-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3 2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CubeTransparentIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CubeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CubeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CubeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyBangladeshiIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CurrencyBangladeshiIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CurrencyBangladeshiIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyDollarIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CurrencyDollarIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CurrencyDollarIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyEuroIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CurrencyEuroIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CurrencyEuroIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyPoundIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CurrencyPoundIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M14.121 7.629A3 3 0 0 0 9.017 9.43c-.023.212-.002.425.028.636l.506 3.541a4.5 4.5 0 0 1-.43 2.65L9 16.5l1.539-.513a2.25 2.25 0 0 1 1.422 0l.655.218a2.25 2.25 0 0 0 1.718-.122L15 15.75M8.25 12H12m9 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CurrencyPoundIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyRupeeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CurrencyRupeeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CurrencyRupeeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyYenIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CurrencyYenIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m9 7.5 3 4.5m0 0 3-4.5M12 12v5.25M15 12H9m6 3H9m12-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CurrencyYenIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CursorArrowRaysIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CursorArrowRaysIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CursorArrowRaysIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CursorArrowRippleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function CursorArrowRippleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672Zm-7.518-.267A8.25 8.25 0 1 1 20.25 10.5M8.288 14.212A5.25 5.25 0 1 1 17.25 10.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(CursorArrowRippleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DevicePhoneMobileIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DevicePhoneMobileIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DevicePhoneMobileIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DeviceTabletIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DeviceTabletIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.5 19.5h3m-6.75 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-15a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15a2.25 2.25 0 0 0 2.25 2.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DeviceTabletIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DivideIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DivideIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M4.499 11.998h15m-7.5-6.75h.008v.008h-.008v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM12 18.751h.007v.007H12v-.007Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DivideIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentArrowDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentArrowDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentArrowDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentArrowUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentArrowUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentArrowUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentChartBarIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentChartBarIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentChartBarIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCheckIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentCheckIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentCheckIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyBangladeshiIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentCurrencyBangladeshiIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 8.25.22-.22a.75.75 0 0 1 1.28.53v6.441c0 .472.214.934.64 1.137a3.75 3.75 0 0 0 4.994-1.77c.205-.428-.152-.868-.627-.868h-.507m-6-2.25h7.5M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentCurrencyBangladeshiIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyDollarIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentCurrencyDollarIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v7.5m2.25-6.466a9.016 9.016 0 0 0-3.461-.203c-.536.072-.974.478-1.021 1.017a4.559 4.559 0 0 0-.018.402c0 .464.336.844.775.994l2.95 1.012c.44.15.775.53.775.994 0 .136-.006.27-.018.402-.047.539-.485.945-1.021 1.017a9.077 9.077 0 0 1-3.461-.203M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentCurrencyDollarIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyEuroIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentCurrencyEuroIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 11.625h4.5m-4.5 2.25h4.5m2.121 1.527c-1.171 1.464-3.07 1.464-4.242 0-1.172-1.465-1.172-3.84 0-5.304 1.171-1.464 3.07-1.464 4.242 0M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentCurrencyEuroIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyPoundIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentCurrencyPoundIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.621 9.879a3 3 0 0 0-5.02 2.897l.164.609a4.5 4.5 0 0 1-.108 2.676l-.157.439.44-.22a2.863 2.863 0 0 1 2.185-.155c.72.24 1.507.184 2.186-.155L15 18M8.25 15.75H12m-1.5-13.5H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentCurrencyPoundIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyRupeeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentCurrencyRupeeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 9h3.75m-4.5 2.625h4.5M12 18.75 9.75 16.5h.375a2.625 2.625 0 0 0 0-5.25H9.75m.75-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentCurrencyRupeeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyYenIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentCurrencyYenIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m1.5 9 2.25 3m0 0 2.25-3m-2.25 3v4.5M9.75 15h4.5m-4.5 2.25h4.5m-3.75-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentCurrencyYenIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentDuplicateIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentDuplicateIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentDuplicateIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentMagnifyingGlassIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentMagnifyingGlassIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentMagnifyingGlassIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentMinusIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentMinusIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentMinusIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentPlusIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentPlusIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentPlusIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentTextIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentTextIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentTextIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function DocumentIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(DocumentIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EllipsisHorizontalCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EllipsisHorizontalCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EllipsisHorizontalCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EllipsisHorizontalIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EllipsisHorizontalIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EllipsisHorizontalIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EllipsisVerticalIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EllipsisVerticalIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EllipsisVerticalIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EnvelopeOpenIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EnvelopeOpenIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 0 0 1.183 1.981l6.478 3.488m8.839 2.51-4.66-2.51m0 0-1.023-.55a2.25 2.25 0 0 0-2.134 0l-1.022.55m0 0-4.661 2.51m16.5 1.615a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V8.844a2.25 2.25 0 0 1 1.183-1.981l7.5-4.039a2.25 2.25 0 0 1 2.134 0l7.5 4.039a2.25 2.25 0 0 1 1.183 1.98V19.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EnvelopeOpenIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EnvelopeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EnvelopeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EnvelopeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EqualsIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EqualsIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M4.499 8.248h15m-15 7.501h15"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EqualsIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ExclamationCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ExclamationCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ExclamationCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ExclamationTriangleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ExclamationTriangleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ExclamationTriangleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EyeDropperIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EyeDropperIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m15 11.25 1.5 1.5.75-.75V8.758l2.276-.61a3 3 0 1 0-3.675-3.675l-.61 2.277H12l-.75.75 1.5 1.5M15 11.25l-8.47 8.47c-.34.34-.8.53-1.28.53s-.94.19-1.28.53l-.97.97-.75-.75.97-.97c.34-.34.53-.8.53-1.28s.19-.94.53-1.28L12.75 9M15 11.25 12.75 9"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EyeDropperIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EyeSlashIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EyeSlashIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EyeSlashIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EyeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function EyeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(EyeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FaceFrownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FaceFrownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FaceFrownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FaceSmileIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FaceSmileIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FaceSmileIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FilmIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FilmIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0 1 18 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 7.746 6 7.125v-1.5M4.875 8.25C5.496 8.25 6 8.754 6 9.375v1.5m0-5.25v5.25m0-5.25C6 5.004 6.504 4.5 7.125 4.5h9.75c.621 0 1.125.504 1.125 1.125m1.125 2.625h1.5m-1.5 0A1.125 1.125 0 0 1 18 7.125v-1.5m1.125 2.625c-.621 0-1.125.504-1.125 1.125v1.5m2.625-2.625c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125M18 5.625v5.25M7.125 12h9.75m-9.75 0A1.125 1.125 0 0 1 6 10.875M7.125 12C6.504 12 6 12.504 6 13.125m0-2.25C6 11.496 5.496 12 4.875 12M18 10.875c0 .621-.504 1.125-1.125 1.125M18 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m-12 5.25v-5.25m0 5.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125m-12 0v-1.5c0-.621-.504-1.125-1.125-1.125M18 18.375v-5.25m0 5.25v-1.5c0-.621.504-1.125 1.125-1.125M18 13.125v1.5c0 .621.504 1.125 1.125 1.125M18 13.125c0-.621.504-1.125 1.125-1.125M6 13.125v1.5c0 .621-.504 1.125-1.125 1.125M6 13.125C6 12.504 5.496 12 4.875 12m-1.5 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M19.125 12h1.5m0 0c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h1.5m14.25 0h1.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FilmIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FingerPrintIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FingerPrintIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FingerPrintIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FireIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FireIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FireIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FlagIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FlagIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FlagIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderArrowDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FolderArrowDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FolderArrowDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderMinusIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FolderMinusIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 13.5H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FolderMinusIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderOpenIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FolderOpenIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FolderOpenIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderPlusIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FolderPlusIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FolderPlusIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FolderIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FolderIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ForwardIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ForwardIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M3 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061A1.125 1.125 0 0 1 3 16.811V8.69ZM12.75 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061a1.125 1.125 0 0 1-1.683-.977V8.69Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ForwardIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FunnelIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function FunnelIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(FunnelIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GifIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function GifIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12.75 8.25v7.5m6-7.5h-3V12m0 0v3.75m0-3.75H18M9.75 9.348c-1.03-1.464-2.698-1.464-3.728 0-1.03 1.465-1.03 3.84 0 5.304 1.03 1.464 2.699 1.464 3.728 0V12h-1.5M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(GifIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GiftTopIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function GiftTopIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 3.75v16.5M2.25 12h19.5M6.375 17.25a4.875 4.875 0 0 0 4.875-4.875V12m6.375 5.25a4.875 4.875 0 0 1-4.875-4.875V12m-9 8.25h16.5a1.5 1.5 0 0 0 1.5-1.5V5.25a1.5 1.5 0 0 0-1.5-1.5H3.75a1.5 1.5 0 0 0-1.5 1.5v13.5a1.5 1.5 0 0 0 1.5 1.5Zm12.621-9.44c-1.409 1.41-4.242 1.061-4.242 1.061s-.349-2.833 1.06-4.242a2.25 2.25 0 0 1 3.182 3.182ZM10.773 7.63c1.409 1.409 1.06 4.242 1.06 4.242S9 12.22 7.592 10.811a2.25 2.25 0 1 1 3.182-3.182Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(GiftTopIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GiftIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function GiftIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(GiftIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeAltIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function GlobeAltIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(GlobeAltIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeAmericasIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function GlobeAmericasIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m6.115 5.19.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(GlobeAmericasIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeAsiaAustraliaIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function GlobeAsiaAustraliaIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 0 1-1.161.886l-.143.048a1.107 1.107 0 0 0-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 0 1-1.652.928l-.679-.906a1.125 1.125 0 0 0-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 0 0-8.862 12.872M12.75 3.031a9 9 0 0 1 6.69 14.036m0 0-.177-.529A2.25 2.25 0 0 0 17.128 15H16.5l-.324-.324a1.453 1.453 0 0 0-2.328.377l-.036.073a1.586 1.586 0 0 1-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 0 1-5.276 3.67m0 0a9 9 0 0 1-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(GlobeAsiaAustraliaIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeEuropeAfricaIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function GlobeEuropeAfricaIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m20.893 13.393-1.135-1.135a2.252 2.252 0 0 1-.421-.585l-1.08-2.16a.414.414 0 0 0-.663-.107.827.827 0 0 1-.812.21l-1.273-.363a.89.89 0 0 0-.738 1.595l.587.39c.59.395.674 1.23.172 1.732l-.2.2c-.212.212-.33.498-.33.796v.41c0 .409-.11.809-.32 1.158l-1.315 2.191a2.11 2.11 0 0 1-1.81 1.025 1.055 1.055 0 0 1-1.055-1.055v-1.172c0-.92-.56-1.747-1.414-2.089l-.655-.261a2.25 2.25 0 0 1-1.383-2.46l.007-.042a2.25 2.25 0 0 1 .29-.787l.09-.15a2.25 2.25 0 0 1 2.37-1.048l1.178.236a1.125 1.125 0 0 0 1.302-.795l.208-.73a1.125 1.125 0 0 0-.578-1.315l-.665-.332-.091.091a2.25 2.25 0 0 1-1.591.659h-.18c-.249 0-.487.1-.662.274a.931.931 0 0 1-1.458-1.137l1.411-2.353a2.25 2.25 0 0 0 .286-.76m11.928 9.869A9 9 0 0 0 8.965 3.525m11.928 9.868A9 9 0 1 1 8.965 3.525"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(GlobeEuropeAfricaIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/H1Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function H1Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.243 4.493v7.5m0 0v7.502m0-7.501h10.5m0-7.5v7.5m0 0v7.501m4.501-8.627 2.25-1.5v10.126m0 0h-2.25m2.25 0h2.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(H1Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/H2Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function H2Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21.75 19.5H16.5v-1.609a2.25 2.25 0 0 1 1.244-2.012l2.89-1.445c.651-.326 1.116-.955 1.116-1.683 0-.498-.04-.987-.118-1.463-.135-.825-.835-1.422-1.668-1.489a15.202 15.202 0 0 0-3.464.12M2.243 4.492v7.5m0 0v7.502m0-7.501h10.5m0-7.5v7.5m0 0v7.501"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(H2Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/H3Icon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function H3Icon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M20.905 14.626a4.52 4.52 0 0 1 .738 3.603c-.154.695-.794 1.143-1.504 1.208a15.194 15.194 0 0 1-3.639-.104m4.405-4.707a4.52 4.52 0 0 0 .738-3.603c-.154-.696-.794-1.144-1.504-1.209a15.19 15.19 0 0 0-3.639.104m4.405 4.708H18M2.243 4.493v7.5m0 0v7.502m0-7.501h10.5m0-7.5v7.5m0 0v7.501"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(H3Icon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HandRaisedIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function HandRaisedIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.05 4.575a1.575 1.575 0 1 0-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 0 1 3.15 0v1.5m-3.15 0 .075 5.925m3.075.75V4.575m0 0a1.575 1.575 0 0 1 3.15 0V15M6.9 7.575a1.575 1.575 0 1 0-3.15 0v8.175a6.75 6.75 0 0 0 6.75 6.75h2.018a5.25 5.25 0 0 0 3.712-1.538l1.732-1.732a5.25 5.25 0 0 0 1.538-3.712l.003-2.024a.668.668 0 0 1 .198-.471 1.575 1.575 0 1 0-2.228-2.228 3.818 3.818 0 0 0-1.12 2.687M6.9 7.575V12m6.27 4.318A4.49 4.49 0 0 1 16.35 15m.002 0h-.002"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(HandRaisedIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HandThumbDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function HandThumbDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M7.498 15.25H4.372c-1.026 0-1.945-.694-2.054-1.715a12.137 12.137 0 0 1-.068-1.285c0-2.848.992-5.464 2.649-7.521C5.287 4.247 5.886 4 6.504 4h4.016a4.5 4.5 0 0 1 1.423.23l3.114 1.04a4.5 4.5 0 0 0 1.423.23h1.294M7.498 15.25c.618 0 .991.724.725 1.282A7.471 7.471 0 0 0 7.5 19.75 2.25 2.25 0 0 0 9.75 22a.75.75 0 0 0 .75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 0 0 2.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384m-10.253 1.5H9.7m8.075-9.75c.01.05.027.1.05.148.593 1.2.925 2.55.925 3.977 0 1.487-.36 2.89-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398-.306.774-1.086 1.227-1.918 1.227h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 0 0 .303-.54"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(HandThumbDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HandThumbUpIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function HandThumbUpIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(HandThumbUpIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HashtagIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function HashtagIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(HashtagIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HeartIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function HeartIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(HeartIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HomeModernIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function HomeModernIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(HomeModernIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HomeIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function HomeIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(HomeIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/IdentificationIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function IdentificationIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(IdentificationIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InboxArrowDownIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function InboxArrowDownIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(InboxArrowDownIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InboxStackIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function InboxStackIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m7.875 14.25 1.214 1.942a2.25 2.25 0 0 0 1.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 0 1 1.872 1.002l.164.246a2.25 2.25 0 0 0 1.872 1.002h2.092a2.25 2.25 0 0 0 1.872-1.002l.164-.246A2.25 2.25 0 0 1 16.954 9h4.636M2.41 9a2.25 2.25 0 0 0-.16.832V12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 0 1 .382-.632l3.285-3.832a2.25 2.25 0 0 1 1.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0 0 21.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 0 0 2.25 2.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(InboxStackIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InboxIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function InboxIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(InboxIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InformationCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function InformationCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(InformationCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ItalicIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ItalicIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M5.248 20.246H9.05m0 0h3.696m-3.696 0 5.893-16.502m0 0h-3.697m3.697 0h3.803"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ItalicIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/KeyIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function KeyIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(KeyIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LanguageIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function LanguageIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(LanguageIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LifebuoyIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function LifebuoyIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M16.712 4.33a9.027 9.027 0 0 1 1.652 1.306c.51.51.944 1.064 1.306 1.652M16.712 4.33l-3.448 4.138m3.448-4.138a9.014 9.014 0 0 0-9.424 0M19.67 7.288l-4.138 3.448m4.138-3.448a9.014 9.014 0 0 1 0 9.424m-4.138-5.976a3.736 3.736 0 0 0-.88-1.388 3.737 3.737 0 0 0-1.388-.88m2.268 2.268a3.765 3.765 0 0 1 0 2.528m-2.268-4.796a3.765 3.765 0 0 0-2.528 0m4.796 4.796c-.181.506-.475.982-.88 1.388a3.736 3.736 0 0 1-1.388.88m2.268-2.268 4.138 3.448m0 0a9.027 9.027 0 0 1-1.306 1.652c-.51.51-1.064.944-1.652 1.306m0 0-3.448-4.138m3.448 4.138a9.014 9.014 0 0 1-9.424 0m5.976-4.138a3.765 3.765 0 0 1-2.528 0m0 0a3.736 3.736 0 0 1-1.388-.88 3.737 3.737 0 0 1-.88-1.388m2.268 2.268L7.288 19.67m0 0a9.024 9.024 0 0 1-1.652-1.306 9.027 9.027 0 0 1-1.306-1.652m0 0 4.138-3.448M4.33 16.712a9.014 9.014 0 0 1 0-9.424m4.138 5.976a3.765 3.765 0 0 1 0-2.528m0 0c.181-.506.475-.982.88-1.388a3.736 3.736 0 0 1 1.388-.88m-2.268 2.268L4.33 7.288m6.406 1.18L7.288 4.33m0 0a9.024 9.024 0 0 0-1.652 1.306A9.025 9.025 0 0 0 4.33 7.288"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(LifebuoyIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LightBulbIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function LightBulbIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(LightBulbIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LinkSlashIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function LinkSlashIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M13.181 8.68a4.503 4.503 0 0 1 1.903 6.405m-9.768-2.782L3.56 14.06a4.5 4.5 0 0 0 6.364 6.365l3.129-3.129m5.614-5.615 1.757-1.757a4.5 4.5 0 0 0-6.364-6.365l-4.5 4.5c-.258.26-.479.541-.661.84m1.903 6.405a4.495 4.495 0 0 1-1.242-.88 4.483 4.483 0 0 1-1.062-1.683m6.587 2.345 5.907 5.907m-5.907-5.907L8.898 8.898M2.991 2.99 8.898 8.9"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(LinkSlashIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LinkIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function LinkIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(LinkIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ListBulletIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function ListBulletIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(ListBulletIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LockClosedIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function LockClosedIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(LockClosedIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LockOpenIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function LockOpenIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(LockOpenIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MagnifyingGlassCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m15.75 15.75-2.489-2.489m0 0a3.375 3.375 0 1 0-4.773-4.773 3.375 3.375 0 0 0 4.774 4.774ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MagnifyingGlassCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassMinusIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MagnifyingGlassMinusIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MagnifyingGlassMinusIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassPlusIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MagnifyingGlassPlusIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MagnifyingGlassPlusIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MagnifyingGlassIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MagnifyingGlassIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MapPinIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MapPinIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+    }), /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MapPinIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MapIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MapIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MapIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MegaphoneIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MegaphoneIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 0 8.835-2.535m0 0A23.74 23.74 0 0 0 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 0 1 0 3.46"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MegaphoneIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MicrophoneIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MicrophoneIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MicrophoneIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MinusCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MinusCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MinusCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MinusSmallIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+/** @deprecated */ function MinusSmallIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M18 12H6"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MinusSmallIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MinusIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MinusIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M5 12h14"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MinusIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MoonIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MoonIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MoonIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MusicalNoteIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function MusicalNoteIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(MusicalNoteIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/NewspaperIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function NewspaperIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(NewspaperIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/NoSymbolIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function NoSymbolIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(NoSymbolIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/NumberedListIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function NumberedListIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M8.242 5.992h12m-12 6.003H20.24m-12 5.999h12M4.117 7.495v-3.75H2.99m1.125 3.75H2.99m1.125 0H5.24m-1.92 2.577a1.125 1.125 0 1 1 1.591 1.59l-1.83 1.83h2.16M2.99 15.745h1.125a1.125 1.125 0 0 1 0 2.25H3.74m0-.002h.375a1.125 1.125 0 0 1 0 2.25H2.99"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(NumberedListIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PaintBrushIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function PaintBrushIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(PaintBrushIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PaperAirplaneIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function PaperAirplaneIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(PaperAirplaneIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PaperClipIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function PaperClipIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(PaperClipIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PauseCircleIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function PauseCircleIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(PauseCircleIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PauseIcon.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+const React = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function PauseIcon({ title, titleId, ...props }, svgRef) {
+    return /*#__PURE__*/ React.createElement("svg", Object.assign({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 1.5,
+        stroke: "currentColor",
+        "aria-hidden": "true",
+        "data-slot": "icon",
+        ref: svgRef,
+        "aria-labelledby": titleId
+    }, props), title ? /*#__PURE__*/ React.createElement("title", {
+        id: titleId
+    }, title) : null, /*#__PURE__*/ React.createElement("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        d: "M15.75 5.25v13.5m-7.5-13.5v13.5"
+    }));
+}
+const ForwardRef = /*#__PURE__*/ React.forwardRef(PauseIcon);
+module.exports = ForwardRef;
+}),
+"[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/index.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+module.exports.AcademicCapIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AcademicCapIcon.js [app-client] (ecmascript)");
+module.exports.AdjustmentsHorizontalIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AdjustmentsHorizontalIcon.js [app-client] (ecmascript)");
+module.exports.AdjustmentsVerticalIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AdjustmentsVerticalIcon.js [app-client] (ecmascript)");
+module.exports.ArchiveBoxArrowDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArchiveBoxArrowDownIcon.js [app-client] (ecmascript)");
+module.exports.ArchiveBoxXMarkIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArchiveBoxXMarkIcon.js [app-client] (ecmascript)");
+module.exports.ArchiveBoxIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArchiveBoxIcon.js [app-client] (ecmascript)");
+module.exports.ArrowDownCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownCircleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowDownLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowDownOnSquareStackIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownOnSquareStackIcon.js [app-client] (ecmascript)");
+module.exports.ArrowDownOnSquareIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownOnSquareIcon.js [app-client] (ecmascript)");
+module.exports.ArrowDownRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowDownTrayIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownTrayIcon.js [app-client] (ecmascript)");
+module.exports.ArrowDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowDownIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLeftCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftCircleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLeftEndOnRectangleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftEndOnRectangleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLeftOnRectangleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftOnRectangleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLeftStartOnRectangleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftStartOnRectangleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLongDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongDownIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLongLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLongRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowLongUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowLongUpIcon.js [app-client] (ecmascript)");
+module.exports.ArrowPathRoundedSquareIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowPathRoundedSquareIcon.js [app-client] (ecmascript)");
+module.exports.ArrowPathIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowPathIcon.js [app-client] (ecmascript)");
+module.exports.ArrowRightCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightCircleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowRightEndOnRectangleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightEndOnRectangleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowRightOnRectangleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightOnRectangleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowRightStartOnRectangleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightStartOnRectangleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowSmallDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallDownIcon.js [app-client] (ecmascript)");
+module.exports.ArrowSmallLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowSmallRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowSmallUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowSmallUpIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTopRightOnSquareIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTopRightOnSquareIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTrendingDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTrendingDownIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTrendingUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTrendingUpIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnDownLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnDownLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnDownRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnDownRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnLeftDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnLeftDownIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnLeftUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnLeftUpIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnRightDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnRightDownIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnRightUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnRightUpIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnUpLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnUpLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowTurnUpRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowTurnUpRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUpCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpCircleIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUpLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUpOnSquareStackIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpOnSquareStackIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUpOnSquareIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpOnSquareIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUpRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUpTrayIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpTrayIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUpIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUturnDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnDownIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUturnLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUturnRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnRightIcon.js [app-client] (ecmascript)");
+module.exports.ArrowUturnUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowUturnUpIcon.js [app-client] (ecmascript)");
+module.exports.ArrowsPointingInIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsPointingInIcon.js [app-client] (ecmascript)");
+module.exports.ArrowsPointingOutIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsPointingOutIcon.js [app-client] (ecmascript)");
+module.exports.ArrowsRightLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsRightLeftIcon.js [app-client] (ecmascript)");
+module.exports.ArrowsUpDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ArrowsUpDownIcon.js [app-client] (ecmascript)");
+module.exports.AtSymbolIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/AtSymbolIcon.js [app-client] (ecmascript)");
+module.exports.BackspaceIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BackspaceIcon.js [app-client] (ecmascript)");
+module.exports.BackwardIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BackwardIcon.js [app-client] (ecmascript)");
+module.exports.BanknotesIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BanknotesIcon.js [app-client] (ecmascript)");
+module.exports.Bars2Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars2Icon.js [app-client] (ecmascript)");
+module.exports.Bars3BottomLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3BottomLeftIcon.js [app-client] (ecmascript)");
+module.exports.Bars3BottomRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3BottomRightIcon.js [app-client] (ecmascript)");
+module.exports.Bars3CenterLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3CenterLeftIcon.js [app-client] (ecmascript)");
+module.exports.Bars3Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars3Icon.js [app-client] (ecmascript)");
+module.exports.Bars4Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Bars4Icon.js [app-client] (ecmascript)");
+module.exports.BarsArrowDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BarsArrowDownIcon.js [app-client] (ecmascript)");
+module.exports.BarsArrowUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BarsArrowUpIcon.js [app-client] (ecmascript)");
+module.exports.Battery0Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Battery0Icon.js [app-client] (ecmascript)");
+module.exports.Battery100Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Battery100Icon.js [app-client] (ecmascript)");
+module.exports.Battery50Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Battery50Icon.js [app-client] (ecmascript)");
+module.exports.BeakerIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BeakerIcon.js [app-client] (ecmascript)");
+module.exports.BellAlertIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellAlertIcon.js [app-client] (ecmascript)");
+module.exports.BellSlashIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellSlashIcon.js [app-client] (ecmascript)");
+module.exports.BellSnoozeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellSnoozeIcon.js [app-client] (ecmascript)");
+module.exports.BellIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BellIcon.js [app-client] (ecmascript)");
+module.exports.BoldIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BoldIcon.js [app-client] (ecmascript)");
+module.exports.BoltSlashIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BoltSlashIcon.js [app-client] (ecmascript)");
+module.exports.BoltIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BoltIcon.js [app-client] (ecmascript)");
+module.exports.BookOpenIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookOpenIcon.js [app-client] (ecmascript)");
+module.exports.BookmarkSlashIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookmarkSlashIcon.js [app-client] (ecmascript)");
+module.exports.BookmarkSquareIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookmarkSquareIcon.js [app-client] (ecmascript)");
+module.exports.BookmarkIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BookmarkIcon.js [app-client] (ecmascript)");
+module.exports.BriefcaseIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BriefcaseIcon.js [app-client] (ecmascript)");
+module.exports.BugAntIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BugAntIcon.js [app-client] (ecmascript)");
+module.exports.BuildingLibraryIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingLibraryIcon.js [app-client] (ecmascript)");
+module.exports.BuildingOffice2Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingOffice2Icon.js [app-client] (ecmascript)");
+module.exports.BuildingOfficeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingOfficeIcon.js [app-client] (ecmascript)");
+module.exports.BuildingStorefrontIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/BuildingStorefrontIcon.js [app-client] (ecmascript)");
+module.exports.CakeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CakeIcon.js [app-client] (ecmascript)");
+module.exports.CalculatorIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalculatorIcon.js [app-client] (ecmascript)");
+module.exports.CalendarDateRangeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalendarDateRangeIcon.js [app-client] (ecmascript)");
+module.exports.CalendarDaysIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalendarDaysIcon.js [app-client] (ecmascript)");
+module.exports.CalendarIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CalendarIcon.js [app-client] (ecmascript)");
+module.exports.CameraIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CameraIcon.js [app-client] (ecmascript)");
+module.exports.ChartBarSquareIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChartBarSquareIcon.js [app-client] (ecmascript)");
+module.exports.ChartBarIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChartBarIcon.js [app-client] (ecmascript)");
+module.exports.ChartPieIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChartPieIcon.js [app-client] (ecmascript)");
+module.exports.ChatBubbleBottomCenterTextIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleBottomCenterTextIcon.js [app-client] (ecmascript)");
+module.exports.ChatBubbleBottomCenterIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleBottomCenterIcon.js [app-client] (ecmascript)");
+module.exports.ChatBubbleLeftEllipsisIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleLeftEllipsisIcon.js [app-client] (ecmascript)");
+module.exports.ChatBubbleLeftRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleLeftRightIcon.js [app-client] (ecmascript)");
+module.exports.ChatBubbleLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleLeftIcon.js [app-client] (ecmascript)");
+module.exports.ChatBubbleOvalLeftEllipsisIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleOvalLeftEllipsisIcon.js [app-client] (ecmascript)");
+module.exports.ChatBubbleOvalLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChatBubbleOvalLeftIcon.js [app-client] (ecmascript)");
+module.exports.CheckBadgeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CheckBadgeIcon.js [app-client] (ecmascript)");
+module.exports.CheckCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CheckCircleIcon.js [app-client] (ecmascript)");
+module.exports.CheckIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CheckIcon.js [app-client] (ecmascript)");
+module.exports.ChevronDoubleDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleDownIcon.js [app-client] (ecmascript)");
+module.exports.ChevronDoubleLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleLeftIcon.js [app-client] (ecmascript)");
+module.exports.ChevronDoubleRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleRightIcon.js [app-client] (ecmascript)");
+module.exports.ChevronDoubleUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDoubleUpIcon.js [app-client] (ecmascript)");
+module.exports.ChevronDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronDownIcon.js [app-client] (ecmascript)");
+module.exports.ChevronLeftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronLeftIcon.js [app-client] (ecmascript)");
+module.exports.ChevronRightIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronRightIcon.js [app-client] (ecmascript)");
+module.exports.ChevronUpDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronUpDownIcon.js [app-client] (ecmascript)");
+module.exports.ChevronUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ChevronUpIcon.js [app-client] (ecmascript)");
+module.exports.CircleStackIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CircleStackIcon.js [app-client] (ecmascript)");
+module.exports.ClipboardDocumentCheckIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardDocumentCheckIcon.js [app-client] (ecmascript)");
+module.exports.ClipboardDocumentListIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardDocumentListIcon.js [app-client] (ecmascript)");
+module.exports.ClipboardDocumentIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardDocumentIcon.js [app-client] (ecmascript)");
+module.exports.ClipboardIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClipboardIcon.js [app-client] (ecmascript)");
+module.exports.ClockIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ClockIcon.js [app-client] (ecmascript)");
+module.exports.CloudArrowDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CloudArrowDownIcon.js [app-client] (ecmascript)");
+module.exports.CloudArrowUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CloudArrowUpIcon.js [app-client] (ecmascript)");
+module.exports.CloudIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CloudIcon.js [app-client] (ecmascript)");
+module.exports.CodeBracketSquareIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CodeBracketSquareIcon.js [app-client] (ecmascript)");
+module.exports.CodeBracketIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CodeBracketIcon.js [app-client] (ecmascript)");
+module.exports.Cog6ToothIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Cog6ToothIcon.js [app-client] (ecmascript)");
+module.exports.Cog8ToothIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/Cog8ToothIcon.js [app-client] (ecmascript)");
+module.exports.CogIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CogIcon.js [app-client] (ecmascript)");
+module.exports.CommandLineIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CommandLineIcon.js [app-client] (ecmascript)");
+module.exports.ComputerDesktopIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ComputerDesktopIcon.js [app-client] (ecmascript)");
+module.exports.CpuChipIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CpuChipIcon.js [app-client] (ecmascript)");
+module.exports.CreditCardIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CreditCardIcon.js [app-client] (ecmascript)");
+module.exports.CubeTransparentIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CubeTransparentIcon.js [app-client] (ecmascript)");
+module.exports.CubeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CubeIcon.js [app-client] (ecmascript)");
+module.exports.CurrencyBangladeshiIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyBangladeshiIcon.js [app-client] (ecmascript)");
+module.exports.CurrencyDollarIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyDollarIcon.js [app-client] (ecmascript)");
+module.exports.CurrencyEuroIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyEuroIcon.js [app-client] (ecmascript)");
+module.exports.CurrencyPoundIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyPoundIcon.js [app-client] (ecmascript)");
+module.exports.CurrencyRupeeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyRupeeIcon.js [app-client] (ecmascript)");
+module.exports.CurrencyYenIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CurrencyYenIcon.js [app-client] (ecmascript)");
+module.exports.CursorArrowRaysIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CursorArrowRaysIcon.js [app-client] (ecmascript)");
+module.exports.CursorArrowRippleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/CursorArrowRippleIcon.js [app-client] (ecmascript)");
+module.exports.DevicePhoneMobileIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DevicePhoneMobileIcon.js [app-client] (ecmascript)");
+module.exports.DeviceTabletIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DeviceTabletIcon.js [app-client] (ecmascript)");
+module.exports.DivideIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DivideIcon.js [app-client] (ecmascript)");
+module.exports.DocumentArrowDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentArrowDownIcon.js [app-client] (ecmascript)");
+module.exports.DocumentArrowUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentArrowUpIcon.js [app-client] (ecmascript)");
+module.exports.DocumentChartBarIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentChartBarIcon.js [app-client] (ecmascript)");
+module.exports.DocumentCheckIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCheckIcon.js [app-client] (ecmascript)");
+module.exports.DocumentCurrencyBangladeshiIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyBangladeshiIcon.js [app-client] (ecmascript)");
+module.exports.DocumentCurrencyDollarIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyDollarIcon.js [app-client] (ecmascript)");
+module.exports.DocumentCurrencyEuroIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyEuroIcon.js [app-client] (ecmascript)");
+module.exports.DocumentCurrencyPoundIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyPoundIcon.js [app-client] (ecmascript)");
+module.exports.DocumentCurrencyRupeeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyRupeeIcon.js [app-client] (ecmascript)");
+module.exports.DocumentCurrencyYenIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentCurrencyYenIcon.js [app-client] (ecmascript)");
+module.exports.DocumentDuplicateIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentDuplicateIcon.js [app-client] (ecmascript)");
+module.exports.DocumentMagnifyingGlassIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentMagnifyingGlassIcon.js [app-client] (ecmascript)");
+module.exports.DocumentMinusIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentMinusIcon.js [app-client] (ecmascript)");
+module.exports.DocumentPlusIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentPlusIcon.js [app-client] (ecmascript)");
+module.exports.DocumentTextIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentTextIcon.js [app-client] (ecmascript)");
+module.exports.DocumentIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/DocumentIcon.js [app-client] (ecmascript)");
+module.exports.EllipsisHorizontalCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EllipsisHorizontalCircleIcon.js [app-client] (ecmascript)");
+module.exports.EllipsisHorizontalIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EllipsisHorizontalIcon.js [app-client] (ecmascript)");
+module.exports.EllipsisVerticalIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EllipsisVerticalIcon.js [app-client] (ecmascript)");
+module.exports.EnvelopeOpenIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EnvelopeOpenIcon.js [app-client] (ecmascript)");
+module.exports.EnvelopeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EnvelopeIcon.js [app-client] (ecmascript)");
+module.exports.EqualsIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EqualsIcon.js [app-client] (ecmascript)");
+module.exports.ExclamationCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ExclamationCircleIcon.js [app-client] (ecmascript)");
+module.exports.ExclamationTriangleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ExclamationTriangleIcon.js [app-client] (ecmascript)");
+module.exports.EyeDropperIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EyeDropperIcon.js [app-client] (ecmascript)");
+module.exports.EyeSlashIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EyeSlashIcon.js [app-client] (ecmascript)");
+module.exports.EyeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/EyeIcon.js [app-client] (ecmascript)");
+module.exports.FaceFrownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FaceFrownIcon.js [app-client] (ecmascript)");
+module.exports.FaceSmileIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FaceSmileIcon.js [app-client] (ecmascript)");
+module.exports.FilmIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FilmIcon.js [app-client] (ecmascript)");
+module.exports.FingerPrintIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FingerPrintIcon.js [app-client] (ecmascript)");
+module.exports.FireIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FireIcon.js [app-client] (ecmascript)");
+module.exports.FlagIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FlagIcon.js [app-client] (ecmascript)");
+module.exports.FolderArrowDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderArrowDownIcon.js [app-client] (ecmascript)");
+module.exports.FolderMinusIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderMinusIcon.js [app-client] (ecmascript)");
+module.exports.FolderOpenIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderOpenIcon.js [app-client] (ecmascript)");
+module.exports.FolderPlusIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderPlusIcon.js [app-client] (ecmascript)");
+module.exports.FolderIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FolderIcon.js [app-client] (ecmascript)");
+module.exports.ForwardIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ForwardIcon.js [app-client] (ecmascript)");
+module.exports.FunnelIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/FunnelIcon.js [app-client] (ecmascript)");
+module.exports.GifIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GifIcon.js [app-client] (ecmascript)");
+module.exports.GiftTopIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GiftTopIcon.js [app-client] (ecmascript)");
+module.exports.GiftIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GiftIcon.js [app-client] (ecmascript)");
+module.exports.GlobeAltIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeAltIcon.js [app-client] (ecmascript)");
+module.exports.GlobeAmericasIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeAmericasIcon.js [app-client] (ecmascript)");
+module.exports.GlobeAsiaAustraliaIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeAsiaAustraliaIcon.js [app-client] (ecmascript)");
+module.exports.GlobeEuropeAfricaIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/GlobeEuropeAfricaIcon.js [app-client] (ecmascript)");
+module.exports.H1Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/H1Icon.js [app-client] (ecmascript)");
+module.exports.H2Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/H2Icon.js [app-client] (ecmascript)");
+module.exports.H3Icon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/H3Icon.js [app-client] (ecmascript)");
+module.exports.HandRaisedIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HandRaisedIcon.js [app-client] (ecmascript)");
+module.exports.HandThumbDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HandThumbDownIcon.js [app-client] (ecmascript)");
+module.exports.HandThumbUpIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HandThumbUpIcon.js [app-client] (ecmascript)");
+module.exports.HashtagIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HashtagIcon.js [app-client] (ecmascript)");
+module.exports.HeartIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HeartIcon.js [app-client] (ecmascript)");
+module.exports.HomeModernIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HomeModernIcon.js [app-client] (ecmascript)");
+module.exports.HomeIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/HomeIcon.js [app-client] (ecmascript)");
+module.exports.IdentificationIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/IdentificationIcon.js [app-client] (ecmascript)");
+module.exports.InboxArrowDownIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InboxArrowDownIcon.js [app-client] (ecmascript)");
+module.exports.InboxStackIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InboxStackIcon.js [app-client] (ecmascript)");
+module.exports.InboxIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InboxIcon.js [app-client] (ecmascript)");
+module.exports.InformationCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/InformationCircleIcon.js [app-client] (ecmascript)");
+module.exports.ItalicIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ItalicIcon.js [app-client] (ecmascript)");
+module.exports.KeyIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/KeyIcon.js [app-client] (ecmascript)");
+module.exports.LanguageIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LanguageIcon.js [app-client] (ecmascript)");
+module.exports.LifebuoyIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LifebuoyIcon.js [app-client] (ecmascript)");
+module.exports.LightBulbIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LightBulbIcon.js [app-client] (ecmascript)");
+module.exports.LinkSlashIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LinkSlashIcon.js [app-client] (ecmascript)");
+module.exports.LinkIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LinkIcon.js [app-client] (ecmascript)");
+module.exports.ListBulletIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/ListBulletIcon.js [app-client] (ecmascript)");
+module.exports.LockClosedIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LockClosedIcon.js [app-client] (ecmascript)");
+module.exports.LockOpenIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/LockOpenIcon.js [app-client] (ecmascript)");
+module.exports.MagnifyingGlassCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassCircleIcon.js [app-client] (ecmascript)");
+module.exports.MagnifyingGlassMinusIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassMinusIcon.js [app-client] (ecmascript)");
+module.exports.MagnifyingGlassPlusIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassPlusIcon.js [app-client] (ecmascript)");
+module.exports.MagnifyingGlassIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MagnifyingGlassIcon.js [app-client] (ecmascript)");
+module.exports.MapPinIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MapPinIcon.js [app-client] (ecmascript)");
+module.exports.MapIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MapIcon.js [app-client] (ecmascript)");
+module.exports.MegaphoneIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MegaphoneIcon.js [app-client] (ecmascript)");
+module.exports.MicrophoneIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MicrophoneIcon.js [app-client] (ecmascript)");
+module.exports.MinusCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MinusCircleIcon.js [app-client] (ecmascript)");
+module.exports.MinusSmallIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MinusSmallIcon.js [app-client] (ecmascript)");
+module.exports.MinusIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MinusIcon.js [app-client] (ecmascript)");
+module.exports.MoonIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MoonIcon.js [app-client] (ecmascript)");
+module.exports.MusicalNoteIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/MusicalNoteIcon.js [app-client] (ecmascript)");
+module.exports.NewspaperIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/NewspaperIcon.js [app-client] (ecmascript)");
+module.exports.NoSymbolIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/NoSymbolIcon.js [app-client] (ecmascript)");
+module.exports.NumberedListIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/NumberedListIcon.js [app-client] (ecmascript)");
+module.exports.PaintBrushIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PaintBrushIcon.js [app-client] (ecmascript)");
+module.exports.PaperAirplaneIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PaperAirplaneIcon.js [app-client] (ecmascript)");
+module.exports.PaperClipIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PaperClipIcon.js [app-client] (ecmascript)");
+module.exports.PauseCircleIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PauseCircleIcon.js [app-client] (ecmascript)");
+module.exports.PauseIcon = __turbopack_context__.r("[project]/Desktop/proyectos coding/agro-erp-production-2/node_modules/@heroicons/react/24/outline/PauseIcon.js [app-client] (ecmascript)");
+module.exports.PencilSquareIcon = (()=>{
+    const e = new Error("Cannot find module './PencilSquareIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PencilIcon = (()=>{
+    const e = new Error("Cannot find module './PencilIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PercentBadgeIcon = (()=>{
+    const e = new Error("Cannot find module './PercentBadgeIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PhoneArrowDownLeftIcon = (()=>{
+    const e = new Error("Cannot find module './PhoneArrowDownLeftIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PhoneArrowUpRightIcon = (()=>{
+    const e = new Error("Cannot find module './PhoneArrowUpRightIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PhoneXMarkIcon = (()=>{
+    const e = new Error("Cannot find module './PhoneXMarkIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PhoneIcon = (()=>{
+    const e = new Error("Cannot find module './PhoneIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PhotoIcon = (()=>{
+    const e = new Error("Cannot find module './PhotoIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PlayCircleIcon = (()=>{
+    const e = new Error("Cannot find module './PlayCircleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PlayPauseIcon = (()=>{
+    const e = new Error("Cannot find module './PlayPauseIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PlayIcon = (()=>{
+    const e = new Error("Cannot find module './PlayIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PlusCircleIcon = (()=>{
+    const e = new Error("Cannot find module './PlusCircleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PlusSmallIcon = (()=>{
+    const e = new Error("Cannot find module './PlusSmallIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PlusIcon = (()=>{
+    const e = new Error("Cannot find module './PlusIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PowerIcon = (()=>{
+    const e = new Error("Cannot find module './PowerIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PresentationChartBarIcon = (()=>{
+    const e = new Error("Cannot find module './PresentationChartBarIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PresentationChartLineIcon = (()=>{
+    const e = new Error("Cannot find module './PresentationChartLineIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PrinterIcon = (()=>{
+    const e = new Error("Cannot find module './PrinterIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.PuzzlePieceIcon = (()=>{
+    const e = new Error("Cannot find module './PuzzlePieceIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.QrCodeIcon = (()=>{
+    const e = new Error("Cannot find module './QrCodeIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.QuestionMarkCircleIcon = (()=>{
+    const e = new Error("Cannot find module './QuestionMarkCircleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.QueueListIcon = (()=>{
+    const e = new Error("Cannot find module './QueueListIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.RadioIcon = (()=>{
+    const e = new Error("Cannot find module './RadioIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ReceiptPercentIcon = (()=>{
+    const e = new Error("Cannot find module './ReceiptPercentIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ReceiptRefundIcon = (()=>{
+    const e = new Error("Cannot find module './ReceiptRefundIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.RectangleGroupIcon = (()=>{
+    const e = new Error("Cannot find module './RectangleGroupIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.RectangleStackIcon = (()=>{
+    const e = new Error("Cannot find module './RectangleStackIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.RocketLaunchIcon = (()=>{
+    const e = new Error("Cannot find module './RocketLaunchIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.RssIcon = (()=>{
+    const e = new Error("Cannot find module './RssIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ScaleIcon = (()=>{
+    const e = new Error("Cannot find module './ScaleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ScissorsIcon = (()=>{
+    const e = new Error("Cannot find module './ScissorsIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ServerStackIcon = (()=>{
+    const e = new Error("Cannot find module './ServerStackIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ServerIcon = (()=>{
+    const e = new Error("Cannot find module './ServerIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ShareIcon = (()=>{
+    const e = new Error("Cannot find module './ShareIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ShieldCheckIcon = (()=>{
+    const e = new Error("Cannot find module './ShieldCheckIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ShieldExclamationIcon = (()=>{
+    const e = new Error("Cannot find module './ShieldExclamationIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ShoppingBagIcon = (()=>{
+    const e = new Error("Cannot find module './ShoppingBagIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ShoppingCartIcon = (()=>{
+    const e = new Error("Cannot find module './ShoppingCartIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SignalSlashIcon = (()=>{
+    const e = new Error("Cannot find module './SignalSlashIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SignalIcon = (()=>{
+    const e = new Error("Cannot find module './SignalIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SlashIcon = (()=>{
+    const e = new Error("Cannot find module './SlashIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SparklesIcon = (()=>{
+    const e = new Error("Cannot find module './SparklesIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SpeakerWaveIcon = (()=>{
+    const e = new Error("Cannot find module './SpeakerWaveIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SpeakerXMarkIcon = (()=>{
+    const e = new Error("Cannot find module './SpeakerXMarkIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.Square2StackIcon = (()=>{
+    const e = new Error("Cannot find module './Square2StackIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.Square3Stack3DIcon = (()=>{
+    const e = new Error("Cannot find module './Square3Stack3DIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.Squares2X2Icon = (()=>{
+    const e = new Error("Cannot find module './Squares2X2Icon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SquaresPlusIcon = (()=>{
+    const e = new Error("Cannot find module './SquaresPlusIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.StarIcon = (()=>{
+    const e = new Error("Cannot find module './StarIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.StopCircleIcon = (()=>{
+    const e = new Error("Cannot find module './StopCircleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.StopIcon = (()=>{
+    const e = new Error("Cannot find module './StopIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.StrikethroughIcon = (()=>{
+    const e = new Error("Cannot find module './StrikethroughIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SunIcon = (()=>{
+    const e = new Error("Cannot find module './SunIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.SwatchIcon = (()=>{
+    const e = new Error("Cannot find module './SwatchIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.TableCellsIcon = (()=>{
+    const e = new Error("Cannot find module './TableCellsIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.TagIcon = (()=>{
+    const e = new Error("Cannot find module './TagIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.TicketIcon = (()=>{
+    const e = new Error("Cannot find module './TicketIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.TrashIcon = (()=>{
+    const e = new Error("Cannot find module './TrashIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.TrophyIcon = (()=>{
+    const e = new Error("Cannot find module './TrophyIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.TruckIcon = (()=>{
+    const e = new Error("Cannot find module './TruckIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.TvIcon = (()=>{
+    const e = new Error("Cannot find module './TvIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.UnderlineIcon = (()=>{
+    const e = new Error("Cannot find module './UnderlineIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.UserCircleIcon = (()=>{
+    const e = new Error("Cannot find module './UserCircleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.UserGroupIcon = (()=>{
+    const e = new Error("Cannot find module './UserGroupIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.UserMinusIcon = (()=>{
+    const e = new Error("Cannot find module './UserMinusIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.UserPlusIcon = (()=>{
+    const e = new Error("Cannot find module './UserPlusIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.UserIcon = (()=>{
+    const e = new Error("Cannot find module './UserIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.UsersIcon = (()=>{
+    const e = new Error("Cannot find module './UsersIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.VariableIcon = (()=>{
+    const e = new Error("Cannot find module './VariableIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.VideoCameraSlashIcon = (()=>{
+    const e = new Error("Cannot find module './VideoCameraSlashIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.VideoCameraIcon = (()=>{
+    const e = new Error("Cannot find module './VideoCameraIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ViewColumnsIcon = (()=>{
+    const e = new Error("Cannot find module './ViewColumnsIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.ViewfinderCircleIcon = (()=>{
+    const e = new Error("Cannot find module './ViewfinderCircleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.WalletIcon = (()=>{
+    const e = new Error("Cannot find module './WalletIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.WifiIcon = (()=>{
+    const e = new Error("Cannot find module './WifiIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.WindowIcon = (()=>{
+    const e = new Error("Cannot find module './WindowIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.WrenchScrewdriverIcon = (()=>{
+    const e = new Error("Cannot find module './WrenchScrewdriverIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.WrenchIcon = (()=>{
+    const e = new Error("Cannot find module './WrenchIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.XCircleIcon = (()=>{
+    const e = new Error("Cannot find module './XCircleIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+module.exports.XMarkIcon = (()=>{
+    const e = new Error("Cannot find module './XMarkIcon.js'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+}),
+]);
+
+//# sourceMappingURL=e1421_%40heroicons_react_24_outline_f1ce4c58._.js.map

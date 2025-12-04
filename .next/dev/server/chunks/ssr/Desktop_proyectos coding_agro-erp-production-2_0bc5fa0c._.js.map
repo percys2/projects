@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/percyscastillo/Desktop/proyectos%20coding/agro-erp-production-2/app/layout.jsx"],"sourcesContent":["import \"./globals.css\";\n\nexport const metadata = {\n  title: \"ERP AgroCentro\",\n  description: \"ERP Multitenant AgroCentro Nica\",\n};\n\nexport default function RootLayout({ children }) {\n  return (\n    <html lang=\"es\">\n      <body>{children}</body>\n    </html>\n  );\n}\n"],"names":[],"mappings":";;;;;;;;;AAEO,MAAM,WAAW;IACtB,OAAO;IACP,aAAa;AACf;AAEe,SAAS,WAAW,EAAE,QAAQ,EAAE;IAC7C,qBACE,gTAAC;QAAK,MAAK;kBACT,cAAA,gTAAC;sBAAM;;;;;;;;;;;AAGb"}},
+    {"offset": {"line": 37, "column": 0}, "map": {"version":3,"sources":["file:///Users/percyscastillo/Desktop/proyectos%20coding/agro-erp-production-2/node_modules/next/src/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.ts"],"sourcesContent":["module.exports = (\n  require('../../module.compiled') as typeof import('../../module.compiled')\n).vendored['react-rsc']!.ReactJsxDevRuntime\n"],"names":["module","exports","require","vendored","ReactJsxDevRuntime"],"mappings":"AAAAA,OAAOC,OAAO,GACZC,QAAQ,2KACRC,QAAQ,CAAC,YAAY,CAAEC,kBAAkB","ignoreList":[0]}}]
+}

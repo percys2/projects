@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/percyscastillo/Desktop/proyectos%20coding/agro-erp-production-2/app/page.jsx"],"sourcesContent":["\"use client\";\n\nimport { useEffect } from \"react\";\nimport { useRouter } from \"next/navigation\";\n\nexport default function Home() {\n  const router = useRouter();\n\n  useEffect(() => {\n    router.replace(\"/login\");\n  }, []);\n\n  return null;\n}\n"],"names":[],"mappings":";;;;AAEA;AACA;;AAHA;;;AAKe,SAAS;;IACtB,MAAM,SAAS,IAAA,oNAAS;IAExB,IAAA,4OAAS;0BAAC;YACR,OAAO,OAAO,CAAC;QACjB;yBAAG,EAAE;IAEL,OAAO;AACT;GARwB;;QACP,oNAAS;;;KADF"}},
+    {"offset": {"line": 38, "column": 0}, "map": {"version":3,"sources":["file:///Users/percyscastillo/Desktop/proyectos%20coding/agro-erp-production-2/node_modules/next/navigation.js"],"sourcesContent":["module.exports = require('./dist/client/components/navigation')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0]}}]
+}
