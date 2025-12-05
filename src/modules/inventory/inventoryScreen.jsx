@@ -15,16 +15,15 @@ import KardexDrawer from "../kardex/KardexDrawer";
 export default function InventoryScreen({ orgSlug }) {
   const inv = useInventory(orgSlug);
 
-  /* ============ KARDEX DRAWER ============ */
   const [kardexOpen, setKardexOpen] = useState(false);
   const [kardexProduct, setKardexProduct] = useState(null);
+  const [kardexRefreshKey, setKardexRefreshKey] = useState(0);
 
   const openKardex = (product) => {
     setKardexProduct(product);
     setKardexOpen(true);
   };
 
-  /* ============ ENTRADA ============ */
   const [entryOpen, setEntryOpen] = useState(false);
   const [entryProduct, setEntryProduct] = useState(null);
 
@@ -61,13 +60,13 @@ export default function InventoryScreen({ orgSlug }) {
       }
 
       await inv.loadInventory();
+      setKardexRefreshKey((k) => k + 1);
       setEntryOpen(false);
     } catch (err) {
       alert("Error registrando entrada");
     }
   };
 
-  /* ============ SALIDA ============ */
   const [exitOpen, setExitOpen] = useState(false);
   const [exitProduct, setExitProduct] = useState(null);
 
@@ -100,13 +99,13 @@ export default function InventoryScreen({ orgSlug }) {
       }
 
       await inv.loadInventory();
+      setKardexRefreshKey((k) => k + 1);
       setExitOpen(false);
     } catch (err) {
       alert("Error registrando salida");
     }
   };
 
-  /* ============ TRASLADO ============ */
   const [transferOpen, setTransferOpen] = useState(false);
   const [transferProduct, setTransferProduct] = useState(null);
 
@@ -145,13 +144,13 @@ export default function InventoryScreen({ orgSlug }) {
       }
 
       await inv.loadInventory();
+      setKardexRefreshKey((k) => k + 1);
       setTransferOpen(false);
     } catch (err) {
       alert("Error registrando traslado");
     }
   };
 
-  /* ============ UI ============ */
   return (
     <div className="space-y-5 max-w-6xl mx-auto">
 
@@ -198,6 +197,7 @@ export default function InventoryScreen({ orgSlug }) {
             stats={inv.stats}
             onEdit={inv.openEditProduct}
             onDelete={inv.deleteProduct}
+            onToggleActive={inv.toggleProductActive}
             onEntry={openEntry}
             onExit={openExit}
             onTransfer={openTransfer}
@@ -207,15 +207,14 @@ export default function InventoryScreen({ orgSlug }) {
         </div>
       </div>
 
-      {/* ======= DRAWER ======= */}
       <KardexDrawer
         open={kardexOpen}
         onClose={() => setKardexOpen(false)}
         product={kardexProduct}
         orgSlug={orgSlug}
+        refreshKey={kardexRefreshKey}
       />
 
-      {/* MODALES */}
       <ProductFormModal
         isOpen={inv.isModalOpen}
         onClose={inv.closeModal}

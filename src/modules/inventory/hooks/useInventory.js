@@ -23,9 +23,6 @@ export function useInventory(orgSlug) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
-  /* ===========================================================
-   * LOAD INVENTORY
-   * =========================================================== */
   async function loadInventory() {
     try {
       setLoading(true);
@@ -41,21 +38,15 @@ export function useInventory(orgSlug) {
         const mapped = json.stock.map((item) => ({
           id: `${item.product_id}-${item.branch_id}`,
           productId: item.product_id,
-
           branchId: item.branch_id,
           branch: item.branch_name ?? "Sin sucursal",
-
           name: item.name,
           sku: item.sku ?? item.product_id,
           category: item.category,
-
           stock: Number(item.stock ?? 0),
-
           minStock: item.min_stock ?? 0,
-
           cost: item.cost ?? 0,
           price: item.price ?? 0,
-
           unitWeight: item.unit_weight ?? 0,
           expiresAt: item.expires_at ?? null,
         }));
@@ -79,9 +70,6 @@ export function useInventory(orgSlug) {
 
   const getStock = (p) => Number(p.stock ?? 0);
 
-  /* ===========================================================
-   * FILTERED PRODUCTS
-   * =========================================================== */
   const filteredProducts = useMemo(() => {
     const term = search.toLowerCase();
 
@@ -106,9 +94,6 @@ export function useInventory(orgSlug) {
     });
   }, [inventory, search, category, branch, lowStockOnly]);
 
-  /* ===========================================================
-   * STATS
-   * =========================================================== */
   const stats = useMemo(() => {
     const totalProducts = inventory.length;
 
@@ -140,9 +125,6 @@ export function useInventory(orgSlug) {
     };
   }, [inventory]);
 
-  /* ===========================================================
-   * MODAL HANDLERS
-   * =========================================================== */
   function openNewProduct() {
     setEditingProduct(null);
     setIsModalOpen(true);
@@ -158,9 +140,6 @@ export function useInventory(orgSlug) {
     setEditingProduct(null);
   }
 
-  /* ===========================================================
-   * SAVE PRODUCT
-   * =========================================================== */
   async function saveProduct(data) {
     try {
       const method = data.productId ? "PUT" : "POST";
@@ -200,9 +179,6 @@ export function useInventory(orgSlug) {
     }
   }
 
-  /* ===========================================================
-   * DELETE PRODUCT
-   * =========================================================== */
   async function deleteProduct(id) {
     try {
       const product = inventory.find((p) => p.id === id);
@@ -219,6 +195,15 @@ export function useInventory(orgSlug) {
 
       if (!res.ok) {
         const err = await res.json();
+        // Check if error is due to historical movements
+        if (err.error && err.error.includes("movimientos históricos")) {
+          return { 
+            success: false, 
+            error: err.error,
+            hasHistory: true,
+            productId: product.productId 
+          };
+        }
         throw new Error(err.error || "Error al eliminar producto");
       }
 
@@ -234,9 +219,32 @@ export function useInventory(orgSlug) {
     }
   }
 
-  /* ===========================================================
-   * RETURN
-   * =========================================================== */
+  async function toggleProductActive(productId, active) {
+    try {
+      const res = await fetch("/api/products", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({ id: productId, active }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al cambiar estado del producto");
+      }
+
+      // Reload inventory to reflect changes
+      await loadInventory();
+      return { success: true };
+
+    } catch (err) {
+      console.error("Toggle product active error:", err);
+      return { success: false, error: err.message };
+    }
+  }
+
   return {
     products: inventory,
     filteredProducts,
@@ -260,6 +268,7 @@ export function useInventory(orgSlug) {
 
     saveProduct,
     deleteProduct,
+    toggleProductActive,
     loadInventory,
 
     loading,

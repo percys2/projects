@@ -30,6 +30,12 @@ export function useFinance(orgSlug) {
   const [supplierModalOpen, setSupplierModalOpen] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState(null);
 
+  const [receivableModalOpen, setReceivableModalOpen] = useState(false);
+  const [editingReceivable, setEditingReceivable] = useState(null);
+
+  const [payableModalOpen, setPayableModalOpen] = useState(false);
+  const [editingPayable, setEditingPayable] = useState(null);
+
   async function loadData() {
     try {
       setLoading(true);
@@ -44,6 +50,8 @@ export function useFinance(orgSlug) {
         clientsRes,
         receivablesRes,
         payablesRes,
+        manualReceivablesRes,
+        manualPayablesRes,
       ] = await Promise.all([
         fetch("/api/finance/accounts", { headers }),
         fetch("/api/finance/ap-bills", { headers }),
@@ -53,6 +61,8 @@ export function useFinance(orgSlug) {
         fetch("/api/clients", { headers }),
         fetch("/api/finance/reports/receivables", { headers }),
         fetch("/api/finance/reports/payables", { headers }),
+        fetch("/api/finance/receivables", { headers }),
+        fetch("/api/finance/payables", { headers }),
       ]);
 
       const [
@@ -64,6 +74,8 @@ export function useFinance(orgSlug) {
         clientsData,
         receivablesData,
         payablesData,
+        manualReceivablesData,
+        manualPayablesData,
       ] = await Promise.all([
         accountsRes.json(),
         expensesRes.json(),
@@ -73,6 +85,8 @@ export function useFinance(orgSlug) {
         clientsRes.json(),
         receivablesRes.json(),
         payablesRes.json(),
+        manualReceivablesRes.json(),
+        manualPayablesRes.json(),
       ]);
 
       setAccounts(accountsData.accounts || []);
@@ -81,8 +95,14 @@ export function useFinance(orgSlug) {
       setAssets(assetsData.assets || []);
       setSuppliers(suppliersData.suppliers || []);
       setClients(clientsData.clients || []);
-      setReceivables(receivablesData.receivables || []);
-      setPayables(payablesData.payables || []);
+      
+      const salesReceivables = (receivablesData.receivables || []).map(r => ({ ...r, source: 'sales' }));
+      const manualRecv = (manualReceivablesData.receivables || []).map(r => ({ ...r, source: 'manual' }));
+      setReceivables([...salesReceivables, ...manualRecv]);
+      
+      const billsPayables = (payablesData.payables || []).map(p => ({ ...p, source: 'bills' }));
+      const manualPay = (manualPayablesData.payables || []).map(p => ({ ...p, source: 'manual' }));
+      setPayables([...billsPayables, ...manualPay]);
     } catch (err) {
       console.error("Finance fetch error:", err);
       setError(err.message);
@@ -196,7 +216,7 @@ export function useFinance(orgSlug) {
   }
 
   async function deleteAccount(id) {
-    if (!window.confirm("¿Eliminar esta cuenta contable?")) return;
+    if (!window.confirm("Eliminar esta cuenta contable?")) return;
     try {
       const res = await fetch("/api/finance/accounts", {
         method: "DELETE",
@@ -257,7 +277,7 @@ export function useFinance(orgSlug) {
   }
 
   async function deleteExpense(id) {
-    if (!window.confirm("¿Eliminar este gasto?")) return;
+    if (!window.confirm("Eliminar este gasto?")) return;
     try {
       const res = await fetch("/api/finance/ap-bills", {
         method: "DELETE",
@@ -327,7 +347,7 @@ export function useFinance(orgSlug) {
   }
 
   async function deletePayment(id) {
-    if (!window.confirm("¿Eliminar este pago/cobro?")) return;
+    if (!window.confirm("Eliminar este pago/cobro?")) return;
     try {
       const res = await fetch("/api/finance/payments", {
         method: "DELETE",
@@ -388,7 +408,7 @@ export function useFinance(orgSlug) {
   }
 
   async function deleteAsset(id) {
-    if (!window.confirm("¿Eliminar este activo fijo?")) return;
+    if (!window.confirm("Eliminar este activo fijo?")) return;
     try {
       const res = await fetch("/api/finance/assets", {
         method: "DELETE",
@@ -449,7 +469,7 @@ export function useFinance(orgSlug) {
   }
 
   async function deleteSupplier(id) {
-    if (!window.confirm("¿Eliminar este proveedor?")) return;
+    if (!window.confirm("Eliminar este proveedor?")) return;
     try {
       const res = await fetch("/api/finance/suppliers", {
         method: "DELETE",
@@ -466,6 +486,174 @@ export function useFinance(orgSlug) {
       return { success: true };
     } catch (err) {
       console.error("Delete supplier error:", err);
+      alert(err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  function openNewReceivable() {
+    setEditingReceivable(null);
+    setReceivableModalOpen(true);
+  }
+
+  function openEditReceivable(receivable) {
+    setEditingReceivable(receivable);
+    setReceivableModalOpen(true);
+  }
+
+  function closeReceivableModal() {
+    setReceivableModalOpen(false);
+    setEditingReceivable(null);
+  }
+
+  async function saveReceivable(data) {
+    try {
+      const method = data.id ? "PUT" : "POST";
+      const res = await fetch("/api/finance/receivables", {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("Error al guardar cuenta por cobrar");
+
+      await loadData();
+      closeReceivableModal();
+      return { success: true };
+    } catch (err) {
+      console.error("Save receivable error:", err);
+      return { success: false, error: err.message };
+    }
+  }
+
+  async function deleteReceivable(id) {
+    if (!window.confirm("Eliminar esta cuenta por cobrar?")) return;
+    try {
+      const res = await fetch("/api/finance/receivables", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!res.ok) throw new Error("Error al eliminar cuenta por cobrar");
+
+      await loadData();
+      return { success: true };
+    } catch (err) {
+      console.error("Delete receivable error:", err);
+      alert(err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  async function createClientInline(clientData) {
+    try {
+      const res = await fetch("/api/clients", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify(clientData),
+      });
+
+      if (!res.ok) throw new Error("Error al crear cliente");
+
+      const data = await res.json();
+      await loadData();
+      return { success: true, client: data.client };
+    } catch (err) {
+      console.error("Create client error:", err);
+      alert(err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  function openNewPayable() {
+    setEditingPayable(null);
+    setPayableModalOpen(true);
+  }
+
+  function openEditPayable(payable) {
+    setEditingPayable(payable);
+    setPayableModalOpen(true);
+  }
+
+  function closePayableModal() {
+    setPayableModalOpen(false);
+    setEditingPayable(null);
+  }
+
+  async function savePayable(data) {
+    try {
+      const method = data.id ? "PUT" : "POST";
+      const res = await fetch("/api/finance/payables", {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("Error al guardar cuenta por pagar");
+
+      await loadData();
+      closePayableModal();
+      return { success: true };
+    } catch (err) {
+      console.error("Save payable error:", err);
+      return { success: false, error: err.message };
+    }
+  }
+
+  async function deletePayable(id) {
+    if (!window.confirm("Eliminar esta cuenta por pagar?")) return;
+    try {
+      const res = await fetch("/api/finance/payables", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!res.ok) throw new Error("Error al eliminar cuenta por pagar");
+
+      await loadData();
+      return { success: true };
+    } catch (err) {
+      console.error("Delete payable error:", err);
+      alert(err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  async function createSupplierInline(supplierData) {
+    try {
+      const res = await fetch("/api/finance/suppliers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify(supplierData),
+      });
+
+      if (!res.ok) throw new Error("Error al crear proveedor");
+
+      const data = await res.json();
+      await loadData();
+      return { success: true, supplier: data.supplier };
+    } catch (err) {
+      console.error("Create supplier error:", err);
       alert(err.message);
       return { success: false, error: err.message };
     }
@@ -529,6 +717,24 @@ export function useFinance(orgSlug) {
     closeSupplierModal,
     saveSupplier,
     deleteSupplier,
+
+    receivableModalOpen,
+    editingReceivable,
+    openNewReceivable,
+    openEditReceivable,
+    closeReceivableModal,
+    saveReceivable,
+    deleteReceivable,
+    createClientInline,
+
+    payableModalOpen,
+    editingPayable,
+    openNewPayable,
+    openEditPayable,
+    closePayableModal,
+    savePayable,
+    deletePayable,
+    createSupplierInline,
 
     loadData,
   };

@@ -32,9 +32,6 @@ export default function KardexScreen({ orgSlug }) {
   const [exitOpen, setExitOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
 
-  // =======================================================
-  // CARGAR PRODUCTOS Y SUCURSALES
-  // =======================================================
   useEffect(() => {
     async function loadFilters() {
       try {
@@ -59,9 +56,6 @@ export default function KardexScreen({ orgSlug }) {
     if (orgSlug) loadFilters();
   }, [orgSlug]);
 
-  // =======================================================
-  // CARGAR KARDEX
-  // =======================================================
   async function loadKardex() {
     try {
       setLoading(true);
@@ -111,9 +105,6 @@ export default function KardexScreen({ orgSlug }) {
     page,
   ]);
 
-  // =======================================================
-  // EXPORTAR PDF
-  // =======================================================
   function handlePrint() {
     const org = {
       name: "AgroCentro Nica",
@@ -139,9 +130,6 @@ export default function KardexScreen({ orgSlug }) {
     });
   }
 
-  // =======================================================
-  // EXPORTAR EXCEL
-  // =======================================================
   function handleExportExcel() {
     const org = {
       name: "AgroCentro Nica",
@@ -164,10 +152,8 @@ export default function KardexScreen({ orgSlug }) {
     });
   }
 
-  // =======================================================
-  // SOLO REQUIERE PRODUCTO SELECCIONADO
-  // =======================================================
-  const canMakeMovement = selectedProduct !== "all";
+  // REQUIERE PRODUCTO Y SUCURSAL SELECCIONADOS
+  const canMakeMovement = selectedProduct !== "all" && selectedBranch !== "all";
 
   const getSelectedProductData = () => {
     if (selectedProduct === "all") return null;
@@ -185,9 +171,6 @@ export default function KardexScreen({ orgSlug }) {
     };
   };
 
-  // =======================================================
-  // MANEJO DE MOVIMIENTOS
-  // =======================================================
   const handleEntrySubmit = async (data) => {
     try {
       const res = await fetch("/api/inventory/movements", {
@@ -202,7 +185,7 @@ export default function KardexScreen({ orgSlug }) {
           qty: data.qty,
           cost: data.cost,
           notes: data.note || "Entrada desde Kardex",
-          to_branch: selectedBranch === "all" ? null : selectedBranch,
+          branchId: selectedBranch === "all" ? null : selectedBranch,
         }),
       });
 
@@ -233,7 +216,7 @@ export default function KardexScreen({ orgSlug }) {
           type: "salida",
           qty: data.qty,
           notes: data.note || "Salida desde Kardex",
-          from_branch: selectedBranch === "all" ? null : selectedBranch,
+          branchId: selectedBranch === "all" ? null : selectedBranch,
         }),
       });
 
@@ -289,9 +272,6 @@ export default function KardexScreen({ orgSlug }) {
     }
   };
 
-  // =======================================================
-  // UI RENDER
-  // =======================================================
   return (
     <div className="space-y-6">
 
@@ -336,6 +316,12 @@ export default function KardexScreen({ orgSlug }) {
         >
           Traslado
         </button>
+
+        {!canMakeMovement && (
+          <span className="text-xs text-amber-600">
+            Seleccione producto y sucursal para registrar movimientos
+          </span>
+        )}
       </div>
 
       {/* SEARCH BAR */}

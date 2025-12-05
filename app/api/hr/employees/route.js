@@ -16,7 +16,9 @@ export async function GET(req) {
       .eq("slug", orgSlug)
       .single();
 
-    if (orgError) throw orgError;
+    if (orgError || !org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
 
     const { data: employees, error } = await supabase
       .from("employees")
@@ -49,7 +51,9 @@ export async function POST(req) {
       .eq("slug", orgSlug)
       .single();
 
-    if (orgError) throw orgError;
+    if (orgError || !org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
 
     const employeeData = {
       org_id: org.id,
@@ -103,7 +107,9 @@ export async function PUT(req) {
       .eq("slug", orgSlug)
       .single();
 
-    if (orgError) throw orgError;
+    if (orgError || !org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
 
     const updateData = {
       name: body.name,

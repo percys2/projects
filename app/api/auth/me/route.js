@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { createServerSupabaseClient, supabaseAdmin } from "@/src/lib/supabase/server";
 
 export async function GET(req) {
   try {
-    const supabase = supabaseAdmin;
+    // Use session-aware client to get the authenticated user from cookies
+    const supabase = await createServerSupabaseClient();
     const orgSlug = req.headers.get("x-org-slug");
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();

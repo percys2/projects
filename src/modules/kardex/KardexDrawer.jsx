@@ -12,7 +12,7 @@ import {
 
 ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale);
 
-export default function KardexDrawer({ open, onClose, product, orgSlug }) {
+export default function KardexDrawer({ open, onClose, product, orgSlug, refreshKey = 0 }) {
   const [loading, setLoading] = useState(false);
   const [movements, setMovements] = useState([]);
 
@@ -48,7 +48,7 @@ export default function KardexDrawer({ open, onClose, product, orgSlug }) {
     }
 
     loadKardex();
-  }, [open, productId, orgSlug]);
+  }, [open, productId, orgSlug, refreshKey]);
 
   // ================================
   // DATOS PARA GRÁFICA

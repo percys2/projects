@@ -3,42 +3,48 @@
 import React, { useState, useEffect } from "react";
 
 export default function ClientModal({ isOpen, onClose, onSave, client }) {
-  const [form, setForm] = useState({
-    first_name: "",
-    last_name: "",
-    phone: "",
-    address: "",
-    city: "",
-    municipio: "",
-    animal_type: "",
-    sales_stage: "prospecto",
-  });
+    const [form, setForm] = useState({
+      first_name: "",
+      last_name: "",
+      phone: "",
+      address: "",
+      city: "",
+      municipio: "",
+      animal_type: "",
+      sales_stage: "prospecto",
+      latitude: "",
+      longitude: "",
+    });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (client) {
-      setForm({
-        first_name: client.first_name || "",
-        last_name: client.last_name || "",
-        phone: client.phone || "",
-        address: client.address || "",
-        city: client.city || "",
-        municipio: client.municipio || "",
-        animal_type: client.animal_type || "",
-        sales_stage: client.sales_stage || "prospecto",
-      });
-    } else {
-      setForm({
-        first_name: "",
-        last_name: "",
-        phone: "",
-        address: "",
-        city: "",
-        municipio: "",
-        animal_type: "",
-        sales_stage: "prospecto",
-      });
-    }
+        if (client) {
+          setForm({
+            first_name: client.first_name || "",
+            last_name: client.last_name || "",
+            phone: client.phone || "",
+            address: client.address || "",
+            city: client.city || "",
+            municipio: client.municipio || "",
+            animal_type: client.animal_type || "",
+            sales_stage: client.sales_stage || "prospecto",
+            latitude: client.latitude || "",
+            longitude: client.longitude || "",
+          });
+        } else {
+          setForm({
+            first_name: "",
+            last_name: "",
+            phone: "",
+            address: "",
+            city: "",
+            municipio: "",
+            animal_type: "",
+            sales_stage: "prospecto",
+            latitude: "",
+            longitude: "",
+          });
+        }
   }, [client, isOpen]);
 
   if (!isOpen) return null;
@@ -148,35 +154,58 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-medium text-slate-600">Tipo de Animal</label>
-              <select
-                value={form.animal_type}
-                onChange={(e) => setForm({ ...form, animal_type: e.target.value })}
-                className="w-full p-2 text-sm border rounded-lg"
-              >
-                <option value="">Seleccionar...</option>
-                {animalTypes.map((type) => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs font-medium text-slate-600">Etapa de Venta</label>
-              <select
-                value={form.sales_stage}
-                onChange={(e) => setForm({ ...form, sales_stage: e.target.value })}
-                className="w-full p-2 text-sm border rounded-lg"
-              >
-                {salesStages.map((stage) => (
-                  <option key={stage.value} value={stage.value}>{stage.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-medium text-slate-600">Tipo de Animal</label>
+                        <select
+                          value={form.animal_type}
+                          onChange={(e) => setForm({ ...form, animal_type: e.target.value })}
+                          className="w-full p-2 text-sm border rounded-lg"
+                        >
+                          <option value="">Seleccionar...</option>
+                          {animalTypes.map((type) => (
+                            <option key={type} value={type}>{type}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-600">Etapa de Venta</label>
+                        <select
+                          value={form.sales_stage}
+                          onChange={(e) => setForm({ ...form, sales_stage: e.target.value })}
+                          className="w-full p-2 text-sm border rounded-lg"
+                        >
+                          {salesStages.map((stage) => (
+                            <option key={stage.value} value={stage.value}>{stage.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-medium text-slate-600">Latitud</label>
+                        <input
+                          type="text"
+                          value={form.latitude}
+                          onChange={(e) => setForm({ ...form, latitude: e.target.value })}
+                          className="w-full p-2 text-sm border rounded-lg"
+                          placeholder="Ej: 12.1364"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-600">Longitud</label>
+                        <input
+                          type="text"
+                          value={form.longitude}
+                          onChange={(e) => setForm({ ...form, longitude: e.target.value })}
+                          className="w-full p-2 text-sm border rounded-lg"
+                          placeholder="Ej: -86.2518"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-4 border-t">
             <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">
               Cancelar
             </button>

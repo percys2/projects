@@ -39,19 +39,40 @@ export async function POST(req) {
 
     const orgId = org.id;
 
-    // NORMALIZACIÓN
+    // NORMALIZACIÓN - accept both branchId and to_branch/from_branch for compatibility
     let fromBranch = null;
     let toBranch = null;
 
-    if (type === "entrada") toBranch = branchId;
-    if (type === "salida") fromBranch = branchId;
+    // For entrada: use branchId if provided, otherwise fall back to to_branch
+    if (type === "entrada") {
+      toBranch = branchId || to_branch;
+    }
+    // For salida: use branchId if provided, otherwise fall back to from_branch
+    if (type === "salida") {
+      fromBranch = branchId || from_branch;
+    }
     if (type === "transferencia") {
       fromBranch = from_branch;
       toBranch = to_branch;
     }
     if (type === "ajuste") {
-      fromBranch = branchId;
-      toBranch = branchId;
+      const adjustBranch = branchId || from_branch || to_branch;
+      fromBranch = adjustBranch;
+      toBranch = adjustBranch;
+    }
+
+    // Validate branch is provided for entrada/salida
+    if (type === "entrada" && !toBranch) {
+      return NextResponse.json(
+        { error: "Debe seleccionar una sucursal para registrar la entrada" },
+        { status: 400 }
+      );
+    }
+    if (type === "salida" && !fromBranch) {
+      return NextResponse.json(
+        { error: "Debe seleccionar una sucursal para registrar la salida" },
+        { status: 400 }
+      );
     }
 
     // INSERTAR EN inventory_movements

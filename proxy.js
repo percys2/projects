@@ -8,7 +8,8 @@ export async function proxy(request) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const publicRoutes = ["/", "/login", "/register"];
+  // Public routes that don't require authentication
+  const publicRoutes = ["/", "/login", "/register", "/forgot-password", "/reset-password", "/verify-email"];
 
   if (publicRoutes.includes(request.nextUrl.pathname)) {
     return response;

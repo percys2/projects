@@ -14,8 +14,13 @@ import { Label } from "@/components/ui/label";
 
 export default function SettingsScreen({ orgSlug }) {
   const [companyName, setCompanyName] = useState("");
+  const [companyEmail, setCompanyEmail] = useState("");
+  const [companyPhone, setCompanyPhone] = useState("");
   const [timezone, setTimezone] = useState("");
   const [currency, setCurrency] = useState("NIO");
+  const [savingGeneral, setSavingGeneral] = useState(false);
+  const [savingCompany, setSavingCompany] = useState(false);
+  const [loadingSettings, setLoadingSettings] = useState(true);
 
   const [branches, setBranches] = useState([]);
   const [branchesLoading, setBranchesLoading] = useState(false);
@@ -43,8 +48,85 @@ export default function SettingsScreen({ orgSlug }) {
     }
   };
 
+  const loadSettings = async () => {
+    if (!orgSlug) return;
+    setLoadingSettings(true);
+    try {
+      const orgRes = await fetch("/api/settings/organization", {
+        headers: { "x-org-slug": orgSlug },
+      });
+      const orgData = await orgRes.json();
+      if (orgRes.ok && orgData.organization) {
+        setCompanyName(orgData.organization.name || "");
+        setCompanyEmail(orgData.organization.email || "");
+        setCompanyPhone(orgData.organization.phone || "");
+        setCurrency(orgData.organization.currency || "NIO");
+      }
+
+      const prefsRes = await fetch("/api/settings/preferences", {
+        headers: { "x-org-slug": orgSlug },
+      });
+      const prefsData = await prefsRes.json();
+      if (prefsRes.ok && prefsData.preferences) {
+        setTimezone(prefsData.preferences.timezone || "");
+      }
+    } catch (err) {
+      console.error("Error loading settings:", err);
+    } finally {
+      setLoadingSettings(false);
+    }
+  };
+
+  const handleSaveGeneral = async () => {
+    setSavingGeneral(true);
+    try {
+      const res = await fetch("/api/settings/preferences", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({ timezone }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al guardar");
+      alert("Configuración general guardada");
+    } catch (err) {
+      alert("Error: " + err.message);
+    } finally {
+      setSavingGeneral(false);
+    }
+  };
+
+  const handleSaveCompany = async () => {
+    setSavingCompany(true);
+    try {
+      const res = await fetch("/api/settings/organization", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          name: companyName,
+          email: companyEmail,
+          phone: companyPhone,
+          currency,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al guardar");
+      alert("Datos de empresa guardados");
+    } catch (err) {
+      alert("Error: " + err.message);
+    } finally {
+      setSavingCompany(false);
+    }
+  };
+
   useEffect(() => {
     loadBranches();
+    loadSettings();
   }, [orgSlug]);
 
   const handleBranchSubmit = async (e) => {
@@ -124,7 +206,6 @@ export default function SettingsScreen({ orgSlug }) {
         Ajustes generales del ERP, administración de sucursales, usuarios y más.
       </p>
 
-      {/* TABS */}
       <Tabs defaultValue="general" className="w-full">
         <TabsList className="grid grid-cols-6 w-full">
           <TabsTrigger value="general">General</TabsTrigger>
@@ -142,7 +223,6 @@ export default function SettingsScreen({ orgSlug }) {
               <CardTitle>Ajustes Generales del Sistema</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-
               <div className="flex flex-col space-y-2">
                 <Label>Zona horaria</Label>
                 <Input
@@ -161,7 +241,9 @@ export default function SettingsScreen({ orgSlug }) {
                 />
               </div>
 
-              <Button className="mt-4">Guardar configuración</Button>
+              <Button className="mt-4" onClick={handleSaveGeneral} disabled={savingGeneral}>
+                {savingGeneral ? "Guardando..." : "Guardar configuración"}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -172,7 +254,6 @@ export default function SettingsScreen({ orgSlug }) {
             <CardHeader>
               <CardTitle>Datos de la Empresa</CardTitle>
             </CardHeader>
-
             <CardContent className="space-y-4">
               <div className="flex flex-col space-y-2">
                 <Label>Nombre de la empresa</Label>
@@ -185,15 +266,25 @@ export default function SettingsScreen({ orgSlug }) {
 
               <div className="flex flex-col space-y-2">
                 <Label>Correo administrativo</Label>
-                <Input placeholder="correo@empresa.com" />
+                <Input 
+                  placeholder="correo@empresa.com" 
+                  value={companyEmail}
+                  onChange={(e) => setCompanyEmail(e.target.value)}
+                />
               </div>
 
               <div className="flex flex-col space-y-2">
                 <Label>Teléfono</Label>
-                <Input placeholder="+505 8888 8888" />
+                <Input 
+                  placeholder="+505 8888 8888" 
+                  value={companyPhone}
+                  onChange={(e) => setCompanyPhone(e.target.value)}
+                />
               </div>
 
-              <Button className="mt-4">Guardar cambios</Button>
+              <Button className="mt-4" onClick={handleSaveCompany} disabled={savingCompany}>
+                {savingCompany ? "Guardando..." : "Guardar cambios"}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -204,7 +295,6 @@ export default function SettingsScreen({ orgSlug }) {
             <CardHeader>
               <CardTitle>Administración de Sucursales</CardTitle>
             </CardHeader>
-
             <CardContent>
               <p className="text-sm text-slate-600 mb-4">
                 Crear, editar o eliminar sucursales para gestionar inventarios.
@@ -343,10 +433,8 @@ export default function SettingsScreen({ orgSlug }) {
             <CardHeader>
               <CardTitle>Administración de Usuarios</CardTitle>
             </CardHeader>
-
             <CardContent>
               <Button>Agregar usuario</Button>
-
               <div className="mt-6 border p-4 rounded">
                 <p className="text-slate-500 text-sm">
                   Aquí aparecerá la tabla de usuarios…
@@ -362,14 +450,11 @@ export default function SettingsScreen({ orgSlug }) {
             <CardHeader>
               <CardTitle>Roles y Permisos</CardTitle>
             </CardHeader>
-
             <CardContent>
               <p className="text-slate-600 text-sm mb-3">
                 Define qué módulos pueden ver y usar tus empleados.
               </p>
-
               <Button>Crear nuevo rol</Button>
-
               <div className="mt-6 border p-4 rounded">
                 <p className="text-slate-500 text-sm">
                   Aquí aparecerá la tabla de permisos…
@@ -385,12 +470,10 @@ export default function SettingsScreen({ orgSlug }) {
             <CardHeader>
               <CardTitle>Opciones de Facturación</CardTitle>
             </CardHeader>
-
             <CardContent>
               <p className="text-sm text-slate-600 mb-4">
                 Configura tu formato de factura, impuestos y numeración.
               </p>
-
               <Button>Configurar facturación</Button>
             </CardContent>
           </Card>

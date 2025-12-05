@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
 
-/* ===========================================================
-   GET - LISTAR OPORTUNIDADES
-   =========================================================== */
 export async function GET(req) {
   try {
     const supabase = supabaseAdmin;
@@ -35,7 +32,6 @@ export async function GET(req) {
       client_id: opp.client?.id || null,
       client_name: `${opp.client?.first_name || ""} ${opp.client?.last_name || ""}`.trim(),
       client_phone: opp.client?.phone || null,
-
       stage_id: opp.stage?.id ?? opp.stage_id,
       stage_name: opp.stage?.name || null,
       stage_color: opp.stage?.color || "gray",
@@ -44,15 +40,11 @@ export async function GET(req) {
     }));
 
     return NextResponse.json({ opportunities: formatted });
-
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-/* ===========================================================
-   POST - CREAR OPORTUNIDAD
-   =========================================================== */
 export async function POST(req) {
   try {
     const supabase = supabaseAdmin;
@@ -68,7 +60,6 @@ export async function POST(req) {
       .eq("slug", orgSlug)
       .single();
 
-    // Obtener primera etapa automáticamente (filtrada por org_id)
     const { data: defaultStage } = await supabase
       .from("crm_stages")
       .select("id")
@@ -79,17 +70,15 @@ export async function POST(req) {
       .single();
 
     if (!body.stage_id && !defaultStage) {
-      return NextResponse.json({ error: "No hay etapas configuradas para esta organización" }, { status: 400 });
+      return NextResponse.json({ error: "No hay etapas configuradas" }, { status: 400 });
     }
-
-    const stageToUse = body.stage_id || defaultStage?.id;
 
     const insertData = {
       org_id: org.id,
       title: body.title,
       client_id: body.client_id || null,
       amount: body.amount || 0,
-      stage_id: stageToUse,
+      stage_id: body.stage_id || defaultStage?.id,
       status: body.status || "open",
       expected_close_date: body.expected_close_date || null,
       source: body.source || null,
@@ -99,37 +88,16 @@ export async function POST(req) {
     const { data, error } = await supabase
       .from("crm_opportunities")
       .insert(insertData)
-      .select(`
-        *,
-        client:clients(id, first_name, last_name, phone),
-        stage:crm_stages(id, name, code, color, probability, sort_order)
-      `)
+      .select(`*, client:clients(id, first_name, last_name, phone), stage:crm_stages(id, name, code, color, probability, sort_order)`)
       .single();
 
     if (error) throw error;
-
-    const formatted = {
-      ...data,
-      client_id: data.client?.id || null,
-      client_name: `${data.client?.first_name || ""} ${data.client?.last_name || ""}`.trim(),
-
-      stage_id: data.stage?.id,
-      stage_name: data.stage?.name,
-      stage_color: data.stage?.color,
-      stage_order: data.stage?.sort_order,
-      stage_code: data.stage?.code,
-    };
-
-    return NextResponse.json({ opportunity: formatted });
-
+    return NextResponse.json({ opportunity: data });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-/* ===========================================================
-   PUT - ACTUALIZAR OPORTUNIDAD
-   =========================================================== */
 export async function PUT(req) {
   try {
     const supabase = supabaseAdmin;
@@ -145,60 +113,36 @@ export async function PUT(req) {
       .eq("slug", orgSlug)
       .single();
 
-    const updateData = {
-      title: body.title,
-      client_id: body.client_id || null,
-      amount: body.amount,
-      stage_id: body.stage_id,
-      status: body.status,
-      expected_close_date: body.expected_close_date,
-      source: body.source,
-      notes: body.notes,
-      lost_reason: body.lost_reason || null,
-      updated_at: new Date().toISOString(),
-    };
-
     const { data, error } = await supabase
       .from("crm_opportunities")
-      .update(updateData)
+      .update({
+        title: body.title,
+        client_id: body.client_id || null,
+        amount: body.amount,
+        stage_id: body.stage_id,
+        status: body.status,
+        expected_close_date: body.expected_close_date,
+        source: body.source,
+        notes: body.notes,
+        lost_reason: body.lost_reason || null,
+        updated_at: new Date().toISOString(),
+      })
       .eq("id", body.id)
       .eq("org_id", org.id)
-      .select(`
-        *,
-        client:clients(id, first_name, last_name, phone),
-        stage:crm_stages(id, name, code, color, probability, sort_order)
-      `)
+      .select(`*, client:clients(id, first_name, last_name, phone), stage:crm_stages(id, name, code, color, probability, sort_order)`)
       .single();
 
     if (error) throw error;
-
-    const formatted = {
-      ...data,
-      client_id: data.client?.id || null,
-      client_name: `${data.client?.first_name || ""} ${data.client?.last_name || ""}`.trim(),
-
-      stage_id: data.stage?.id,
-      stage_name: data.stage?.name,
-      stage_color: data.stage?.color,
-      stage_order: data.stage?.sort_order,
-      stage_code: data.stage?.code,
-    };
-
-    return NextResponse.json({ opportunity: formatted });
-
+    return NextResponse.json({ opportunity: data });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-/* ===========================================================
-   DELETE
-   =========================================================== */
 export async function DELETE(req) {
   try {
     const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
-
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -218,9 +162,7 @@ export async function DELETE(req) {
       .eq("org_id", org.id);
 
     if (error) throw error;
-
     return NextResponse.json({ success: true });
-
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

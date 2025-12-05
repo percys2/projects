@@ -15,6 +15,7 @@ export default function InventoryGrid({
   stats,
   onEdit,
   onDelete,
+  onToggleActive,
   onEntry,
   onExit,
   onTransfer,
@@ -23,6 +24,7 @@ export default function InventoryGrid({
 }) {
   const safeProducts = Array.isArray(products) ? products : [];
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [deactivateConfirm, setDeactivateConfirm] = useState(null);
 
   const getStock = (p) => p.stock ?? p.quantity ?? 0;
   const getUnitWeight = (p) =>
@@ -83,8 +85,25 @@ export default function InventoryGrid({
 
   const confirmDelete = async () => {
     if (deleteConfirm && onDelete) {
-      await onDelete(deleteConfirm.id);
+      const result = await onDelete(deleteConfirm.id);
+      if (result && result.hasHistory) {
+        setDeactivateConfirm({
+          ...deleteConfirm,
+          productId: result.productId
+        });
+      }
       setDeleteConfirm(null);
+    }
+  };
+
+  const confirmDeactivate = async () => {
+    if (deactivateConfirm && onToggleActive) {
+      const result = await onToggleActive(deactivateConfirm.productId, false);
+      if (!result?.success) {
+        alert(result?.error || "Error al desactivar el producto. Verifique que la columna 'active' existe en la tabla products.");
+        return;
+      }
+      setDeactivateConfirm(null);
     }
   };
 
@@ -115,6 +134,37 @@ export default function InventoryGrid({
                 className="px-4 py-2 bg-red-600 text-white rounded"
               >
                 Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DEACTIVATE CONFIRM MODAL */}
+      {deactivateConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+            <h3 className="text-lg font-semibold text-slate-800">
+              Producto con historial
+            </h3>
+
+            <p className="text-slate-600 my-4">
+              <strong>{deactivateConfirm.name}</strong> tiene movimientos históricos y no puede eliminarse.
+              ¿Desea desactivarlo en su lugar? El producto no aparecerá en las listas pero su historial se conservará.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeactivateConfirm(null)}
+                className="px-4 py-2 bg-slate-200 rounded"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDeactivate}
+                className="px-4 py-2 bg-amber-600 text-white rounded"
+              >
+                Desactivar
               </button>
             </div>
           </div>
@@ -201,17 +251,17 @@ export default function InventoryGrid({
                     <td className="px-2 py-1.5">{p.branch ?? p.branch_name}</td>
                     <td className="px-2 py-1.5 text-right">{stock}</td>
                     <td className="px-2 py-1.5 text-right">{weight}</td>
-                    <td className="px-2 py-1.5 text-right">
-                      C$ {p.cost?.toLocaleString("es-NI")}
+                    <td className="px-2 py-1.5 text-right whitespace-nowrap">
+                      C${(p.cost ?? 0).toLocaleString("es-NI")}
                     </td>
-                    <td className="px-2 py-1.5 text-right">
-                      C$ {costTotal.toLocaleString("es-NI")}
+                    <td className="px-2 py-1.5 text-right whitespace-nowrap">
+                      C${costTotal.toLocaleString("es-NI")}
                     </td>
-                    <td className="px-2 py-1.5 text-right">
-                      C$ {p.price?.toLocaleString("es-NI")}
+                    <td className="px-2 py-1.5 text-right whitespace-nowrap">
+                      C${(p.price ?? 0).toLocaleString("es-NI")}
                     </td>
-                    <td className="px-2 py-1.5 text-right">
-                      {pricePerLb ? `C$ ${pricePerLb.toFixed(2)}` : "-"}
+                    <td className="px-2 py-1.5 text-right whitespace-nowrap">
+                      {pricePerLb ? `C$${pricePerLb.toFixed(2)}` : "-"}
                     </td>
                     <td className="px-2 py-1.5 text-right">
                       {computeDaysToExpire(p.expiresAt) ?? "—"}
@@ -222,26 +272,14 @@ export default function InventoryGrid({
                     <td className="px-2 py-1.5 text-right">
                       <div className="flex justify-end gap-1 flex-wrap">
 
-                        {/* 🔥 HISTORIAL / KARDEX (UUID LIMPIO) */}
+                        {/* HISTORIAL / KARDEX */}
                         <button
                           onClick={() => {
-                            let pid = p.product_id ?? p.id;
-                            pid = String(pid);
-
-                            // cortar solo las 5 partes válidas UUID
-                            const cleanUUID = pid
-                              .split("-")
-                              .slice(0, 5)
-                              .join("-");
-
-                            onKardex({
-                              ...p,
-                              productId: cleanUUID,
-                            });
+                            onKardex(p);
                           }}
                           className="px-2 py-1 text-[11px] bg-purple-600 text-white rounded hover:bg-purple-700"
                         >
-                          Historial ▸
+                          Historial
                         </button>
 
                         <button

@@ -20,17 +20,42 @@ export async function GET(req) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    const { data: clients, error } = await supabase
-      .from("clients")
-      .select("*")
+    const { data: receivables, error } = await supabase
+      .from("ar_receivables")
+      .select(`
+        id,
+        client_id,
+        invoice_number,
+        description,
+        date,
+        due_date,
+        total,
+        amount_paid,
+        status,
+        notes,
+        created_at,
+        clients (id, first_name, last_name, email, phone)
+      `)
       .eq("org_id", org.id)
-      .order("first_name", { ascending: true });
+      .order("date", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === "42P01") {
+        return NextResponse.json({ receivables: [] });
+      }
+      throw error;
+    }
 
-    return NextResponse.json(clients || []);
+    const formattedReceivables = (receivables || []).map(r => ({
+      ...r,
+      client_name: r.clients ? `${r.clients.first_name} ${r.clients.last_name}` : "Sin cliente",
+      factura: r.invoice_number,
+      fecha: r.date,
+    }));
+
+    return NextResponse.json({ receivables: formattedReceivables });
   } catch (err) {
-    console.error("Clients GET error:", err);
+    console.error("Receivables GET error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -55,31 +80,37 @@ export async function POST(req) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    const clientData = {
-      org_id: org.id,
-      first_name: body.first_name,
-      last_name: body.last_name,
-      phone: body.phone,
-      address: body.address,
-      city: body.city,
-      municipio: body.municipio,
-      animal_type: body.animal_type,
-      sales_stage: body.sales_stage || "prospecto",
-      latitude: body.latitude || null,
-      longitude: body.longitude || null,
-    };
+    const total = parseFloat(body.total) || 0;
+    const amount_paid = parseFloat(body.amount_paid) || 0;
+    let status = "pending";
+    if (amount_paid >= total && total > 0) {
+      status = "paid";
+    } else if (amount_paid > 0) {
+      status = "partial";
+    }
 
-    const { data: client, error } = await supabase
-      .from("clients")
-      .insert(clientData)
+    const { data: receivable, error } = await supabase
+      .from("ar_receivables")
+      .insert({
+        org_id: org.id,
+        client_id: body.client_id || null,
+        invoice_number: body.invoice_number || null,
+        description: body.description || null,
+        date: body.date || new Date().toISOString().split("T")[0],
+        due_date: body.due_date || null,
+        total,
+        amount_paid,
+        status,
+        notes: body.notes || null,
+      })
       .select()
       .single();
 
     if (error) throw error;
 
-    return NextResponse.json(client);
+    return NextResponse.json({ receivable, success: true });
   } catch (err) {
-    console.error("Clients POST error:", err);
+    console.error("Receivables POST error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -91,7 +122,7 @@ export async function PUT(req) {
     const body = await req.json();
 
     if (!orgSlug || !body.id) {
-      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+      return NextResponse.json({ error: "Missing org slug or id" }, { status: 400 });
     }
 
     const { data: org, error: orgError } = await supabase
@@ -104,22 +135,28 @@ export async function PUT(req) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    const updateData = {
-      first_name: body.first_name,
-      last_name: body.last_name,
-      phone: body.phone,
-      address: body.address,
-      city: body.city,
-      municipio: body.municipio,
-      animal_type: body.animal_type,
-      sales_stage: body.sales_stage,
-      latitude: body.latitude || null,
-      longitude: body.longitude || null,
-    };
+    const total = parseFloat(body.total) || 0;
+    const amount_paid = parseFloat(body.amount_paid) || 0;
+    let status = "pending";
+    if (amount_paid >= total && total > 0) {
+      status = "paid";
+    } else if (amount_paid > 0) {
+      status = "partial";
+    }
 
-    const { data: client, error } = await supabase
-      .from("clients")
-      .update(updateData)
+    const { data: receivable, error } = await supabase
+      .from("ar_receivables")
+      .update({
+        client_id: body.client_id || null,
+        invoice_number: body.invoice_number || null,
+        description: body.description || null,
+        date: body.date,
+        due_date: body.due_date || null,
+        total,
+        amount_paid,
+        status,
+        notes: body.notes || null,
+      })
       .eq("id", body.id)
       .eq("org_id", org.id)
       .select()
@@ -127,9 +164,9 @@ export async function PUT(req) {
 
     if (error) throw error;
 
-    return NextResponse.json(client);
+    return NextResponse.json({ receivable, success: true });
   } catch (err) {
-    console.error("Clients PUT error:", err);
+    console.error("Receivables PUT error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -141,7 +178,7 @@ export async function DELETE(req) {
     const body = await req.json();
 
     if (!orgSlug || !body.id) {
-      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+      return NextResponse.json({ error: "Missing org slug or id" }, { status: 400 });
     }
 
     const { data: org, error: orgError } = await supabase
@@ -155,7 +192,7 @@ export async function DELETE(req) {
     }
 
     const { error } = await supabase
-      .from("clients")
+      .from("ar_receivables")
       .delete()
       .eq("id", body.id)
       .eq("org_id", org.id);
@@ -164,7 +201,7 @@ export async function DELETE(req) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Clients DELETE error:", err);
+    console.error("Receivables DELETE error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

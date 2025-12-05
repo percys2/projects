@@ -1,24 +1,18 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { getOrgContext } from "@/src/lib/api/getOrgContext";
 
 export async function GET(req) {
   try {
-    const supabase = supabaseAdmin;
-
-    const orgSlug = req.headers.get("x-org-slug");
-    if (!orgSlug) {
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    // Securely derive org context from authenticated session
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
     }
 
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    if (orgError) throw orgError;
-
-    const orgId = org.id;
+    const { orgId } = context;
+    const supabase = supabaseAdmin;
 
     const { data: stockData, error: invError } = await supabase
       .from("current_stock")
@@ -72,22 +66,19 @@ export async function GET(req) {
 
 export async function DELETE(req) {
   try {
-    const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
-    const body = await req.json();
-
-    if (!orgSlug || !body.productId) {
-      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+    // Securely derive org context from authenticated session
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
     }
 
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
+    const { orgId } = context;
+    const supabase = supabaseAdmin;
+    const body = await req.json();
 
-    if (orgError || !org) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    if (!body.productId) {
+      return NextResponse.json({ error: "Missing product ID" }, { status: 400 });
     }
 
     // Check if product has any movement history
@@ -95,7 +86,7 @@ export async function DELETE(req) {
       .from("inventory_movements")
       .select("id")
       .eq("product_id", body.productId)
-      .eq("org_id", org.id)
+      .eq("org_id", orgId)
       .limit(1);
 
     if (movCheckError) {
@@ -107,7 +98,7 @@ export async function DELETE(req) {
       .from("kardex")
       .select("id")
       .eq("product_id", body.productId)
-      .eq("org_id", org.id)
+      .eq("org_id", orgId)
       .limit(1);
 
     if (kardexCheckError) {
@@ -132,7 +123,7 @@ export async function DELETE(req) {
       .from("products")
       .delete()
       .eq("id", body.productId)
-      .eq("org_id", org.id);
+      .eq("org_id", orgId);
 
     if (prodError) throw prodError;
 
