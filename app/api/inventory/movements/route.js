@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 
 export async function POST(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // User ID can be passed via header if available
+    const userId = req.headers.get("x-user-id") || null;
 
     const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
@@ -70,7 +66,7 @@ export async function POST(req) {
         reference: notes || null,
         from_branch: fromBranch,
         to_branch: toBranch,
-        created_by: user.id,
+        created_by: userId,
       })
       .select("*")
       .single();

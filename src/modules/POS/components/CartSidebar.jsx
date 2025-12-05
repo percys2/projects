@@ -12,7 +12,7 @@ import { salesService } from "../services/salesService";
 import { useCashRegisterStore } from "../store/useCashRegisterStore";
 import { useBranchStore } from "../store/useBranchStore";
 
-export default function CartSidebar() {
+export default function CartSidebar({ orgSlug }) {
   const cart = usePosStore((s) => s.cart);
   const clearCart = usePosStore((s) => s.clearCart);
   const client = usePosStore((s) => s.selectedClient);
@@ -33,10 +33,11 @@ export default function CartSidebar() {
       }
 
       const sale = await salesService.makeSale({
+        orgSlug,
         client: client || customerForm,
         cart,
         paymentType: "efectivo",
-        branch,
+        branchId: branch,
       });
 
       addMovement({

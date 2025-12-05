@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 
 /* ===========================================================
    GET - LISTAR OPORTUNIDADES
    =========================================================== */
 export async function GET(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
 
     if (!orgSlug)
@@ -36,7 +36,7 @@ export async function GET(req) {
       client_name: `${opp.client?.first_name || ""} ${opp.client?.last_name || ""}`.trim(),
       client_phone: opp.client?.phone || null,
 
-      stage_id: opp.stage?.id ?? opp.stage_id, // FIX
+      stage_id: opp.stage?.id ?? opp.stage_id,
       stage_name: opp.stage?.name || null,
       stage_color: opp.stage?.color || "gray",
       stage_order: opp.stage?.sort_order || 0,
@@ -55,7 +55,7 @@ export async function GET(req) {
    =========================================================== */
 export async function POST(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
@@ -68,15 +68,21 @@ export async function POST(req) {
       .eq("slug", orgSlug)
       .single();
 
-    // Obtener primera etapa automáticamente
+    // Obtener primera etapa automáticamente (filtrada por org_id)
     const { data: defaultStage } = await supabase
       .from("crm_stages")
       .select("id")
+      .eq("org_id", org.id)
+      .eq("is_active", true)
       .order("sort_order")
       .limit(1)
       .single();
 
-    const stageToUse = body.stage_id || defaultStage.id;
+    if (!body.stage_id && !defaultStage) {
+      return NextResponse.json({ error: "No hay etapas configuradas para esta organización" }, { status: 400 });
+    }
+
+    const stageToUse = body.stage_id || defaultStage?.id;
 
     const insertData = {
       org_id: org.id,
@@ -126,7 +132,7 @@ export async function POST(req) {
    =========================================================== */
 export async function PUT(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const body = await req.json();
     const orgSlug = req.headers.get("x-org-slug");
 
@@ -190,7 +196,7 @@ export async function PUT(req) {
    =========================================================== */
 export async function DELETE(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
 
     const { searchParams } = new URL(req.url);

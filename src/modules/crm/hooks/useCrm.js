@@ -30,6 +30,7 @@ export function useCrm(orgSlug) {
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
 
       const [stagesRes, oppsRes, clientsRes] = await Promise.all([
         fetch("/api/crm/stages", { headers: { "x-org-slug": orgSlug } }),
@@ -40,6 +41,16 @@ export function useCrm(orgSlug) {
       const stagesData = await stagesRes.json();
       const oppsData = await oppsRes.json();
       const clientsData = await clientsRes.json();
+
+      if (!stagesRes.ok) {
+        throw new Error(stagesData.error || "Error al cargar etapas");
+      }
+      if (!oppsRes.ok) {
+        throw new Error(oppsData.error || "Error al cargar oportunidades");
+      }
+      if (!clientsRes.ok) {
+        throw new Error(clientsData.error || "Error al cargar clientes");
+      }
 
       setStages(stagesData.stages || []);
       setOpportunities(oppsData.opportunities || []);

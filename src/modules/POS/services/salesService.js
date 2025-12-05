@@ -1,29 +1,48 @@
-import { inventoryService } from "./inventoryService";
 import { generateInvoiceNumber } from "../utils/generateInvoiceNumber";
 
 export const salesService = {
-  async makeSale({ orgId, orgSlug, branchId, client, cart, paymentType, notes }) {
-    if (!orgId) throw new Error("Missing orgId");
+  async makeSale({ orgSlug, branchId, client, cart, paymentType, notes }) {
+    // Get orgId from orgSlug via API or use localStorage fallback
+    let orgId = localStorage.getItem("activeOrgId");
+    
+    // If no orgId in localStorage, fetch it from the organization
+    if (!orgId && orgSlug) {
+      const orgRes = await fetch("/api/organizations/by-slug", {
+        headers: { "x-org-slug": orgSlug },
+      });
+      if (orgRes.ok) {
+        const orgData = await orgRes.json();
+        orgId = orgData.id;
+      }
+    }
+    
+    if (!orgId) throw new Error("Missing orgId - please select an organization.");
     if (!client?.id) throw new Error("Seleccione un cliente.");
     if (!cart || cart.length === 0) throw new Error("El carrito está vacío.");
+    if (!branchId) throw new Error("Seleccione una sucursal.");
 
     const invoice = generateInvoiceNumber();
     const total = cart.reduce((sum, p) => sum + p.qty * p.price, 0);
 
-    // 1️⃣ Build items in the exact format your API expects
+    // Build items in the exact format the API expects
     const itemsPayload = cart.map((p) => ({
-      product_id: p.id,
+      product_id: p.id || p.productId,
       quantity: p.qty,
       price: Number(p.price),
-      cost: Number(p.cost ?? 0), // MOST IMPORTANT
+      cost: Number(p.cost ?? 0),
     }));
 
-    // 2️⃣ Make the request to your real route
+    // Make the request to the sales API
+    // Note: /api/sales/create-with-items already handles:
+    // - Decreasing inventory via RPC
+    // - Recording in kardex
+    // - Recording in inventory_movements
     const res = await fetch("/api/sales/create-with-items", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-org-id": orgId, // API REQUIRED HEADER
+        "x-org-id": orgId,
+        "x-branch-id": branchId,
       },
       body: JSON.stringify({
         client_id: client.id,
@@ -40,19 +59,10 @@ export const salesService = {
       throw new Error(data.error || "Error creando venta.");
     }
 
-    // 3️⃣ Decrease inventory for each item (you also do RPC)
-    for (const item of cart) {
-      await inventoryService.decreaseStock(
-        orgSlug,
-        item.id,
-        branchId,
-        item.qty
-      );
-    }
-
-    // 4️⃣ Return sale with invoice
+    // Return sale with invoice
     return {
       ...data.sale,
+      invoice: invoice,
       invoice_number: invoice,
       items: cart,
       total,

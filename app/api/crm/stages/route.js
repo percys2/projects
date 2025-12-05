@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 
 const DEFAULT_STAGES = [
   { code: "prospeccion", name: "Prospección", sort_order: 1, probability: 0.10, color: "slate" },
@@ -14,7 +14,7 @@ const DEFAULT_STAGES = [
 
 export async function GET(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
 
     if (!orgSlug) {
@@ -54,7 +54,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 

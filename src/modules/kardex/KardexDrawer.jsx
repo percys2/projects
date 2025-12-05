@@ -29,7 +29,7 @@ export default function KardexDrawer({ open, onClose, product, orgSlug }) {
         const res = await fetch(`/api/kardex`, {
           headers: {
             "x-org-slug": orgSlug,
-            "x-product-id": productId, // ✔️ ¡FILTRO CORRECTO!
+            "x-product-id": productId,
           },
         });
 
@@ -89,8 +89,18 @@ export default function KardexDrawer({ open, onClose, product, orgSlug }) {
         </button>
       </div>
 
+      {/* BOTON VOLVER */}
+      <div className="p-3 border-b bg-white">
+        <button
+          onClick={onClose}
+          className="w-full px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-300 transition"
+        >
+          ← Volver al Inventario
+        </button>
+      </div>
+
       {/* CONTENIDO */}
-      <div className="p-4 overflow-y-auto h-full pb-10 space-y-4">
+      <div className="p-4 overflow-y-auto h-full pb-24 space-y-4">
 
         {/* LOADING */}
         {loading && (

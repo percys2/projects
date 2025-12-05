@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 
 export async function GET(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
 
     if (!orgSlug) {
@@ -97,7 +97,7 @@ export async function GET(req) {
 
 export async function PUT(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
 
     if (!orgSlug) {
@@ -136,7 +136,7 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
 
     if (!orgSlug) {

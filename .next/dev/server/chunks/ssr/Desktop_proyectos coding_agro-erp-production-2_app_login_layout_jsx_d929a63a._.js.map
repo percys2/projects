@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/percyscastillo/Desktop/proyectos%20coding/agro-erp-production-2/app/login/layout.jsx"],"sourcesContent":["export const dynamic = 'force-dynamic';\n\nexport default function LoginLayout({ children }) {\n  return children;\n}"],"names":[],"mappings":";;;;;;AAAO,MAAM,UAAU;AAER,SAAS,YAAY,EAAE,QAAQ,EAAE;IAC9C,OAAO;AACT"}}]
-}

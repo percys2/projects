@@ -1,7 +1,8 @@
 "use client";
 
+import React, { useState } from "react";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import "jspdf-autotable";
 import * as XLSX from "xlsx";
 
 export default function ReportsPanel({ orgSlug, accounts }) {

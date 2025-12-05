@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 
 export default function SalesScreen({ orgSlug }) {
   const [sales, setSales] = useState([]);
@@ -92,12 +95,175 @@ export default function SalesScreen({ orgSlug }) {
     }
   }
 
+  const exportToPDF = () => {
+    if (filteredSales.length === 0) {
+      alert("No hay ventas para exportar");
+      return;
+    }
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFontSize(18);
+    doc.text("Reporte de Ventas", pageWidth / 2, 20, { align: "center" });
+
+    doc.setFontSize(10);
+    const periodText = dateStart && dateEnd 
+      ? `Periodo: ${formatDate(dateStart)} - ${formatDate(dateEnd)}`
+      : "Todas las ventas";
+    doc.text(periodText, pageWidth / 2, 28, { align: "center" });
+    doc.text(`Generado: ${new Date().toLocaleDateString("es-NI")}`, pageWidth / 2, 34, { align: "center" });
+
+    doc.setFontSize(9);
+    doc.text(`Total Ventas: ${formatCurrency(totals.totalRevenue)}`, 14, 45);
+    doc.text(`Ganancia Bruta: ${formatCurrency(totals.totalMargin)}`, 14, 51);
+    doc.text(`Costo Total: ${formatCurrency(totals.totalCost)}`, 100, 45);
+    doc.text(`Productos Vendidos: ${totals.totalItems}`, 100, 51);
+
+    const tableData = filteredSales.map((sale) => [
+      formatDate(sale.fecha),
+      sale.factura || "-",
+      getClientName(sale.clients),
+      (sale.sales_items || []).length,
+      formatCurrency(sale.subtotal),
+      formatCurrency(sale.descuento),
+      formatCurrency(sale.total),
+      formatCurrency(sale.margen),
+    ]);
+
+    doc.autoTable({
+      startY: 58,
+      head: [["Fecha", "Factura", "Cliente", "Items", "Subtotal", "Descuento", "Total", "Margen"]],
+      body: tableData,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [51, 65, 85], textColor: 255 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      columnStyles: {
+        0: { cellWidth: 20 },
+        1: { cellWidth: 25 },
+        2: { cellWidth: 35 },
+        3: { cellWidth: 12, halign: "center" },
+        4: { cellWidth: 25, halign: "right" },
+        5: { cellWidth: 22, halign: "right" },
+        6: { cellWidth: 25, halign: "right" },
+        7: { cellWidth: 25, halign: "right" },
+      },
+    });
+
+    const fileName = dateStart && dateEnd 
+      ? `ventas_${dateStart}_${dateEnd}.pdf`
+      : `ventas_${new Date().toISOString().slice(0, 10)}.pdf`;
+    doc.save(fileName);
+  };
+
+  const exportToExcel = () => {
+    if (filteredSales.length === 0) {
+      alert("No hay ventas para exportar");
+      return;
+    }
+
+    const summaryData = [
+      ["REPORTE DE VENTAS"],
+      [dateStart && dateEnd ? `Periodo: ${formatDate(dateStart)} - ${formatDate(dateEnd)}` : "Todas las ventas"],
+      [`Generado: ${new Date().toLocaleDateString("es-NI")}`],
+      [],
+      ["RESUMEN"],
+      ["Total Ventas", totals.totalRevenue],
+      ["Ganancia Bruta", totals.totalMargin],
+      ["Costo Total", totals.totalCost],
+      ["Productos Vendidos", totals.totalItems],
+      [],
+      ["DETALLE DE VENTAS"],
+      ["Fecha", "Factura", "Cliente", "Items", "Subtotal", "Descuento", "Total", "Margen"],
+    ];
+
+    const salesData = filteredSales.map((sale) => [
+      formatDate(sale.fecha),
+      sale.factura || "-",
+      getClientName(sale.clients),
+      (sale.sales_items || []).length,
+      sale.subtotal || 0,
+      sale.descuento || 0,
+      sale.total || 0,
+      sale.margen || 0,
+    ]);
+
+    const allData = [...summaryData, ...salesData];
+
+    const ws = XLSX.utils.aoa_to_sheet(allData);
+
+    ws["!cols"] = [
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 25 },
+      { wch: 8 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 15 },
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+
+    const fileName = dateStart && dateEnd 
+      ? `ventas_${dateStart}_${dateEnd}.xlsx`
+      : `ventas_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
+  const exportToCSV = () => {
+    if (filteredSales.length === 0) {
+      alert("No hay ventas para exportar");
+      return;
+    }
+
+    let csvContent = "Fecha,Factura,Cliente,Items,Subtotal,Descuento,Total,Margen\n";
+    
+    filteredSales.forEach((sale) => {
+      const row = [
+        formatDate(sale.fecha),
+        sale.factura || "-",
+        `"${getClientName(sale.clients)}"`,
+        (sale.sales_items || []).length,
+        sale.subtotal || 0,
+        sale.descuento || 0,
+        sale.total || 0,
+        sale.margen || 0,
+      ];
+      csvContent += row.join(",") + "\n";
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    const fileName = dateStart && dateEnd 
+      ? `ventas_${dateStart}_${dateEnd}.csv`
+      : `ventas_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = fileName;
+    link.click();
+  };
+
   return (
     <div className="space-y-6 p-4">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Ventas</h1>
           <p className="text-sm text-slate-500">Historial de ventas del POS</p>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={exportToCSV} className="px-3 py-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg flex items-center gap-1">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            CSV
+          </button>
+          <button onClick={exportToExcel} className="px-3 py-2 text-sm bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg flex items-center gap-1">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            Excel
+          </button>
+          <button onClick={exportToPDF} className="px-3 py-2 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded-lg flex items-center gap-1">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            PDF
+          </button>
         </div>
       </div>
 
@@ -279,3 +445,4 @@ export default function SalesScreen({ orgSlug }) {
     </div>
   );
 }
+

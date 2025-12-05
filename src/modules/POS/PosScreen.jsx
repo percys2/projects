@@ -8,13 +8,14 @@ import ProductCard from "./components/ProductCard";
 import CartSidebar from "./components/CartSidebar";
 import PosHeader from "./components/PosHeader";
 
-export default function PosScreen() {
+export default function PosScreen({ orgSlug }) {
   const branch = useBranchStore((s) => s.activeBranch);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     async function load() {
-      const data = await inventoryService.getInventory(branch);
+      // Use orgSlug for API call, branch for filtering
+      const data = await inventoryService.getInventory(orgSlug, branch);
 
       // ALWAYS extract array safely
       const list =
@@ -28,8 +29,8 @@ export default function PosScreen() {
 
       setProducts(list);
     }
-    load();
-  }, [branch]);
+    if (orgSlug) load();
+  }, [orgSlug, branch]);
 
   return (
     <div className="grid grid-cols-12 gap-4 h-full">
@@ -53,7 +54,7 @@ export default function PosScreen() {
 
       {/* CARRITO */}
       <div className="col-span-4">
-        <CartSidebar />
+        <CartSidebar orgSlug={orgSlug} />
       </div>
     </div>
   );

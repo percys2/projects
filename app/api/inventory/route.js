@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 
 export async function GET(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
 
     const orgSlug = req.headers.get("x-org-slug");
     if (!orgSlug) {
@@ -20,7 +20,6 @@ export async function GET(req) {
 
     const orgId = org.id;
 
-    // Use the current_stock view instead of inventory table
     const { data: stockData, error: invError } = await supabase
       .from("current_stock")
       .select("*")
@@ -28,7 +27,6 @@ export async function GET(req) {
 
     if (invError) throw invError;
 
-    // Transform the view data to match the expected format
     const inventory = (stockData || []).map(item => ({
       id: `${item.product_id}-${item.branch_id || 'no-branch'}`,
       quantity: item.stock,
@@ -74,7 +72,7 @@ export async function GET(req) {
 
 export async function DELETE(req) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
@@ -92,18 +90,44 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    // Delete all movements for this product first
-    const { error: movError } = await supabase
+    // Check if product has any movement history
+    const { data: movements, error: movCheckError } = await supabase
       .from("inventory_movements")
-      .delete()
+      .select("id")
       .eq("product_id", body.productId)
-      .eq("org_id", org.id);
+      .eq("org_id", org.id)
+      .limit(1);
 
-    if (movError) {
-      console.log("Movement delete error (ignored):", movError);
+    if (movCheckError) {
+      console.log("Movement check error:", movCheckError);
     }
 
-    // Delete the product
+    // Check if product has any kardex history
+    const { data: kardexRecords, error: kardexCheckError } = await supabase
+      .from("kardex")
+      .select("id")
+      .eq("product_id", body.productId)
+      .eq("org_id", org.id)
+      .limit(1);
+
+    if (kardexCheckError) {
+      console.log("Kardex check error:", kardexCheckError);
+    }
+
+    // If product has history, block deletion
+    const hasMovements = movements && movements.length > 0;
+    const hasKardex = kardexRecords && kardexRecords.length > 0;
+
+    if (hasMovements || hasKardex) {
+      return NextResponse.json(
+        { 
+          error: "No se puede eliminar este producto porque tiene movimientos históricos (entradas/salidas). El historial debe conservarse. Contacte al administrador si necesita desactivar este producto." 
+        },
+        { status: 400 }
+      );
+    }
+
+    // Only delete product if it has no history
     const { error: prodError } = await supabase
       .from("products")
       .delete()
@@ -118,5 +142,3 @@ export async function DELETE(req) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
-
-

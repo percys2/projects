@@ -1,14 +1,23 @@
 export const inventoryService = {
-  async getInventory(orgSlug, branchName = null) {
+  async getInventory(orgSlug, branchId = null) {
     const response = await fetch(`/api/inventory`, {
       headers: { "x-org-slug": orgSlug },
     });
 
     const data = await response.json();
+    
+    if (!response.ok) {
+      console.error("Inventory fetch error:", data.error);
+      return [];
+    }
+    
     const items = data.inventory ?? [];
 
-    if (branchName) {
-      return items.filter(i => i.branches?.name === branchName);
+    if (branchId) {
+      return items.filter(i => 
+        i.branches?.id === branchId || 
+        i.branches?.name === branchId
+      );
     }
 
     return items;
