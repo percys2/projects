@@ -1,24 +1,29 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
-import { getOrgContext } from "@/src/lib/api/getOrgContext";
-import { productSchema, validateRequest } from "@/src/lib/validation/schemas";
 
 export async function GET(req) {
   try {
-    // Securely derive org context from authenticated session
-    const context = await getOrgContext(req);
-    
-    if (!context.success) {
-      return NextResponse.json({ error: context.error }, { status: context.status });
+    const supabase = supabaseAdmin;
+    const orgSlug = req.headers.get("x-org-slug");
+
+    if (!orgSlug) {
+      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
     }
 
-    const { orgId } = context;
-    const supabase = supabaseAdmin;
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
+
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
 
     const { data: products, error } = await supabase
       .from("products")
       .select("*")
-      .eq("org_id", orgId);
+      .eq("org_id", org.id);
 
     if (error) throw error;
 
@@ -31,25 +36,26 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    // Securely derive org context from authenticated session
-    const context = await getOrgContext(req);
-    
-    if (!context.success) {
-      return NextResponse.json({ error: context.error }, { status: context.status });
-    }
-
-    const { orgId } = context;
     const supabase = supabaseAdmin;
+    const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
-    // Validate input
-    const validation = validateRequest(productSchema, body);
-    if (!validation.success) {
-      return NextResponse.json({ error: "Invalid data", details: validation.errors }, { status: 400 });
+    if (!orgSlug) {
+      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    }
+
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
+
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
     const productData = {
-      org_id: orgId,
+      org_id: org.id,
       name: body.name,
       sku: body.sku,
       category: body.category,
@@ -68,7 +74,7 @@ export async function POST(req) {
     const branchId = body.branchId || body.branch_id;
     if (branchId) {
       const inventoryData = {
-        org_id: orgId,
+        org_id: org.id,
         product_id: product.id,
         branch_id: branchId,
         quantity: 0,
@@ -78,13 +84,7 @@ export async function POST(req) {
         lot_number: body.lot || body.lot_number || null,
       };
 
-      const { error: invError } = await supabase
-        .from("inventory")
-        .insert(inventoryData);
-
-      if (invError) {
-        console.error("Inventory insert error:", invError);
-      }
+      await supabase.from("inventory").insert(inventoryData);
     }
 
     return NextResponse.json({ product }, { status: 201 });
@@ -96,19 +96,22 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
-    // Securely derive org context from authenticated session
-    const context = await getOrgContext(req);
-    
-    if (!context.success) {
-      return NextResponse.json({ error: context.error }, { status: context.status });
-    }
-
-    const { orgId } = context;
     const supabase = supabaseAdmin;
+    const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
-    if (!body.id) {
-      return NextResponse.json({ error: "Missing product ID" }, { status: 400 });
+    if (!orgSlug || !body.id) {
+      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+    }
+
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
+
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
     const updateData = {
@@ -123,7 +126,7 @@ export async function PUT(req) {
       .from("products")
       .update(updateData)
       .eq("id", body.id)
-      .eq("org_id", orgId)
+      .eq("org_id", org.id)
       .select()
       .single();
 
@@ -138,26 +141,29 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
   try {
-    // Securely derive org context from authenticated session
-    const context = await getOrgContext(req);
-    
-    if (!context.success) {
-      return NextResponse.json({ error: context.error }, { status: context.status });
-    }
-
-    const { orgId } = context;
     const supabase = supabaseAdmin;
+    const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
-    if (!body.id) {
-      return NextResponse.json({ error: "Missing product ID" }, { status: 400 });
+    if (!orgSlug || !body.id) {
+      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+    }
+
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("slug", orgSlug)
+      .single();
+
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
     const { error } = await supabase
       .from("products")
       .delete()
       .eq("id", body.id)
-      .eq("org_id", orgId);
+      .eq("org_id", org.id);
 
     if (error) throw error;
 

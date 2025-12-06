@@ -1,25 +1,32 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/src/lib/supabase/server";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { getOrgContext } from "@/src/lib/api/getOrgContext";
+import { rateLimit } from "@/src/lib/middleware/rateLimit";
+import { logAuditEvent, AuditActions } from "@/src/lib/audit/auditLog";
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(request) {
   try {
-    const supabase = await createClient();
-    const orgSlug = request.headers.get("x-org-slug");
-
-    if (!orgSlug) {
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    const context = await getOrgContext(request);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
     }
+
+    const { orgId } = context;
+    const supabase = supabaseAdmin;
 
     const { data: org, error } = await supabase
       .from("organizations")
       .select("*")
-      .eq("slug", orgSlug)
+      .eq("id", orgId)
       .single();
 
     if (error) throw error;
 
     return NextResponse.json({ organization: org });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("GET organization error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -27,23 +34,26 @@ export async function GET(request) {
 
 export async function PUT(request) {
   try {
-    const supabase = await createClient();
-    const orgSlug = request.headers.get("x-org-slug");
-    const body = await request.json();
-
-    if (!orgSlug) {
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    const context = await getOrgContext(request);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
     }
 
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
+    const { orgId, userId } = context;
 
-    if (orgError) throw orgError;
+    const rateLimitResult = rateLimit(`organization:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor intente más tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString() } }
+      );
+    }
 
-    const { error } = await supabase
+    const body = await request.json();
+    const supabase = supabaseAdmin;
+
+    const { data: org, error } = await supabase
       .from("organizations")
       .update({
         name: body.name,
@@ -57,12 +67,24 @@ export async function PUT(request) {
         currency: body.currency,
         logo_url: body.logo_url,
       })
-      .eq("id", org.id);
+      .eq("id", orgId)
+      .select()
+      .single();
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true });
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.SETTINGS_UPDATE,
+      resourceType: "organization",
+      resourceId: orgId,
+      metadata: { name: org.name },
+    });
+
+    return NextResponse.json({ success: true, organization: org });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("PUT organization error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

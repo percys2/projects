@@ -1,27 +1,19 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { getOrgContext } from "@/src/lib/api/getOrgContext";
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(req) {
   try {
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
+    }
+
+    const { orgId } = context;
     const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
     const range = req.nextUrl?.searchParams?.get("range") || "30";
-
-    if (!orgSlug) {
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
-    }
-
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    if (orgError || !org) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-    }
-
-    const orgId = org.id;
     const now = new Date();
     const periodStart = new Date(now);
     periodStart.setDate(periodStart.getDate() - parseInt(range));
@@ -188,6 +180,7 @@ export async function GET(req) {
       lowStock: lowStock || [],
     });
   } catch (error) {
+    Sentry.captureException(error);
     console.error("Dashboard API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

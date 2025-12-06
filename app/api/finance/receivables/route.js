@@ -10,52 +10,31 @@ export async function GET(req) {
       return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
     }
 
-    const { data: org, error: orgError } = await supabase
+    const { data: org } = await supabase
       .from("organizations")
       .select("id")
       .eq("slug", orgSlug)
       .single();
 
-    if (orgError || !org) {
+    if (!org) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    const { data: receivables, error } = await supabase
+    const { data, error } = await supabase
       .from("ar_receivables")
-      .select(`
-        id,
-        client_id,
-        invoice_number,
-        description,
-        date,
-        due_date,
-        total,
-        amount_paid,
-        status,
-        notes,
-        created_at,
-        clients (id, first_name, last_name, email, phone)
-      `)
+      .select("*, clients(name)")
       .eq("org_id", org.id)
-      .order("date", { ascending: false });
+      .order("created_at", { ascending: false });
 
-    if (error) {
-      if (error.code === "42P01") {
-        return NextResponse.json({ receivables: [] });
-      }
-      throw error;
-    }
+    if (error) throw error;
 
-    const formattedReceivables = (receivables || []).map(r => ({
+    const receivables = (data || []).map((r) => ({
       ...r,
-      client_name: r.clients ? `${r.clients.first_name} ${r.clients.last_name}` : "Sin cliente",
-      factura: r.invoice_number,
-      fecha: r.date,
+      client_name: r.clients?.name || "Cliente",
     }));
 
-    return NextResponse.json({ receivables: formattedReceivables });
+    return NextResponse.json({ receivables });
   } catch (err) {
-    console.error("Receivables GET error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -70,47 +49,35 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
     }
 
-    const { data: org, error: orgError } = await supabase
+    const { data: org } = await supabase
       .from("organizations")
       .select("id")
       .eq("slug", orgSlug)
       .single();
 
-    if (orgError || !org) {
+    if (!org) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    const total = parseFloat(body.total) || 0;
-    const amount_paid = parseFloat(body.amount_paid) || 0;
-    let status = "pending";
-    if (amount_paid >= total && total > 0) {
-      status = "paid";
-    } else if (amount_paid > 0) {
-      status = "partial";
-    }
-
-    const { data: receivable, error } = await supabase
+    const { data, error } = await supabase
       .from("ar_receivables")
       .insert({
         org_id: org.id,
-        client_id: body.client_id || null,
-        invoice_number: body.invoice_number || null,
-        description: body.description || null,
-        date: body.date || new Date().toISOString().split("T")[0],
-        due_date: body.due_date || null,
-        total,
-        amount_paid,
-        status,
-        notes: body.notes || null,
+        client_id: body.client_id,
+        factura: body.factura,
+        total: body.total,
+        amount_paid: body.amount_paid || 0,
+        due_date: body.due_date,
+        status: body.status || "pending",
+        fecha: body.fecha || new Date().toISOString().split("T")[0],
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    return NextResponse.json({ receivable, success: true });
+    return NextResponse.json({ receivable: data });
   } catch (err) {
-    console.error("Receivables POST error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -122,40 +89,28 @@ export async function PUT(req) {
     const body = await req.json();
 
     if (!orgSlug || !body.id) {
-      return NextResponse.json({ error: "Missing org slug or id" }, { status: 400 });
+      return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
 
-    const { data: org, error: orgError } = await supabase
+    const { data: org } = await supabase
       .from("organizations")
       .select("id")
       .eq("slug", orgSlug)
       .single();
 
-    if (orgError || !org) {
+    if (!org) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    const total = parseFloat(body.total) || 0;
-    const amount_paid = parseFloat(body.amount_paid) || 0;
-    let status = "pending";
-    if (amount_paid >= total && total > 0) {
-      status = "paid";
-    } else if (amount_paid > 0) {
-      status = "partial";
-    }
-
-    const { data: receivable, error } = await supabase
+    const { data, error } = await supabase
       .from("ar_receivables")
       .update({
-        client_id: body.client_id || null,
-        invoice_number: body.invoice_number || null,
-        description: body.description || null,
-        date: body.date,
-        due_date: body.due_date || null,
-        total,
-        amount_paid,
-        status,
-        notes: body.notes || null,
+        client_id: body.client_id,
+        factura: body.factura,
+        total: body.total,
+        amount_paid: body.amount_paid,
+        due_date: body.due_date,
+        status: body.status,
       })
       .eq("id", body.id)
       .eq("org_id", org.id)
@@ -164,9 +119,8 @@ export async function PUT(req) {
 
     if (error) throw error;
 
-    return NextResponse.json({ receivable, success: true });
+    return NextResponse.json({ receivable: data });
   } catch (err) {
-    console.error("Receivables PUT error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -178,16 +132,16 @@ export async function DELETE(req) {
     const body = await req.json();
 
     if (!orgSlug || !body.id) {
-      return NextResponse.json({ error: "Missing org slug or id" }, { status: 400 });
+      return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
 
-    const { data: org, error: orgError } = await supabase
+    const { data: org } = await supabase
       .from("organizations")
       .select("id")
       .eq("slug", orgSlug)
       .single();
 
-    if (orgError || !org) {
+    if (!org) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
@@ -201,7 +155,6 @@ export async function DELETE(req) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Receivables DELETE error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

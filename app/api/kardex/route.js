@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { getOrgContext } from "@/src/lib/api/getOrgContext";
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(req) {
   try {
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ success: false, error: context.error }, { status: context.status });
+    }
+
+    const { orgId } = context;
     const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
+
     const productId = req.headers.get("x-product-id");
     const branchId = req.headers.get("x-branch-id");
     const movementType = req.headers.get("x-movement-type");
@@ -16,22 +25,10 @@ export async function GET(req) {
     const limit = Number(url.searchParams.get("limit") || 50);
     const offset = Number(url.searchParams.get("offset") || 0);
 
-    if (!orgSlug)
-      return NextResponse.json({ success: false, error: "Missing org slug" });
-
-    const { data: org } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    if (!org)
-      return NextResponse.json({ success: false, error: "Org not found" });
-
     let query = supabase
       .from("kardex_view")
       .select("*")
-      .eq("org_id", org.id)
+      .eq("org_id", orgId)
       .range(offset, offset + limit - 1)
       .order("created_at", { ascending: false });
 
@@ -49,6 +46,7 @@ export async function GET(req) {
 
     return NextResponse.json({ success: true, data });
   } catch (err) {
-    return NextResponse.json({ success: false, error: err.message });
+    Sentry.captureException(err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }

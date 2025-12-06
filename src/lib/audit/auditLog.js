@@ -94,6 +94,7 @@ export const AuditActions = {
   // Inventory actions
   INVENTORY_ADJUST: 'inventory_adjust',
   INVENTORY_MOVEMENT: 'inventory_movement',
+  INVENTORY_DELETE: 'inventory_delete',
   
   // Organization actions
   ORG_CREATE: 'org_create',
@@ -101,4 +102,48 @@ export const AuditActions = {
   ORG_MEMBER_ADD: 'org_member_add',
   ORG_MEMBER_REMOVE: 'org_member_remove',
   ORG_MEMBER_ROLE_CHANGE: 'org_member_role_change',
+  
+  // Client actions
+  CLIENT_CREATE: 'client_create',
+  CLIENT_UPDATE: 'client_update',
+  CLIENT_DELETE: 'client_delete',
+  
+  // Employee actions
+  EMPLOYEE_CREATE: 'employee_create',
+  EMPLOYEE_UPDATE: 'employee_update',
+  EMPLOYEE_DELETE: 'employee_delete',
+  
+  // Finance actions
+  SUPPLIER_CREATE: 'supplier_create',
+  SUPPLIER_UPDATE: 'supplier_update',
+  SUPPLIER_DELETE: 'supplier_delete',
+  AP_BILL_CREATE: 'ap_bill_create',
+  AP_BILL_UPDATE: 'ap_bill_update',
+  AP_BILL_DELETE: 'ap_bill_delete',
+  PAYMENT_CREATE: 'payment_create',
+  PAYMENT_UPDATE: 'payment_update',
+  PAYMENT_DELETE: 'payment_delete',
+  ASSET_CREATE: 'asset_create',
+  ASSET_UPDATE: 'asset_update',
+  ASSET_DELETE: 'asset_delete',
+  
+  // CRM actions
+  OPPORTUNITY_CREATE: 'opportunity_create',
+  OPPORTUNITY_UPDATE: 'opportunity_update',
+  OPPORTUNITY_DELETE: 'opportunity_delete',
+  ACTIVITY_CREATE: 'activity_create',
+  ACTIVITY_UPDATE: 'activity_update',
+  ACTIVITY_DELETE: 'activity_delete',
+  
+  // Settings actions
+  SETTINGS_UPDATE: 'settings_update',
+  TAX_CREATE: 'tax_create',
+  TAX_UPDATE: 'tax_update',
+  TAX_DELETE: 'tax_delete',
+  PAYMENT_METHOD_CREATE: 'payment_method_create',
+  PAYMENT_METHOD_UPDATE: 'payment_method_update',
+  PAYMENT_METHOD_DELETE: 'payment_method_delete',
+  BRANCH_CREATE: 'branch_create',
+  BRANCH_UPDATE: 'branch_update',
+  BRANCH_DELETE: 'branch_delete',
 };

@@ -73,14 +73,43 @@ export default function SalesScreen({ orgSlug }) {
     return new Date(date).toLocaleDateString("es-NI");
   };
 
-  async function handleDeleteSale(saleId) {
-    if (!confirm("¿Estás seguro de ELIMINAR esta venta? Esta acción no se puede deshacer.")) return;
+  // ANULAR VENTA - Restaura inventario
+  async function handleCancelSale(saleId) {
+    const reason = prompt("Motivo de anulación (opcional):");
+    if (reason === null) return; // Usuario canceló el prompt
+
+    if (!confirm("¿Estás seguro de ANULAR esta venta?\n\nEl inventario será restaurado automáticamente.")) return;
     
     try {
       const res = await fetch("/api/sales", {
         method: "DELETE",
         headers: { "Content-Type": "application/json", "x-org-slug": orgSlug },
-        body: JSON.stringify({ id: saleId }),
+        body: JSON.stringify({ id: saleId, action: "cancel" }),
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        alert("Venta anulada exitosamente. El inventario ha sido restaurado.");
+        loadSales();
+        setSelectedSale(null);
+      } else {
+        alert("Error: " + (data.error || "No se pudo anular la venta"));
+      }
+    } catch (err) {
+      alert("Error al anular venta: " + err.message);
+    }
+  }
+
+  // ELIMINAR PERMANENTEMENTE (solo admins)
+  async function handleDeleteSale(saleId) {
+    if (!confirm("¿ELIMINAR PERMANENTEMENTE esta venta?\n\nEsta acción NO restaura el inventario y NO se puede deshacer.\n\nSolo usar si la venta fue creada por error.")) return;
+    
+    try {
+      const res = await fetch("/api/sales", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", "x-org-slug": orgSlug },
+        body: JSON.stringify({ id: saleId, action: "delete" }),
       });
       
       if (res.ok) {
@@ -128,7 +157,7 @@ export default function SalesScreen({ orgSlug }) {
       formatCurrency(sale.subtotal),
       formatCurrency(sale.descuento),
       formatCurrency(sale.total),
-      formatCurrency(sale.margen),
+      sale.status === "cancelled" ? "ANULADA" : formatCurrency(sale.margen),
     ]);
 
     doc.autoTable({
@@ -138,16 +167,6 @@ export default function SalesScreen({ orgSlug }) {
       styles: { fontSize: 8, cellPadding: 2 },
       headStyles: { fillColor: [51, 65, 85], textColor: 255 },
       alternateRowStyles: { fillColor: [248, 250, 252] },
-      columnStyles: {
-        0: { cellWidth: 20 },
-        1: { cellWidth: 25 },
-        2: { cellWidth: 35 },
-        3: { cellWidth: 12, halign: "center" },
-        4: { cellWidth: 25, halign: "right" },
-        5: { cellWidth: 22, halign: "right" },
-        6: { cellWidth: 25, halign: "right" },
-        7: { cellWidth: 25, halign: "right" },
-      },
     });
 
     const fileName = dateStart && dateEnd 
@@ -174,7 +193,7 @@ export default function SalesScreen({ orgSlug }) {
       ["Productos Vendidos", totals.totalItems],
       [],
       ["DETALLE DE VENTAS"],
-      ["Fecha", "Factura", "Cliente", "Items", "Subtotal", "Descuento", "Total", "Margen"],
+      ["Fecha", "Factura", "Cliente", "Items", "Subtotal", "Descuento", "Total", "Margen", "Estado"],
     ];
 
     const salesData = filteredSales.map((sale) => [
@@ -186,22 +205,12 @@ export default function SalesScreen({ orgSlug }) {
       sale.descuento || 0,
       sale.total || 0,
       sale.margen || 0,
+      sale.status === "cancelled" ? "ANULADA" : "Activa",
     ]);
 
     const allData = [...summaryData, ...salesData];
-
     const ws = XLSX.utils.aoa_to_sheet(allData);
-
-    ws["!cols"] = [
-      { wch: 12 },
-      { wch: 15 },
-      { wch: 25 },
-      { wch: 8 },
-      { wch: 15 },
-      { wch: 12 },
-      { wch: 15 },
-      { wch: 15 },
-    ];
+    ws["!cols"] = [{ wch: 12 }, { wch: 15 }, { wch: 25 }, { wch: 8 }, { wch: 15 }, { wch: 12 }, { wch: 15 }, { wch: 15 }, { wch: 10 }];
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Ventas");
@@ -218,7 +227,7 @@ export default function SalesScreen({ orgSlug }) {
       return;
     }
 
-    let csvContent = "Fecha,Factura,Cliente,Items,Subtotal,Descuento,Total,Margen\n";
+    let csvContent = "Fecha,Factura,Cliente,Items,Subtotal,Descuento,Total,Margen,Estado\n";
     
     filteredSales.forEach((sale) => {
       const row = [
@@ -230,6 +239,7 @@ export default function SalesScreen({ orgSlug }) {
         sale.descuento || 0,
         sale.total || 0,
         sale.margen || 0,
+        sale.status === "cancelled" ? "ANULADA" : "Activa",
       ];
       csvContent += row.join(",") + "\n";
     });
@@ -252,18 +262,9 @@ export default function SalesScreen({ orgSlug }) {
           <p className="text-sm text-slate-500">Historial de ventas del POS</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={exportToCSV} className="px-3 py-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            CSV
-          </button>
-          <button onClick={exportToExcel} className="px-3 py-2 text-sm bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            Excel
-          </button>
-          <button onClick={exportToPDF} className="px-3 py-2 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded-lg flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            PDF
-          </button>
+          <button onClick={exportToCSV} className="px-3 py-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg">CSV</button>
+          <button onClick={exportToExcel} className="px-3 py-2 text-sm bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg">Excel</button>
+          <button onClick={exportToPDF} className="px-3 py-2 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded-lg">PDF</button>
         </div>
       </div>
 
@@ -271,12 +272,11 @@ export default function SalesScreen({ orgSlug }) {
         <div className="bg-white rounded-xl border p-4">
           <p className="text-xs text-slate-500">Total Ventas</p>
           <p className="text-xl font-bold text-slate-800">{formatCurrency(totals.totalRevenue)}</p>
-          <p className="text-xs text-slate-400">{filteredSales.length} transacciones</p>
+          <p className="text-xs text-slate-400">{filteredSales.filter(s => s.status !== "cancelled").length} activas</p>
         </div>
         <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-4">
           <p className="text-xs text-emerald-600">Ganancia Bruta</p>
           <p className="text-xl font-bold text-emerald-700">{formatCurrency(totals.totalMargin)}</p>
-          <p className="text-xs text-emerald-500">{totals.totalRevenue > 0 ? ((totals.totalMargin / totals.totalRevenue) * 100).toFixed(1) : 0}% margen</p>
         </div>
         <div className="bg-red-50 rounded-xl border border-red-200 p-4">
           <p className="text-xs text-red-600">Costo Total</p>
@@ -285,7 +285,6 @@ export default function SalesScreen({ orgSlug }) {
         <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
           <p className="text-xs text-blue-600">Productos Vendidos</p>
           <p className="text-xl font-bold text-blue-700">{totals.totalItems}</p>
-          <p className="text-xs text-blue-400">unidades</p>
         </div>
       </div>
 
@@ -318,29 +317,43 @@ export default function SalesScreen({ orgSlug }) {
                 <th className="text-left p-3 font-medium text-slate-600">Factura</th>
                 <th className="text-left p-3 font-medium text-slate-600">Cliente</th>
                 <th className="text-left p-3 font-medium text-slate-600">Productos</th>
-                <th className="text-right p-3 font-medium text-slate-600">Subtotal</th>
-                <th className="text-right p-3 font-medium text-slate-600">Descuento</th>
                 <th className="text-right p-3 font-medium text-slate-600">Total</th>
-                <th className="text-right p-3 font-medium text-slate-600">Margen</th>
+                <th className="text-center p-3 font-medium text-slate-600">Estado</th>
                 <th className="text-center p-3 font-medium text-slate-600">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredSales.length === 0 ? (
-                <tr><td colSpan="9" className="text-center p-8 text-slate-400">No hay ventas</td></tr>
+                <tr><td colSpan="7" className="text-center p-8 text-slate-400">No hay ventas</td></tr>
               ) : (
                 filteredSales.map((sale) => (
-                  <tr key={sale.id} className="border-b hover:bg-slate-50 cursor-pointer" onClick={() => setSelectedSale(sale)}>
+                  <tr 
+                    key={sale.id} 
+                    className={`border-b hover:bg-slate-50 cursor-pointer ${sale.status === "cancelled" ? "bg-red-50 opacity-60" : ""}`}
+                    onClick={() => setSelectedSale(sale)}
+                  >
                     <td className="p-3">{formatDate(sale.fecha)}</td>
                     <td className="p-3 font-mono text-xs">{sale.factura || "-"}</td>
                     <td className="p-3">{getClientName(sale.clients)}</td>
                     <td className="p-3 text-slate-500">{(sale.sales_items || []).length} items</td>
-                    <td className="p-3 text-right">{formatCurrency(sale.subtotal)}</td>
-                    <td className="p-3 text-right text-orange-600">{formatCurrency(sale.descuento)}</td>
                     <td className="p-3 text-right font-medium">{formatCurrency(sale.total)}</td>
-                    <td className="p-3 text-right text-emerald-600">{formatCurrency(sale.margen)}</td>
+                    <td className="p-3 text-center">
+                      {sale.status === "cancelled" ? (
+                        <span className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded">ANULADA</span>
+                      ) : (
+                        <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">Activa</span>
+                      )}
+                    </td>
                     <td className="p-3 text-center">
                       <button onClick={(e) => { e.stopPropagation(); setSelectedSale(sale); }} className="text-blue-600 hover:underline text-xs">Ver</button>
+                      {sale.status !== "cancelled" && (
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleCancelSale(sale.id); }} 
+                          className="ml-2 text-red-600 hover:underline text-xs"
+                        >
+                          Anular
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -356,6 +369,7 @@ export default function SalesScreen({ orgSlug }) {
         </div>
       )}
 
+      {/* Modal de detalle */}
       {selectedSale && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedSale(null)}>
           <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
@@ -363,6 +377,9 @@ export default function SalesScreen({ orgSlug }) {
               <div>
                 <h2 className="font-bold text-lg">Detalle de Venta</h2>
                 <p className="text-xs text-slate-500">Factura: {selectedSale.factura || selectedSale.id}</p>
+                {selectedSale.status === "cancelled" && (
+                  <span className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded mt-1 inline-block">VENTA ANULADA</span>
+                )}
               </div>
               <button onClick={() => setSelectedSale(null)} className="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
             </div>
@@ -376,8 +393,6 @@ export default function SalesScreen({ orgSlug }) {
                 <div>
                   <p className="text-xs text-slate-500">Cliente</p>
                   <p className="font-medium">{getClientName(selectedSale.clients)}</p>
-                  {selectedSale.clients?.phone && <p className="text-xs text-slate-400">{selectedSale.clients.phone}</p>}
-                  {selectedSale.clients?.city && <p className="text-xs text-slate-400">{selectedSale.clients.city}</p>}
                 </div>
               </div>
 
@@ -390,7 +405,6 @@ export default function SalesScreen({ orgSlug }) {
                       <th className="text-right p-2">Cant.</th>
                       <th className="text-right p-2">Precio</th>
                       <th className="text-right p-2">Subtotal</th>
-                      <th className="text-right p-2">Margen</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -400,44 +414,34 @@ export default function SalesScreen({ orgSlug }) {
                         <td className="p-2 text-right">{item.quantity}</td>
                         <td className="p-2 text-right">{formatCurrency(item.price)}</td>
                         <td className="p-2 text-right">{formatCurrency(item.subtotal)}</td>
-                        <td className="p-2 text-right text-emerald-600">{formatCurrency(item.margin)}</td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot className="bg-slate-50 font-medium">
                     <tr className="border-t">
-                      <td colSpan="3" className="p-2 text-right">Subtotal:</td>
-                      <td className="p-2 text-right">{formatCurrency(selectedSale.subtotal)}</td>
-                      <td></td>
-                    </tr>
-                    {Number(selectedSale.descuento) > 0 && (
-                      <tr>
-                        <td colSpan="3" className="p-2 text-right text-orange-600">Descuento:</td>
-                        <td className="p-2 text-right text-orange-600">-{formatCurrency(selectedSale.descuento)}</td>
-                        <td></td>
-                      </tr>
-                    )}
-                    {Number(selectedSale.iva) > 0 && (
-                      <tr>
-                        <td colSpan="3" className="p-2 text-right">IVA:</td>
-                        <td className="p-2 text-right">{formatCurrency(selectedSale.iva)}</td>
-                        <td></td>
-                      </tr>
-                    )}
-                    <tr className="border-t">
                       <td colSpan="3" className="p-2 text-right font-bold">Total:</td>
                       <td className="p-2 text-right font-bold">{formatCurrency(selectedSale.total)}</td>
-                      <td className="p-2 text-right text-emerald-600 font-bold">{formatCurrency(selectedSale.margen)}</td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
 
-              <div className="flex justify-end gap-2 pt-4 border-t">
-                <button onClick={() => handleDeleteSale(selectedSale.id)} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                  Eliminar Venta
-                </button>
-              </div>
+              {selectedSale.status !== "cancelled" && (
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                  <button 
+                    onClick={() => handleCancelSale(selectedSale.id)} 
+                    className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm hover:bg-orange-700"
+                  >
+                    Anular Venta (Restaurar Inventario)
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteSale(selectedSale.id)} 
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                  >
+                    Eliminar Permanente
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -445,4 +449,3 @@ export default function SalesScreen({ orgSlug }) {
     </div>
   );
 }
-

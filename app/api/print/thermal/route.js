@@ -27,8 +27,9 @@ export async function POST(req) {
 
     const ticket = buildThermalTicket(sale);
 
-    // Send to printer-server
-    await fetch("http://localhost:8089/print-thermal", {
+    // Send to printer-server (configurable via environment variable)
+    const printerServerUrl = process.env.PRINTER_SERVER_URL || "http://localhost:8089";
+    await fetch(`${printerServerUrl}/print-thermal`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: ticket })
