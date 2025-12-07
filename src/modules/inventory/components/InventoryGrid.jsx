@@ -25,6 +25,7 @@ export default function InventoryGrid({
   const safeProducts = Array.isArray(products) ? products : [];
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deactivateConfirm, setDeactivateConfirm] = useState(null);
+  const [expandedRow, setExpandedRow] = useState(null);
 
   const getStock = (p) => p.stock ?? p.quantity ?? 0;
   const getUnitWeight = (p) =>
@@ -107,31 +108,35 @@ export default function InventoryGrid({
     }
   };
 
+  const toggleRowExpand = (id) => {
+    setExpandedRow(expandedRow === id ? null : id);
+  };
+
   return (
     <div className="space-y-3">
 
       {/* DELETE CONFIRM MODAL */}
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
             <h3 className="text-lg font-semibold text-slate-800">
-              Confirmar eliminación
+              Confirmar eliminacion
             </h3>
 
             <p className="text-slate-600 my-4">
-              ¿Eliminar <strong>{deleteConfirm.name}</strong>? Esta acción es permanente.
+              Eliminar <strong>{deleteConfirm.name}</strong>? Esta accion es permanente.
             </p>
 
-            <div className="flex justify-end gap-3">
+            <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 bg-slate-200 rounded"
+                className="flex-1 px-4 py-3 bg-slate-200 rounded min-h-[48px]"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded"
+                className="flex-1 px-4 py-3 bg-red-600 text-white rounded min-h-[48px]"
               >
                 Eliminar
               </button>
@@ -142,27 +147,27 @@ export default function InventoryGrid({
 
       {/* DEACTIVATE CONFIRM MODAL */}
       {deactivateConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
             <h3 className="text-lg font-semibold text-slate-800">
               Producto con historial
             </h3>
 
             <p className="text-slate-600 my-4">
-              <strong>{deactivateConfirm.name}</strong> tiene movimientos históricos y no puede eliminarse.
-              ¿Desea desactivarlo en su lugar? El producto no aparecerá en las listas pero su historial se conservará.
+              <strong>{deactivateConfirm.name}</strong> tiene movimientos historicos y no puede eliminarse.
+              Desea desactivarlo en su lugar? El producto no aparecera en las listas pero su historial se conservara.
             </p>
 
-            <div className="flex justify-end gap-3">
+            <div className="flex gap-3">
               <button
                 onClick={() => setDeactivateConfirm(null)}
-                className="px-4 py-2 bg-slate-200 rounded"
+                className="flex-1 px-4 py-3 bg-slate-200 rounded min-h-[48px]"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDeactivate}
-                className="px-4 py-2 bg-amber-600 text-white rounded"
+                className="flex-1 px-4 py-3 bg-amber-600 text-white rounded min-h-[48px]"
               >
                 Desactivar
               </button>
@@ -172,42 +177,146 @@ export default function InventoryGrid({
       )}
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
-        <div className="bg-slate-50 border rounded-lg px-3 py-2">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 text-[11px]">
+        <div className="bg-slate-50 border rounded-lg px-2 sm:px-3 py-2">
           <p className="text-slate-500">Productos</p>
-          <p className="text-lg font-semibold">{totalProducts}</p>
+          <p className="text-base sm:text-lg font-semibold">{totalProducts}</p>
         </div>
 
-        <div className="bg-slate-50 border rounded-lg px-3 py-2">
+        <div className="bg-slate-50 border rounded-lg px-2 sm:px-3 py-2">
           <p className="text-slate-500">Unidades</p>
-          <p className="text-lg font-semibold">
+          <p className="text-base sm:text-lg font-semibold">
             {totalUnits.toLocaleString("es-NI")}
           </p>
         </div>
 
-        <div className="bg-slate-50 border rounded-lg px-3 py-2">
+        <div className="bg-slate-50 border rounded-lg px-2 sm:px-3 py-2">
           <p className="text-slate-500">Valor inventario</p>
-          <p className="text-lg font-semibold text-emerald-700">
+          <p className="text-base sm:text-lg font-semibold text-emerald-700">
             C$ {inventoryValue.toLocaleString("es-NI")}
           </p>
         </div>
 
-        <div className="bg-slate-50 border rounded-lg px-3 py-2">
+        <div className="bg-slate-50 border rounded-lg px-2 sm:px-3 py-2">
           <p className="text-slate-500">Potencial de venta</p>
-          <p className="text-lg font-semibold text-indigo-700">
+          <p className="text-base sm:text-lg font-semibold text-indigo-700">
             C$ {potentialRevenue.toLocaleString("es-NI")}
           </p>
         </div>
       </div>
 
-      {/* TABLE */}
-      <div className="w-full overflow-auto max-h-[520px]">
+      {/* MOBILE CARDS VIEW */}
+      <div className="lg:hidden space-y-2">
+        {sortedProducts.length === 0 ? (
+          <p className="text-center text-slate-400 py-8">No hay productos</p>
+        ) : (
+          sortedProducts.map((p) => {
+            const stock = getStock(p);
+            const costTotal = stock * (p.cost ?? 0);
+            const isExpanded = expandedRow === p.id;
+
+            return (
+              <div
+                key={p.id}
+                className="bg-white border rounded-lg p-3 shadow-sm"
+              >
+                <div 
+                  className="flex justify-between items-start cursor-pointer"
+                  onClick={() => toggleRowExpand(p.id)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm truncate">{p.name}</p>
+                    <p className="text-xs text-slate-500">{p.category} - {p.branch ?? p.branch_name}</p>
+                    <div className="flex gap-4 mt-1">
+                      <span className="text-xs">Stock: <strong>{stock}</strong></span>
+                      <span className="text-xs">Precio: <strong>C${p.price}</strong></span>
+                    </div>
+                  </div>
+                  <svg 
+                    className={`w-5 h-5 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+
+                {isExpanded && (
+                  <div className="mt-3 pt-3 border-t space-y-3">
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <span className="text-slate-500">Codigo:</span>
+                        <span className="ml-1 font-medium">{p.sku ?? p.id}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Costo:</span>
+                        <span className="ml-1 font-medium">C${(p.cost ?? 0).toLocaleString("es-NI")}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Costo total:</span>
+                        <span className="ml-1 font-medium">C${costTotal.toLocaleString("es-NI")}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Vence:</span>
+                        <span className="ml-1 font-medium">{p.expiresAt || "-"}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => onKardex(p)}
+                        className="flex-1 min-w-[80px] px-2 py-2 text-xs bg-purple-600 text-white rounded"
+                      >
+                        Historial
+                      </button>
+                      <button
+                        onClick={() => onEntry && onEntry(p)}
+                        className="flex-1 min-w-[80px] px-2 py-2 text-xs bg-emerald-600 text-white rounded"
+                      >
+                        Entrada
+                      </button>
+                      <button
+                        onClick={() => onExit && onExit(p)}
+                        className="flex-1 min-w-[80px] px-2 py-2 text-xs bg-orange-600 text-white rounded"
+                      >
+                        Salida
+                      </button>
+                      <button
+                        onClick={() => onTransfer && onTransfer(p)}
+                        className="flex-1 min-w-[80px] px-2 py-2 text-xs bg-blue-600 text-white rounded"
+                      >
+                        Traslado
+                      </button>
+                      <button
+                        onClick={() => onEdit && onEdit(p)}
+                        className="flex-1 min-w-[80px] px-2 py-2 text-xs bg-slate-800 text-white rounded"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirm(p)}
+                        className="flex-1 min-w-[80px] px-2 py-2 text-xs bg-red-600 text-white rounded"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden lg:block w-full overflow-auto max-h-[520px]">
         <table className="min-w-full text-[12px]">
           <thead>
             <tr className="bg-slate-50 border-b text-[11px] uppercase text-slate-500">
               <th className="px-2 py-2">Producto</th>
-              <th className="px-2 py-2">Código</th>
-              <th className="px-2 py-2">Categoría</th>
+              <th className="px-2 py-2">Codigo</th>
+              <th className="px-2 py-2">Categoria</th>
               <th className="px-2 py-2">Bodega</th>
               <th className="px-2 py-2 text-right">Cantidad</th>
               <th className="px-2 py-2 text-right">Peso</th>
@@ -215,7 +324,7 @@ export default function InventoryGrid({
               <th className="px-2 py-2 text-right">Costo total</th>
               <th className="px-2 py-2 text-right">Precio</th>
               <th className="px-2 py-2 text-right">Precio x lb</th>
-              <th className="px-2 py-2 text-right">Días p/ vencer</th>
+              <th className="px-2 py-2 text-right">Dias p/ vencer</th>
               <th className="px-2 py-2">Vence</th>
               <th className="px-2 py-2 text-right">Acciones</th>
             </tr>
@@ -264,7 +373,7 @@ export default function InventoryGrid({
                       {pricePerLb ? `C$${pricePerLb.toFixed(2)}` : "-"}
                     </td>
                     <td className="px-2 py-1.5 text-right">
-                      {computeDaysToExpire(p.expiresAt) ?? "—"}
+                      {computeDaysToExpire(p.expiresAt) ?? "-"}
                     </td>
                     <td className="px-2 py-1.5">{p.expiresAt}</td>
 

@@ -97,6 +97,36 @@
     margin-left: 0 !important;
     width: 100% !important;
   }
+
+  /* Mobile table scroll */
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Mobile card adjustments */
+  .mobile-card {
+    padding: 0.75rem !important;
+  }
+
+  /* Mobile header adjustments */
+  .mobile-header {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    align-items: stretch !important;
+  }
+
+  /* Mobile button group */
+  .mobile-btn-group {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .mobile-btn-group > button {
+    flex: 1 1 auto !important;
+    min-width: 80px !important;
+  }
 }
 
 /* Tablet styles */
@@ -171,5 +201,16 @@
 @media (prefers-color-scheme: dark) {
   .dark-mode-ready {
     /* Add dark mode styles here when ready */
+  }
+}
+
+/* Safe area for notched devices */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  }
+  
+  .safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top)) !important;
   }
 }

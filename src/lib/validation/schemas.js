@@ -36,19 +36,28 @@ export const productSchema = z.object({
   price: z.number().positive('El precio debe ser mayor a 0'),
   cost: z.number().nonnegative('El costo no puede ser negativo').optional(),
 });
+// Helper para convertir strings vacios a null para campos numericos opcionales
+const optionalNumberFromString = z.preprocess(
+  (val) => {
+    if (val === "" || val === undefined || val === null) return undefined;
+    const num = typeof val === "number" ? val : Number(val);
+    return Number.isNaN(num) ? undefined : num;
+  },
+  z.number().optional().nullable()
+);
 
 // Client Schema (updated for actual fields used)
 export const clientSchema = z.object({
   first_name: z.string().min(1, 'El nombre es requerido'),
-  last_name: z.string().optional(),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  municipio: z.string().optional(),
-  animal_type: z.string().optional(),
-  sales_stage: z.enum(['prospecto', 'contactado', 'negociacion', 'cliente', 'inactivo']).optional(),
-  latitude: z.number().optional().nullable(),
-  longitude: z.number().optional().nullable(),
+  last_name: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
+  city: z.string().optional().nullable(),
+  municipio: z.string().optional().nullable(),
+  animal_type: z.string().optional().nullable(),
+  sales_stage: z.string().optional().nullable(),
+  latitude: optionalNumberFromString,
+  longitude: optionalNumberFromString,
 });
 
 // Client Update Schema (includes id)
@@ -133,12 +142,14 @@ export const assetSchema = z.object({
 
 // CRM Opportunity Schema
 export const opportunitySchema = z.object({
-  client_id: z.string().uuid('ID de cliente inválido').optional(),
+  client_id: z.string().uuid('ID de cliente inválido').optional().nullable(),
   title: z.string().min(1, 'El título es requerido'),
-  value: z.number().nonnegative('El valor no puede ser negativo').optional(),
-  stage_id: z.string().uuid('ID de etapa inválido').optional(),
-  expected_close_date: z.string().optional(),
-  notes: z.string().optional(),
+  amount: z.coerce.number().nonnegative('El valor no puede ser negativo').optional().nullable(),
+  stage_id: z.string().uuid('ID de etapa inválido').optional().nullable(),
+  expected_close_date: z.string().optional().nullable(),
+  source: z.string().optional().nullable(),
+  status: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
 });
 
 // CRM Activity Schema

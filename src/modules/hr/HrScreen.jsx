@@ -30,20 +30,20 @@ export default function HrScreen({ orgSlug }) {
   }
 
   return (
-    <div className="space-y-5 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-5 max-w-6xl mx-auto px-2 sm:px-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h1 className="text-lg font-semibold text-slate-800">
             Recursos Humanos
           </h1>
           <p className="text-xs text-slate-500">
-            Gestión de empleados, nómina y prestaciones según ley nicaragüense
+            Gestion de empleados, nomina y prestaciones segun ley nicaraguense
           </p>
         </div>
 
         <button
           onClick={hr.openNewEmployee}
-          className="px-3 py-2 bg-slate-900 text-white rounded-lg text-xs hover:bg-slate-800"
+          className="w-full sm:w-auto px-3 py-2 bg-slate-900 text-white rounded-lg text-xs hover:bg-slate-800 min-h-[44px]"
         >
           + Agregar empleado
         </button>
@@ -52,11 +52,11 @@ export default function HrScreen({ orgSlug }) {
       <HrStats stats={hr.stats} />
 
       <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
-        <div className="border-b">
-          <nav className="flex">
+        <div className="border-b overflow-x-auto">
+          <nav className="flex min-w-max">
             <button
               onClick={() => setActiveTab("employees")}
-              className={`px-4 py-3 text-sm font-medium ${
+              className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
                 activeTab === "employees"
                   ? "border-b-2 border-slate-900 text-slate-900"
                   : "text-slate-500 hover:text-slate-700"
@@ -66,20 +66,20 @@ export default function HrScreen({ orgSlug }) {
             </button>
             <button
               onClick={() => setActiveTab("payroll")}
-              className={`px-4 py-3 text-sm font-medium ${
+              className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
                 activeTab === "payroll"
                   ? "border-b-2 border-slate-900 text-slate-900"
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              Calculadora de Nómina
+              Calculadora de Nomina
             </button>
           </nav>
         </div>
 
         {activeTab === "employees" && (
           <>
-            <div className="px-4 py-3 border-b">
+            <div className="px-3 sm:px-4 py-3 border-b">
               <HrFilters
                 search={hr.search}
                 setSearch={hr.setSearch}
@@ -91,7 +91,7 @@ export default function HrScreen({ orgSlug }) {
               />
             </div>
 
-            <div className="px-4 py-3">
+            <div className="px-2 sm:px-4 py-3">
               <EmployeeList
                 employees={hr.filteredEmployees}
                 onEdit={hr.openEditEmployee}
@@ -105,7 +105,7 @@ export default function HrScreen({ orgSlug }) {
         )}
 
         {activeTab === "payroll" && (
-          <div className="px-4 py-3">
+          <div className="px-3 sm:px-4 py-3">
             <PayrollCalculator />
           </div>
         )}

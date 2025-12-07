@@ -152,9 +152,9 @@ export default function InventoryScreen({ orgSlug }) {
   };
 
   return (
-    <div className="space-y-5 max-w-6xl mx-auto">
+    <div className="space-y-4 sm:space-y-5 max-w-6xl mx-auto px-2 sm:px-0">
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h1 className="text-lg font-semibold">Inventario</h1>
           <p className="text-xs text-slate-500">
@@ -164,21 +164,21 @@ export default function InventoryScreen({ orgSlug }) {
 
         <button
           onClick={inv.openNewProduct}
-          className="px-3 py-2 bg-slate-900 text-white rounded-lg text-xs"
+          className="w-full sm:w-auto px-3 py-2 bg-slate-900 text-white rounded-lg text-xs min-h-[44px]"
         >
           + Agregar producto
         </button>
       </div>
 
       <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
-        <div className="px-4 py-3 border-b">
+        <div className="px-3 sm:px-4 py-3 border-b">
           <h2 className="font-semibold text-sm">Detalle de inventario</h2>
           <p className="text-[11px] text-slate-500">
             Total filtrados: {inv.filteredProducts.length}
           </p>
         </div>
 
-        <div className="px-4 py-3 border-b">
+        <div className="px-3 sm:px-4 py-3 border-b">
           <InventoryFilters
             search={inv.search}
             setSearch={inv.setSearch}
@@ -191,7 +191,7 @@ export default function InventoryScreen({ orgSlug }) {
           />
         </div>
 
-        <div className="px-4 py-3">
+        <div className="px-2 sm:px-4 py-3">
           <InventoryGrid
             products={inv.filteredProducts}
             stats={inv.stats}
