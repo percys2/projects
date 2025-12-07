@@ -1,9 +1,25 @@
 "use client";
 
 import React from "react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { formatCurrency } from "../POS/utils/formatCurrency";
+
+// Timezone para Nicaragua
+const TIMEZONE = "America/Managua";
+
+// Formatear fecha en hora local de Nicaragua
+const formatKardexDateTime = (value) => {
+  if (!value) return "-";
+  const d = new Date(value);
+  return d.toLocaleString("es-NI", {
+    timeZone: TIMEZONE,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
 
 export default function KardexTable({
   data = [],
@@ -16,19 +32,35 @@ export default function KardexTable({
 }) {
   const totals = data.reduce(
     (acc, m) => {
-      const qty = Number(m.qty || m.quantity || 0);
+      const rawQty = Number(m.qty || m.quantity || 0);
+      const qty = isNaN(rawQty) ? 0 : rawQty;
       const cost = Number(m.cost_unit || m.cost || 0);
-      const totalCost = Number(m.total_cost || m.total || qty * cost);
+      const totalCost = Number(m.total_cost || m.total || Math.abs(qty) * cost);
 
-      const type = m.movement_type;
+      const type = (m.movement_type || "").toUpperCase();
 
-      if (type === "entrada") {
-        acc.entradas += qty;
-        acc.costoEntradas += totalCost;
-      }
-      if (type === "salida") {
-        acc.salidas += qty;
-        acc.costoSalidas += totalCost;
+      // Entradas: ENTRADA, ENTRY, SALE_CANCEL (restauración de inventario)
+      const isEntrada =
+        type === "ENTRADA" ||
+        type === "ENTRY" ||
+        type === "SALE_CANCEL" ||
+        type === "PURCHASE" ||
+        type === "ADJUSTMENT_IN";
+
+      // Salidas: SALIDA, EXIT, SALE, VENTA
+      const isSalida =
+        type === "SALIDA" ||
+        type === "EXIT" ||
+        type === "SALE" ||
+        type === "VENTA" ||
+        type === "ADJUSTMENT_OUT";
+
+      if (isEntrada) {
+        acc.entradas += Math.abs(qty);
+        acc.costoEntradas += Math.abs(totalCost);
+      } else if (isSalida) {
+        acc.salidas += Math.abs(qty);
+        acc.costoSalidas += Math.abs(totalCost);
       }
 
       return acc;
@@ -36,12 +68,44 @@ export default function KardexTable({
     { entradas: 0, salidas: 0, costoEntradas: 0, costoSalidas: 0 }
   );
 
-  const typeColors = {
-    entrada: "text-green-600 font-semibold",
-    salida: "text-red-600 font-semibold",
-    transferencia: "text-blue-600 font-semibold",
-    venta: "text-orange-600 font-semibold",
-    ajuste: "text-gray-700 font-semibold",
+  // Colores por tipo de movimiento (soporta mayúsculas y minúsculas)
+  const getTypeColor = (type) => {
+    const t = (type || "").toUpperCase();
+    if (t === "ENTRADA" || t === "ENTRY" || t === "SALE_CANCEL" || t === "PURCHASE") {
+      return "text-green-600 font-semibold";
+    }
+    if (t === "SALIDA" || t === "EXIT" || t === "SALE" || t === "VENTA") {
+      return "text-red-600 font-semibold";
+    }
+    if (t === "TRANSFERENCIA" || t === "TRANSFER") {
+      return "text-blue-600 font-semibold";
+    }
+    if (t === "AJUSTE" || t === "ADJUSTMENT" || t === "ADJUSTMENT_IN" || t === "ADJUSTMENT_OUT") {
+      return "text-gray-700 font-semibold";
+    }
+    return "text-slate-600";
+  };
+
+  // Traducir tipo de movimiento a español
+  const translateMovementType = (type) => {
+    const t = (type || "").toUpperCase();
+    const translations = {
+      "ENTRADA": "ENTRADA",
+      "ENTRY": "ENTRADA",
+      "SALIDA": "SALIDA",
+      "EXIT": "SALIDA",
+      "SALE": "VENTA",
+      "VENTA": "VENTA",
+      "SALE_CANCEL": "ANULACIÓN",
+      "TRANSFER": "TRASLADO",
+      "TRANSFERENCIA": "TRASLADO",
+      "ADJUSTMENT": "AJUSTE",
+      "AJUSTE": "AJUSTE",
+      "ADJUSTMENT_IN": "AJUSTE +",
+      "ADJUSTMENT_OUT": "AJUSTE -",
+      "PURCHASE": "COMPRA",
+    };
+    return translations[t] || t;
   };
 
   return (
@@ -58,14 +122,14 @@ export default function KardexTable({
             onClick={onPrint}
             className="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs hover:bg-slate-800"
           >
-            🖨 Imprimir
+            Imprimir
           </button>
 
           <button
             onClick={onExportExcel}
             className="bg-green-600 text-white px-4 py-2 rounded-lg text-xs hover:bg-green-700"
           >
-            📊 Excel
+            Excel
           </button>
         </div>
       </div>
@@ -132,13 +196,11 @@ export default function KardexTable({
               return (
                 <tr key={m.id} className="border-b last:border-none">
                   <td className="p-2">
-                    {format(new Date(m.created_at), "dd/MM/yyyy HH:mm", {
-                      locale: es,
-                    })}
+                    {formatKardexDateTime(m.created_at)}
                   </td>
 
-                  <td className={`p-2 ${typeColors[m.movement_type] || ""}`}>
-                    {m.movement_type?.toUpperCase()}
+                  <td className={`p-2 ${getTypeColor(m.movement_type)}`}>
+                    {translateMovementType(m.movement_type)}
                   </td>
 
                   <td className="p-2">{m.product_name || "-"}</td>
@@ -176,7 +238,7 @@ export default function KardexTable({
               : "bg-white hover:bg-slate-100"
           }`}
         >
-          ⬅ Anterior
+          Anterior
         </button>
 
         <p className="text-xs text-slate-500">Página {page + 1}</p>
@@ -190,7 +252,7 @@ export default function KardexTable({
               : "bg-white hover:bg-slate-100"
           }`}
         >
-          Siguiente ➡
+          Siguiente
         </button>
       </div>
     </div>

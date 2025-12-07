@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import KardexTable from "./kardexTable";
 import { exportKardexPDF } from "./utils/exportKardexPDF";
 import { exportKardexExcel } from "./utils/exportKardexExcel";
@@ -8,12 +8,14 @@ import { exportKardexExcel } from "./utils/exportKardexExcel";
 import InventoryEntryModal from "../inventory/components/InventoryEntryModal";
 import InventoryExitModal from "../inventory/components/InventoryExitModal";
 import InventoryTransferModal from "../inventory/components/InventoryTransferModal";
+import BulkInventoryModal from "../inventory/components/BulkInventoryModal";
 
 export default function KardexScreen({ orgSlug }) {
   const [loading, setLoading] = useState(false);
   const [movements, setMovements] = useState([]);
   const [products, setProducts] = useState([]);
   const [branches, setBranches] = useState([]);
+  const [productSearch, setProductSearch] = useState("");
 
   const [selectedProduct, setSelectedProduct] = useState("all");
   const [selectedBranch, setSelectedBranch] = useState("all");
@@ -27,10 +29,13 @@ export default function KardexScreen({ orgSlug }) {
   const limit = 50;
 
   const [error, setError] = useState(null);
+  const [productStock, setProductStock] = useState([]);
+  const [loadingStock, setLoadingStock] = useState(false);
 
   const [entryOpen, setEntryOpen] = useState(false);
   const [exitOpen, setExitOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   useEffect(() => {
     async function loadFilters() {
@@ -105,6 +110,72 @@ export default function KardexScreen({ orgSlug }) {
     page,
   ]);
 
+  // Load product stock when a product is selected
+  useEffect(() => {
+    async function loadProductStock() {
+      if (selectedProduct === "all" || !orgSlug) {
+        setProductStock([]);
+        return;
+      }
+      try {
+        setLoadingStock(true);
+        const res = await fetch(`/api/inventory/stock?productId=${selectedProduct}`, {
+          headers: { "x-org-slug": orgSlug },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setProductStock(data.stock || []);
+        }
+      } catch (err) {
+        console.error("Error loading product stock:", err);
+      } finally {
+        setLoadingStock(false);
+      }
+    }
+    loadProductStock();
+  }, [selectedProduct, orgSlug]);
+
+  // Date filter helpers
+  const setDatePreset = (preset) => {
+    const today = new Date();
+    const formatDate = (d) => d.toISOString().split("T")[0];
+    
+    switch (preset) {
+      case "today":
+        setDateStart(formatDate(today));
+        setDateEnd(formatDate(today));
+        break;
+      case "yesterday":
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        setDateStart(formatDate(yesterday));
+        setDateEnd(formatDate(yesterday));
+        break;
+      case "week":
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - today.getDay());
+        setDateStart(formatDate(weekStart));
+        setDateEnd(formatDate(today));
+        break;
+      case "month":
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        setDateStart(formatDate(monthStart));
+        setDateEnd(formatDate(today));
+        break;
+      case "lastMonth":
+        const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+        setDateStart(formatDate(lastMonthStart));
+        setDateEnd(formatDate(lastMonthEnd));
+        break;
+      case "clear":
+        setDateStart("");
+        setDateEnd("");
+        break;
+    }
+    setPage(0);
+  };
+
   function handlePrint() {
     const org = {
       name: "AgroCentro Nica",
@@ -152,8 +223,17 @@ export default function KardexScreen({ orgSlug }) {
     });
   }
 
-  // REQUIERE PRODUCTO Y SUCURSAL SELECCIONADOS
   const canMakeMovement = selectedProduct !== "all" && selectedBranch !== "all";
+
+  const filteredProducts = useMemo(() => {
+    if (!productSearch.trim()) return products;
+    const term = productSearch.toLowerCase();
+    return products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(term) ||
+        (p.sku && p.sku.toLowerCase().includes(term))
+    );
+  }, [productSearch, products]);
 
   const getSelectedProductData = () => {
     if (selectedProduct === "all") return null;
@@ -317,6 +397,20 @@ export default function KardexScreen({ orgSlug }) {
           Traslado
         </button>
 
+        <div className="border-l border-slate-300 h-6 mx-2" />
+
+        <button
+          onClick={() => setBulkOpen(true)}
+          disabled={selectedBranch === "all"}
+          className={`px-3 py-1.5 text-xs rounded-lg ${
+            selectedBranch !== "all"
+              ? "bg-purple-600 text-white hover:bg-purple-700"
+              : "bg-slate-200 text-slate-400 cursor-not-allowed"
+          }`}
+        >
+          Movimiento Múltiple
+        </button>
+
         {!canMakeMovement && (
           <span className="text-xs text-amber-600">
             Seleccione producto y sucursal para registrar movimientos
@@ -338,6 +432,54 @@ export default function KardexScreen({ orgSlug }) {
         />
       </div>
 
+      {/* FILTROS RÁPIDOS DE FECHA */}
+      <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 border rounded-xl">
+        <span className="text-xs font-semibold text-slate-600">Período:</span>
+        <button onClick={() => setDatePreset("today")} className={`px-2 py-1 text-xs rounded ${dateStart === new Date().toISOString().split("T")[0] && dateEnd === dateStart ? "bg-emerald-600 text-white" : "bg-white border hover:bg-slate-100"}`}>Hoy</button>
+        <button onClick={() => setDatePreset("yesterday")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Ayer</button>
+        <button onClick={() => setDatePreset("week")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Esta semana</button>
+        <button onClick={() => setDatePreset("month")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Este mes</button>
+        <button onClick={() => setDatePreset("lastMonth")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Mes pasado</button>
+        {(dateStart || dateEnd) && (
+          <button onClick={() => setDatePreset("clear")} className="px-2 py-1 text-xs rounded bg-red-100 text-red-600 hover:bg-red-200">Limpiar</button>
+        )}
+        {(dateStart || dateEnd) && (
+          <span className="text-xs text-slate-500 ml-2">
+            {dateStart && dateEnd ? `${dateStart} - ${dateEnd}` : dateStart || dateEnd}
+          </span>
+        )}
+      </div>
+
+      {/* RESUMEN DEL PRODUCTO SELECCIONADO */}
+      {selectedProduct !== "all" && (
+        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-blue-800">
+              Resumen: {products.find(p => p.id === selectedProduct)?.name || "Producto"}
+            </h3>
+            {loadingStock && <span className="text-xs text-blue-500">Cargando stock...</span>}
+          </div>
+          {!loadingStock && productStock.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              {productStock.map((stock) => (
+                <div key={stock.branch_id || stock.id} className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
+                  <p className="text-xs text-slate-500 truncate">{stock.branch_name || branches.find(b => b.id === stock.branch_id)?.name || "Sin sucursal"}</p>
+                  <p className="text-lg font-bold text-blue-700">{stock.stock || stock.qty || 0}</p>
+                  <p className="text-xs text-slate-400">unidades</p>
+                </div>
+              ))}
+              <div className="bg-blue-600 rounded-lg p-3 text-white shadow-sm">
+                <p className="text-xs opacity-80">Stock Total</p>
+                <p className="text-lg font-bold">{productStock.reduce((sum, s) => sum + (s.stock || s.qty || 0), 0)}</p>
+                <p className="text-xs opacity-80">unidades</p>
+              </div>
+            </div>
+          ) : !loadingStock ? (
+            <p className="text-xs text-slate-500">No hay stock registrado para este producto</p>
+          ) : null}
+        </div>
+      )}
+
       {/* FILTROS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
 
@@ -345,6 +487,13 @@ export default function KardexScreen({ orgSlug }) {
           <label className="text-xs font-semibold text-slate-600">
             Producto
           </label>
+          <input
+            type="text"
+            placeholder="Buscar producto..."
+            value={productSearch}
+            onChange={(e) => setProductSearch(e.target.value)}
+            className="w-full p-2 mb-1 text-xs border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+          />
           <select
             value={selectedProduct}
             onChange={(e) => {
@@ -353,13 +502,19 @@ export default function KardexScreen({ orgSlug }) {
             }}
             className="w-full p-2 text-xs border rounded-lg"
           >
-            <option value="all">Todos</option>
-            {products.map((p) => (
+            <option value="all">Todos ({products.length} productos)</option>
+            {filteredProducts.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name}
+                {p.name} {p.sku ? `(${p.sku})` : ""}
               </option>
             ))}
           </select>
+          {productSearch && filteredProducts.length === 0 && (
+            <p className="text-xs text-amber-600 mt-1">No se encontraron productos</p>
+          )}
+          {productSearch && filteredProducts.length > 0 && (
+            <p className="text-xs text-slate-500 mt-1">{filteredProducts.length} resultados</p>
+          )}
         </div>
 
         <div>
@@ -475,6 +630,16 @@ export default function KardexScreen({ orgSlug }) {
         product={getSelectedProductData()}
         onSubmit={handleTransferSubmit}
         branches={branches}
+      />
+
+      <BulkInventoryModal
+        isOpen={bulkOpen}
+        onClose={() => setBulkOpen(false)}
+        products={products}
+        branches={branches}
+        selectedBranch={selectedBranch}
+        orgSlug={orgSlug}
+        onSuccess={loadKardex}
       />
     </div>
   );

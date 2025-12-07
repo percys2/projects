@@ -3,12 +3,10 @@
 import React, { useState } from "react";
 import { useFinance } from "./hooks/useFinance";
 import FinanceStats from "./components/FinanceStats";
-import AccountsList from "./components/AccountsList";
 import ExpensesList from "./components/ExpensesList";
 import PaymentsList from "./components/PaymentsList";
 import AssetsList from "./components/AssetsList";
 import SuppliersList from "./components/SuppliersList";
-import AccountFormModal from "./components/AccountFormModal";
 import ExpenseFormModal from "./components/ExpenseFormModal";
 import PaymentFormModal from "./components/PaymentFormModal";
 import AssetFormModal from "./components/AssetFormModal";
@@ -22,10 +20,8 @@ import CashFlowChart from "./components/CashFlowChart";
 import FinanceKpiHeader from "./components/FinanceKpiHeader";
 import DueDateAlerts from "./components/DueDateAlerts";
 import PartialPaymentHistoryModal from "./components/PartialPaymentHistoryModal";
-import BankReconciliationPanel from "./components/BankReconciliationPanel";
 import BudgetsPanel from "./components/BudgetsPanel";
 import FinanceExportButtons from "./components/FinanceExportButtons";
-import ElectronicInvoicingPanel from "./components/ElectronicInvoicingPanel";
 
 export default function FinanceScreen({ orgSlug }) {
   const finance = useFinance(orgSlug);
@@ -66,10 +62,7 @@ export default function FinanceScreen({ orgSlug }) {
     { id: "payables", label: "Por Pagar" },
     { id: "assets", label: "Activos Fijos" },
     { id: "suppliers", label: "Proveedores" },
-    { id: "accounts", label: "Plan de Cuentas" },
-    { id: "reconciliation", label: "Conciliación" },
     { id: "budgets", label: "Presupuestos" },
-    { id: "invoicing", label: "Facturación E." },
     { id: "reports", label: "Reportes" },
   ];
 
@@ -130,14 +123,6 @@ export default function FinanceScreen({ orgSlug }) {
               className="px-3 py-2 bg-slate-900 text-white rounded-lg text-xs hover:bg-slate-800"
             >
               + Agregar Proveedor
-            </button>
-          )}
-          {activeTab === "accounts" && (
-            <button
-              onClick={finance.openNewAccount}
-              className="px-3 py-2 bg-slate-900 text-white rounded-lg text-xs hover:bg-slate-800"
-            >
-              + Nueva Cuenta
             </button>
           )}
         </div>
@@ -394,33 +379,12 @@ export default function FinanceScreen({ orgSlug }) {
             />
           )}
 
-          {activeTab === "accounts" && (
-            <AccountsList
-              accounts={finance.accounts}
-              onEdit={finance.openEditAccount}
-              onDelete={finance.deleteAccount}
-            />
-          )}
-
-          {activeTab === "reconciliation" && (
-            <BankReconciliationPanel
-              payments={finance.payments}
-              expenses={finance.expenses}
-              cashAccounts={finance.cashAccounts}
-              orgSlug={orgSlug}
-            />
-          )}
-
           {activeTab === "budgets" && (
             <BudgetsPanel
               accounts={finance.accounts}
               expenses={finance.expenses}
               orgSlug={orgSlug}
             />
-          )}
-
-          {activeTab === "invoicing" && (
-            <ElectronicInvoicingPanel orgSlug={orgSlug} />
           )}
 
           {activeTab === "reports" && (
@@ -433,14 +397,6 @@ export default function FinanceScreen({ orgSlug }) {
       </div>
 
       {/* Modals */}
-      <AccountFormModal
-        isOpen={finance.accountModalOpen}
-        onClose={finance.closeAccountModal}
-        onSave={finance.saveAccount}
-        account={finance.editingAccount}
-        accounts={finance.accounts}
-      />
-
       <ExpenseFormModal
         isOpen={finance.expenseModalOpen}
         onClose={finance.closeExpenseModal}
