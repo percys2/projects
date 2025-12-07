@@ -24,13 +24,17 @@ export async function GET(req) {
 
     if (error) throw error;
 
+    // Filter out inactive products (active = false)
+    // The current_stock view may include an 'active' column from products table
+    const filteredStock = (stock || []).filter(item => item.active !== false);
+
     // get branches
     const { data: branches } = await supabase
       .from("branches")
       .select("*")
       .eq("org_id", org.id);
 
-    return NextResponse.json({ stock, branches });
+    return NextResponse.json({ stock: filteredStock, branches });
 
   } catch (err) {
     return NextResponse.json({ error: err.message });

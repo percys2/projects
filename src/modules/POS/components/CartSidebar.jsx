@@ -39,7 +39,7 @@ export default function CartSidebar({ orgSlug }) {
         orgSlug,
         client: client || customerForm,
         cart,
-        paymentType: "efectivo",
+        paymentType: "cash",
         branchId: branch,
       });
 
@@ -62,8 +62,8 @@ export default function CartSidebar({ orgSlug }) {
     <div className="bg-white border rounded-xl shadow-md h-full p-3 flex flex-col space-y-3">
 
       <CustomerHeader />
-      <CustomerSelector />
-      <CustomerForm />
+      <CustomerSelector orgSlug={orgSlug} />
+      <CustomerForm orgSlug={orgSlug} />
 
       {/* PRODUCTOS DEL CARRITO */}
       <div className="flex-1 overflow-y-auto mt-2 space-y-2 pr-1">

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { usePosStore } from "../store/usePosStore";
 import { clientsService } from "../services/clientsService";
 
-export default function CustomerSelector() {
+export default function CustomerSelector({ orgSlug }) {
   const setClient = usePosStore((s) => s.setClient);
   const [query, setQuery] = useState("");
   const [clients, setClients] = useState([]);
@@ -12,12 +12,13 @@ export default function CustomerSelector() {
   // Buscar clientes del CRM
   useEffect(() => {
     const fetchClients = async () => {
-      const data = await clientsService.searchClients(query);
+      if (!orgSlug) return;
+      const data = await clientsService.searchClients(orgSlug, query);
       setClients(data);
     };
 
     fetchClients();
-  }, [query]);
+  }, [orgSlug, query]);
 
   return (
     <div className="bg-white border rounded-xl p-3">

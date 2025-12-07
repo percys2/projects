@@ -1,6 +1,6 @@
 export const inventoryService = {
   async getInventory(orgSlug, branchId = null) {
-    const response = await fetch(`/api/inventory`, {
+    const response = await fetch(`/api/inventory/stock`, {
       headers: { "x-org-slug": orgSlug },
     });
 
@@ -11,12 +11,14 @@ export const inventoryService = {
       return [];
     }
     
-    const items = data.inventory ?? [];
+    // current_stock returns { stock: [...], branches: [...] }
+    const items = data.stock ?? [];
 
     if (branchId) {
       return items.filter(i => 
-        i.branches?.id === branchId || 
-        i.branches?.name === branchId
+        i.branch_id === branchId || 
+        i.branch_name === branchId ||
+        i.branch_name?.toLowerCase() === branchId?.toLowerCase()
       );
     }
 

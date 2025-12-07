@@ -1,14 +1,19 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export const useBranchStore = create((set) => ({
-  branches: [
-    { id: "masatepe", name: "Bodega Masatepe" },
-    { id: "diriomo", name: "Bodega Diriomo" },
-  ],
+export const useBranchStore = create(
+  persist(
+    (set) => ({
+      branches: [],
+      activeBranch: null,
 
-  activeBranch: "masatepe",
-
-  setBranch: (branch) => set({ activeBranch: branch }),
-}));
+      setBranches: (branches) => set({ branches }),
+      setBranch: (branchId) => set({ activeBranch: branchId }),
+    }),
+    {
+      name: "pos-branch-storage",
+    }
+  )
+);

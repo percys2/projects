@@ -13,14 +13,16 @@ export const registerSchema = z.object({
 
 // Sale Creation Schema
 export const createSaleSchema = z.object({
-  client_id: z.string().uuid('ID de cliente inválido').optional(),
+  client_id: z.string().uuid('ID de cliente inválido').optional().nullable(),
+  client_name: z.string().optional().nullable(),
+  factura: z.string().optional().nullable(),
   total: z.number().positive('El total debe ser mayor a 0'),
   payment_method: z.enum(['cash', 'card', 'transfer', 'credit']).default('cash'),
-  notes: z.string().optional(),
+  notes: z.string().optional().nullable(),
   items: z.array(z.object({
     product_id: z.string().uuid('ID de producto inválido'),
     quantity: z.number().positive('La cantidad debe ser mayor a 0'),
-    price: z.number().positive('El precio debe ser mayor a 0'),
+    price: z.number().nonnegative('El precio no puede ser negativo'),
     cost: z.number().nonnegative('El costo no puede ser negativo').optional(),
   })).min(1, 'Debe incluir al menos un producto'),
 });
@@ -203,14 +205,30 @@ export const productDeleteSchema = z.object({
 // Helper function to validate request body
 export function validateRequest(schema, data) {
   try {
+    // Guard against undefined schema
+    if (!schema || typeof schema.parse !== 'function') {
+      return {
+        success: false,
+        errors: [{ field: 'schema', message: 'Invalid validation schema' }],
+      };
+    }
     return {
       success: true,
       data: schema.parse(data),
     };
   } catch (error) {
+    // Guard against non-Zod errors (which don't have .errors array)
+    const zodErrors = Array.isArray(error.errors) ? error.errors : [];
+    if (zodErrors.length === 0) {
+      // Non-Zod error - return the error message directly
+      return {
+        success: false,
+        errors: [{ field: 'unknown', message: error.message || 'Validation error' }],
+      };
+    }
     return {
       success: false,
-      errors: error.errors.map(err => ({
+      errors: zodErrors.map(err => ({
         field: err.path.join('.'),
         message: err.message,
       })),

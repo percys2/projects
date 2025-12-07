@@ -41,7 +41,9 @@ export async function POST(req) {
     }
 
     const body = await req.json();
+    console.log("SALE BODY:", JSON.stringify(body, null, 2));
     const validation = validateRequest(createSaleSchema, body);
+    console.log("SALE VALIDATION:", JSON.stringify(validation, null, 2));
 
     if (!validation.success) {
       return NextResponse.json(
@@ -50,11 +52,30 @@ export async function POST(req) {
       );
     }
 
-    const { client_id, total, payment_method, items, notes } = validation.data;
+    const { client_id, client_name, total, payment_method, items, notes, factura } = validation.data;
+
+    // Defensive guard: ensure items is a valid array
+    if (!Array.isArray(items) || items.length === 0) {
+      return NextResponse.json(
+        { error: "Debe incluir al menos un producto en la venta." },
+        { status: 400 }
+      );
+    }
 
     // Use the admin client for transactional operations
     // Note: org context is already validated via getOrgContextWithBranch
     const supabase = supabaseAdmin;
+
+    // Calculate subtotal and margin from items
+    const subtotal = items.reduce(
+      (sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0),
+      0
+    );
+    const totalCost = items.reduce(
+      (sum, item) => sum + Number(item.cost || 0) * Number(item.quantity || 0),
+      0
+    );
+    const margen = subtotal - totalCost;
 
     // 1. Crear venta
     const { data: sale, error: saleError } = await supabase
@@ -63,7 +84,12 @@ export async function POST(req) {
         org_id: orgId,
         branch_id: branchId,
         client_id,
+        client_name: client_name || null,
+        factura: factura || null,
+        fecha: new Date().toISOString().split("T")[0],
+        subtotal,
         total,
+        margen,
         payment_method: payment_method || "cash",
         notes: notes || null,
         user_id: userId || null,
@@ -78,7 +104,7 @@ export async function POST(req) {
       );
     }
 
-    // 2. Guardar items de venta
+    // 2. Guardar items de venta (margin is a generated column, don't include it)
     const salesItems = items.map((item) => ({
       sale_id: sale.id,
       org_id: orgId,
@@ -87,9 +113,6 @@ export async function POST(req) {
       price: Number(item.price),
       cost: Number(item.cost) || 0,
       subtotal: Number(item.quantity) * Number(item.price),
-      margin:
-        (Number(item.price) - Number(item.cost || 0)) *
-        Number(item.quantity),
     }));
 
     const { data: createdItems, error: itemsError } = await supabase
@@ -105,29 +128,8 @@ export async function POST(req) {
       );
     }
 
-    // 3. Actualizar inventario mediante RPC
-    for (const item of items) {
-      const { error } = await supabase.rpc("decrease_inventory", {
-        p_org_id: orgId,
-        p_product_id: item.product_id,
-        p_quantity: Number(item.quantity),
-        p_branch_id: branchId,
-      });
-
-      if (error) {
-        // rollback
-        await supabase.from("sales_items").delete().eq("sale_id", sale.id);
-        await supabase.from("sales").delete().eq("id", sale.id);
-
-        return NextResponse.json(
-          {
-            error: "Failed to update stock. Sale rolled back.",
-            details: error.message,
-          },
-          { status: 500 }
-        );
-      }
-    }
+    // 3. Stock is updated via inventory_movements (no separate inventory table)
+    // The current_stock view calculates stock from inventory_movements
 
     // 4. Registrar movimiento en KARDEX
     for (const item of items) {
@@ -151,11 +153,12 @@ export async function POST(req) {
     }
 
     // 5. Registrar MOVIMIENTO en inventory_movements
+    // Use type "salida" to match existing convention (current_stock view uses from_branch/to_branch, not type)
     for (const item of items) {
-      await supabase.from("inventory_movements").insert({
+      const { error: movError } = await supabase.from("inventory_movements").insert({
         org_id: orgId,
         product_id: item.product_id,
-        type: "SALE",
+        type: "salida",
         qty: Number(item.quantity),
         from_branch: branchId,
         to_branch: null,
@@ -164,6 +167,9 @@ export async function POST(req) {
         reference: `Venta #${sale.id}`,
         created_by: userId,
       });
+      if (movError) {
+        console.error("Error inserting inventory_movement:", movError);
+      }
     }
 
     // 6. Contabilidad (no bloquea)

@@ -28,7 +28,7 @@ export async function getOrgContext(req) {
     const { data: membership, error: memberError } = await supabaseAdmin
       .from("organization_members")
       .select("id, role")
-      .eq("organization_id", org.id)
+      .eq("org_id", org.id)
       .eq("user_id", user.id)
       .single();
 

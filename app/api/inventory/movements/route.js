@@ -1,14 +1,19 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { getOrgContext } from "@/src/lib/api/getOrgContext";
 
 export async function POST(req) {
   try {
+    // Get authenticated user and org context
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
+    }
+
+    const { orgId, userId } = context;
     const supabase = supabaseAdmin;
 
-    // User ID can be passed via header if available
-    const userId = req.headers.get("x-user-id") || null;
-
-    const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 
     const {
@@ -22,32 +27,19 @@ export async function POST(req) {
       to_branch,
     } = body;
 
-    if (!orgSlug)
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
-
     if (!productId || !qty || !type)
       return NextResponse.json(
         { error: "Missing required fields (productId, qty, type)" },
         { status: 400 }
       );
 
-    const { data: org } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    const orgId = org.id;
-
     // NORMALIZACIÓN - accept both branchId and to_branch/from_branch for compatibility
     let fromBranch = null;
     let toBranch = null;
 
-    // For entrada: use branchId if provided, otherwise fall back to to_branch
     if (type === "entrada") {
       toBranch = branchId || to_branch;
     }
-    // For salida: use branchId if provided, otherwise fall back to from_branch
     if (type === "salida") {
       fromBranch = branchId || from_branch;
     }
@@ -61,7 +53,6 @@ export async function POST(req) {
       toBranch = adjustBranch;
     }
 
-    // Validate branch is provided for entrada/salida
     if (type === "entrada" && !toBranch) {
       return NextResponse.json(
         { error: "Debe seleccionar una sucursal para registrar la entrada" },
@@ -93,6 +84,36 @@ export async function POST(req) {
       .single();
 
     if (error) throw error;
+
+    // INSERTAR EN KARDEX para que aparezca en el historial
+    const movementTypeMap = {
+      entrada: "ENTRY",
+      salida: "EXIT",
+      transferencia: "TRANSFER",
+      ajuste: "ADJUSTMENT",
+    };
+
+    const kardexData = {
+      org_id: orgId,
+      product_id: productId,
+      movement_type: movementTypeMap[type] || type.toUpperCase(),
+      quantity: type === "salida" ? Number(qty) * -1 : Number(qty),
+      branch_id: toBranch || fromBranch,
+      from_branch: fromBranch,
+      to_branch: toBranch,
+      cost_unit: cost || 0,
+      total: (cost || 0) * Number(qty),
+      reference: notes || `Movimiento de inventario: ${type}`,
+      created_by: userId,
+    };
+
+    const { error: kardexError } = await supabase
+      .from("kardex")
+      .insert(kardexData);
+
+    if (kardexError) {
+      console.error("Kardex insert error:", kardexError);
+    }
 
     // ACTUALIZAR current_stock
     if (type === "entrada")

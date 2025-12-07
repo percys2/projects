@@ -10,13 +10,46 @@ import CartSidebar from "./components/CartSidebar";
 import PosHeader from "./components/PosHeader";
 
 export default function PosScreen({ orgSlug }) {
+  const branches = useBranchStore((s) => s.branches);
   const branch = useBranchStore((s) => s.activeBranch);
+  const setBranches = useBranchStore((s) => s.setBranches);
+  const setBranch = useBranchStore((s) => s.setBranch);
   const isOpen = useCashRegisterStore((s) => s.isOpen);
   const [products, setProducts] = useState([]);
 
+  // Fetch branches from API
   useEffect(() => {
-    async function load() {
-      const data = await inventoryService.getInventory(orgSlug, branch);
+    async function loadBranches() {
+      if (!orgSlug) return;
+      try {
+        const res = await fetch("/api/branches", {
+          headers: { "x-org-slug": orgSlug },
+        });
+        const data = await res.json();
+        const branchList = data.branches || [];
+        setBranches(branchList);
+        
+        // Set first branch as active if none selected
+        if (!branch && branchList.length > 0) {
+          setBranch(branchList[0].id);
+        }
+      } catch (err) {
+        console.error("Error loading branches:", err);
+      }
+    }
+    loadBranches();
+  }, [orgSlug]);
+
+  // Fetch products when branch changes
+  useEffect(() => {
+    async function loadProducts() {
+      if (!orgSlug || !branch) return;
+      
+      // Find branch name for inventory filter (case-insensitive)
+      const branchObj = branches.find((b) => b.id === branch);
+      const branchName = branchObj?.name || branch;
+      
+      const data = await inventoryService.getInventory(orgSlug, branchName);
 
       const list =
         Array.isArray(data)
@@ -29,8 +62,8 @@ export default function PosScreen({ orgSlug }) {
 
       setProducts(list);
     }
-    if (orgSlug) load();
-  }, [orgSlug, branch]);
+    loadProducts();
+  }, [orgSlug, branch, branches]);
 
   return (
     <div className="grid grid-cols-12 gap-4 h-full">
@@ -55,8 +88,8 @@ export default function PosScreen({ orgSlug }) {
             No hay productos para esta bodega ({branch})
           </p>
         ) : (
-          products.map((p) => (
-            <ProductCard key={p.id} product={p} />
+          products.map((p, index) => (
+            <ProductCard key={p.product_id || p.id || index} product={p} />
           ))
         )}
       </div>

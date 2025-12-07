@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -13,6 +14,8 @@ import {
   Settings,
   LogOut,
   Store,
+  Menu,
+  X,
 } from "lucide-react";
 
 const menuItems = [
@@ -50,12 +53,16 @@ const menuItems = [
 export default function AppLayout({ children, orgSlug }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (!orgSlug) return <main>{children}</main>;
 
   const activeKey = pathname.split("/")[2] || "dashboard";
 
-  const goTo = (key) => router.push(`/${orgSlug}/${key}`);
+  const goTo = (key) => {
+    router.push(`/${orgSlug}/${key}`);
+    setIsSidebarOpen(false); // Close sidebar on mobile after navigation
+  };
 
   const handleLogout = async () => {
     try {
@@ -68,7 +75,37 @@ export default function AppLayout({ children, orgSlug }) {
 
   return (
     <div className="flex h-screen bg-slate-100">
-      <aside className="w-64 bg-gradient-to-b from-slate-950 to-slate-900 text-slate-100 flex flex-col border-r border-slate-800/50 shadow-xl">
+      {/* Mobile Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-slate-900 md:hidden">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
+            <Store className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-sm font-bold text-white">AgroCentro ERP</span>
+        </div>
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
+        >
+          {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-950 to-slate-900 text-slate-100 flex flex-col border-r border-slate-800/50 shadow-xl
+        transform transition-transform duration-300 ease-in-out
+        md:relative md:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         {/* Brand Header */}
         <div className="px-4 py-5 border-b border-slate-800/50">
           <div className="flex items-center gap-3">
@@ -178,7 +215,7 @@ export default function AppLayout({ children, orgSlug }) {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-6 bg-slate-50">{children}</main>
+      <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-50 pt-16 md:pt-6">{children}</main>
     </div>
   );
 }

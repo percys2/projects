@@ -10,11 +10,14 @@ export const clientsService = {
     const list = await res.json();
     query = query.toLowerCase();
 
-    return list.filter(c =>
-      c.name.toLowerCase().includes(query) ||
-      c.phone?.includes(query) ||
-      c.ruc?.toLowerCase().includes(query)
-    );
+    // Filter by first_name, last_name, or phone (clients table uses first_name/last_name, not name)
+    return list.filter(c => {
+      const fullName = `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase();
+      return fullName.includes(query) ||
+        c.phone?.includes(query) ||
+        c.first_name?.toLowerCase().includes(query) ||
+        c.last_name?.toLowerCase().includes(query);
+    });
   },
 
   async getClientById(orgSlug, id) {

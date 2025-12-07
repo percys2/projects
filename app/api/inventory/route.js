@@ -21,7 +21,10 @@ export async function GET(req) {
 
     if (invError) throw invError;
 
-    const inventory = (stockData || []).map(item => ({
+    // Filter out inactive products (active = false)
+    const activeStock = (stockData || []).filter(item => item.active !== false);
+
+    const inventory = activeStock.map(item => ({
       id: `${item.product_id}-${item.branch_id || 'no-branch'}`,
       quantity: item.stock,
       cost: item.cost,

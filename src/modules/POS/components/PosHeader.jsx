@@ -71,14 +71,19 @@ export default function PosHeader() {
           {/* Selector de sucursal */}
           <select
             className="text-sm border rounded px-3 py-2"
-            value={activeBranch}
+            value={activeBranch || ""}
             onChange={(e) => setBranch(e.target.value)}
+            disabled={branches.length === 0}
           >
-            {branches.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.name}
-              </option>
-            ))}
+            {branches.length === 0 ? (
+              <option value="">Cargando...</option>
+            ) : (
+              branches.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.name}
+                </option>
+              ))
+            )}
           </select>
         </div>
       </div>
