@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
 import { getOrgContext } from "@/src/lib/api/getOrgContext";
+import { deleteSchema, validateRequest } from "@/src/lib/validation/schemas";
+import { rateLimit } from "@/src/lib/middleware/rateLimit";
+import { logAuditEvent, AuditActions } from "@/src/lib/audit/auditLog";
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(req) {
   try {
-    // Securely derive org context from authenticated session
     const context = await getOrgContext(req);
     
     if (!context.success) {
@@ -20,10 +23,16 @@ export async function GET(req) {
       .eq("org_id", orgId)
       .order("code", { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === "42P01") {
+        return NextResponse.json({ accounts: [] });
+      }
+      throw error;
+    }
 
     return NextResponse.json({ accounts: accounts || [] });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("Accounts GET error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -31,16 +40,31 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    // Securely derive org context from authenticated session
     const context = await getOrgContext(req);
     
     if (!context.success) {
       return NextResponse.json({ error: context.error }, { status: context.status });
     }
 
-    const { orgId } = context;
+    const { orgId, userId } = context;
+
+    const rateLimitResult = rateLimit(`accounts:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor intente más tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString() } }
+      );
+    }
+
     const supabase = supabaseAdmin;
     const body = await req.json();
+
+    if (!body.code || !body.name || !body.type) {
+      return NextResponse.json(
+        { error: "Código, nombre y tipo son requeridos" },
+        { status: 400 }
+      );
+    }
 
     const accountData = {
       org_id: orgId,
@@ -60,8 +84,18 @@ export async function POST(req) {
 
     if (error) throw error;
 
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.ACCOUNT_CREATE || "account_create",
+      resourceType: "account",
+      resourceId: account.id,
+      metadata: { code: account.code, name: account.name },
+    });
+
     return NextResponse.json({ account }, { status: 201 });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("Accounts POST error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -69,14 +103,22 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
-    // Securely derive org context from authenticated session
     const context = await getOrgContext(req);
     
     if (!context.success) {
       return NextResponse.json({ error: context.error }, { status: context.status });
     }
 
-    const { orgId } = context;
+    const { orgId, userId } = context;
+
+    const rateLimitResult = rateLimit(`accounts:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor intente más tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString() } }
+      );
+    }
+
     const supabase = supabaseAdmin;
     const body = await req.json();
 
@@ -103,8 +145,18 @@ export async function PUT(req) {
 
     if (error) throw error;
 
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.ACCOUNT_UPDATE || "account_update",
+      resourceType: "account",
+      resourceId: account.id,
+      metadata: { code: account.code, name: account.name },
+    });
+
     return NextResponse.json({ account });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("Accounts PUT error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -112,31 +164,54 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
   try {
-    // Securely derive org context from authenticated session
     const context = await getOrgContext(req);
     
     if (!context.success) {
       return NextResponse.json({ error: context.error }, { status: context.status });
     }
 
-    const { orgId } = context;
+    const { orgId, userId } = context;
+
+    const rateLimitResult = rateLimit(`accounts:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor intente más tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString() } }
+      );
+    }
+
     const supabase = supabaseAdmin;
     const body = await req.json();
 
-    if (!body.id) {
-      return NextResponse.json({ error: "Missing account ID" }, { status: 400 });
+    const validation = validateRequest(deleteSchema, body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Datos inválidos", details: validation.errors },
+        { status: 400 }
+      );
     }
 
     const { error } = await supabase
       .from("accounts")
       .delete()
-      .eq("id", body.id)
+      .eq("id", validation.data.id)
       .eq("org_id", orgId);
 
     if (error) throw error;
 
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.ACCOUNT_DELETE || "account_delete",
+      resourceType: "account",
+      resourceId: validation.data.id,
+      metadata: {},
+    });
+
     return NextResponse.json({ success: true });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("Accounts DELETE error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

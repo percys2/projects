@@ -31,7 +31,7 @@ export async function GET(req) {
         status,
         notes,
         created_at,
-        suppliers (id, name, contact_name, email, phone)
+        suppliers (id, name, email, phone)
       `)
       .eq("org_id", orgId)
       .order("date", { ascending: false });

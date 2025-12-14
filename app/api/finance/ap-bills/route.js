@@ -1,44 +1,47 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { getOrgContext } from "@/src/lib/api/getOrgContext";
 import { postAPBillToGL } from "@/src/lib/services/journalService";
+import { deleteSchema, validateRequest } from "@/src/lib/validation/schemas";
+import { rateLimit } from "@/src/lib/middleware/rateLimit";
+import { logAuditEvent, AuditActions } from "@/src/lib/audit/auditLog";
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(req) {
   try {
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
+    }
+
+    const { orgId } = context;
     const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
-
-    if (!orgSlug) {
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
-    }
-
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    if (orgError || !org) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-    }
 
     const { data: bills, error } = await supabase
       .from("ap_bills")
       .select(`
         *,
-        suppliers (name)
+        suppliers (id, name, phone, email)
       `)
-      .eq("org_id", org.id)
+      .eq("org_id", orgId)
       .order("date", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === "42P01") {
+        return NextResponse.json({ bills: [] });
+      }
+      throw error;
+    }
 
     const billsWithSupplier = (bills || []).map((b) => ({
       ...b,
-      supplier_name: b.suppliers?.name,
+      supplier_name: b.suppliers?.name || "Sin proveedor",
     }));
 
     return NextResponse.json({ bills: billsWithSupplier });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("AP Bills GET error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -46,31 +49,38 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
+    }
+
+    const { orgId, userId } = context;
+
+    const rateLimitResult = rateLimit(`ap-bills:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor intente más tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString() } }
+      );
+    }
+
     const body = await req.json();
+    const supabase = supabaseAdmin;
 
-    if (!orgSlug) {
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    if (!body.date) {
+      return NextResponse.json({ error: "La fecha es requerida" }, { status: 400 });
     }
 
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    if (orgError || !org) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-    }
+    const total = parseFloat(body.total) || 0;
 
     const billData = {
-      org_id: org.id,
+      org_id: orgId,
       supplier_id: body.supplier_id || null,
       date: body.date,
       due_date: body.due_date || null,
       reference: body.reference || null,
-      total: body.total || 0,
+      total,
       amount_paid: 0,
       status: "open",
       notes: body.notes || null,
@@ -87,7 +97,7 @@ export async function POST(req) {
     let itemsData = [];
     if (body.items && body.items.length > 0) {
       itemsData = body.items.map((item) => ({
-        org_id: org.id,
+        org_id: orgId,
         bill_id: bill.id,
         account_id: item.account_id || null,
         description: item.description || null,
@@ -99,19 +109,30 @@ export async function POST(req) {
         .insert(itemsData);
 
       if (itemsError) {
+        Sentry.captureException(itemsError);
         console.error("AP Bill Items insert error:", itemsError);
       }
     }
 
     try {
       const glItems = itemsData.length > 0 ? itemsData : [{ amount: bill.total, description: bill.notes || "Gasto" }];
-      await postAPBillToGL(org.id, bill, glItems);
+      await postAPBillToGL(orgId, bill, glItems);
     } catch (glError) {
       console.error("GL posting error (non-blocking):", glError);
     }
 
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.AP_BILL_CREATE,
+      resourceType: "ap_bill",
+      resourceId: bill.id,
+      metadata: { reference: bill.reference, total: bill.total },
+    });
+
     return NextResponse.json({ bill }, { status: 201 });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("AP Bills POST error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -119,30 +140,36 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
-    const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
+    }
+
+    const { orgId, userId } = context;
+
+    const rateLimitResult = rateLimit(`ap-bills:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor intente más tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString() } }
+      );
+    }
+
     const body = await req.json();
-
-    if (!orgSlug || !body.id) {
-      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+    
+    if (!body.id) {
+      return NextResponse.json({ error: "Missing bill ID" }, { status: 400 });
     }
 
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    if (orgError || !org) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-    }
+    const supabase = supabaseAdmin;
 
     const updateData = {
       supplier_id: body.supplier_id || null,
       date: body.date,
       due_date: body.due_date || null,
       reference: body.reference || null,
-      total: body.total || 0,
+      total: parseFloat(body.total) || 0,
       notes: body.notes || null,
     };
 
@@ -150,7 +177,7 @@ export async function PUT(req) {
       .from("ap_bills")
       .update(updateData)
       .eq("id", body.id)
-      .eq("org_id", org.id)
+      .eq("org_id", orgId)
       .select()
       .single();
 
@@ -164,7 +191,7 @@ export async function PUT(req) {
 
       if (body.items.length > 0) {
         const itemsData = body.items.map((item) => ({
-          org_id: org.id,
+          org_id: orgId,
           bill_id: body.id,
           account_id: item.account_id || null,
           description: item.description || null,
@@ -175,8 +202,18 @@ export async function PUT(req) {
       }
     }
 
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.AP_BILL_UPDATE,
+      resourceType: "ap_bill",
+      resourceId: bill.id,
+      metadata: { reference: bill.reference, total: bill.total },
+    });
+
     return NextResponse.json({ bill });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("AP Bills PUT error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -184,39 +221,59 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
   try {
-    const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
+    const context = await getOrgContext(req);
+    
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
+    }
+
+    const { orgId, userId } = context;
+
+    const rateLimitResult = rateLimit(`ap-bills:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor intente más tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString() } }
+      );
+    }
+
     const body = await req.json();
+    const validation = validateRequest(deleteSchema, body);
 
-    if (!orgSlug || !body.id) {
-      return NextResponse.json({ error: "Missing data" }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Datos inválidos", details: validation.errors },
+        { status: 400 }
+      );
     }
 
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
-
-    if (orgError || !org) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-    }
+    const supabase = supabaseAdmin;
 
     await supabase
       .from("ap_bill_items")
       .delete()
-      .eq("bill_id", body.id);
+      .eq("bill_id", validation.data.id);
 
     const { error } = await supabase
       .from("ap_bills")
       .delete()
-      .eq("id", body.id)
-      .eq("org_id", org.id);
+      .eq("id", validation.data.id)
+      .eq("org_id", orgId);
 
     if (error) throw error;
 
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.AP_BILL_DELETE,
+      resourceType: "ap_bill",
+      resourceId: validation.data.id,
+      metadata: {},
+    });
+
     return NextResponse.json({ success: true });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("AP Bills DELETE error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

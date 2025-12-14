@@ -30,11 +30,9 @@ export function useFinance(orgSlug) {
   const [supplierModalOpen, setSupplierModalOpen] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState(null);
 
-  // Receivables modal state
   const [receivableModalOpen, setReceivableModalOpen] = useState(false);
   const [editingReceivable, setEditingReceivable] = useState(null);
 
-  // Payables modal state
   const [payableModalOpen, setPayableModalOpen] = useState(false);
   const [editingPayable, setEditingPayable] = useState(null);
 
@@ -165,7 +163,6 @@ export function useFinance(orgSlug) {
     );
   }, [accounts]);
 
-  // Account functions
   function openNewAccount() {
     setEditingAccount(null);
     setAccountModalOpen(true);
@@ -227,7 +224,6 @@ export function useFinance(orgSlug) {
     }
   }
 
-  // Expense functions
   function openNewExpense() {
     setEditingExpense(null);
     setExpenseModalOpen(true);
@@ -289,7 +285,6 @@ export function useFinance(orgSlug) {
     }
   }
 
-  // Payment functions
   function openNewPayment() {
     setEditingPayment(null);
     setPayingBill(null);
@@ -360,7 +355,6 @@ export function useFinance(orgSlug) {
     }
   }
 
-  // Asset functions
   function openNewAsset() {
     setEditingAsset(null);
     setAssetModalOpen(true);
@@ -422,7 +416,6 @@ export function useFinance(orgSlug) {
     }
   }
 
-  // Supplier functions
   function openNewSupplier() {
     setEditingSupplier(null);
     setSupplierModalOpen(true);
@@ -461,6 +454,29 @@ export function useFinance(orgSlug) {
     }
   }
 
+  async function createSupplierInline(data) {
+    try {
+      const res = await fetch("/api/finance/suppliers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("Error al crear proveedor");
+
+      const result = await res.json();
+      await loadData();
+      return { success: true, supplier: result.supplier };
+    } catch (err) {
+      console.error("Create supplier inline error:", err);
+      alert(err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
   async function deleteSupplier(id) {
     if (!window.confirm("¿Eliminar este proveedor?")) return;
     try {
@@ -484,7 +500,6 @@ export function useFinance(orgSlug) {
     }
   }
 
-  // Receivable functions
   function openReceivableModal() {
     setEditingReceivable(null);
     setReceivableModalOpen(true);
@@ -521,7 +536,6 @@ export function useFinance(orgSlug) {
     }
   }
 
-  // Payable functions
   function openPayableModal() {
     setEditingPayable(null);
     setPayableModalOpen(true);
@@ -615,9 +629,9 @@ export function useFinance(orgSlug) {
     openEditSupplier,
     closeSupplierModal,
     saveSupplier,
+    createSupplierInline,
     deleteSupplier,
 
-    // Receivables
     receivableModalOpen,
     editingReceivable,
     openReceivableModal,
@@ -625,7 +639,6 @@ export function useFinance(orgSlug) {
     closeReceivableModal,
     saveReceivable,
 
-    // Payables
     payableModalOpen,
     editingPayable,
     openPayableModal,

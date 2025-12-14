@@ -448,6 +448,7 @@ export default function FinanceScreen({ orgSlug }) {
         onSave={finance.savePayable}
         payable={finance.editingPayable}
         suppliers={finance.suppliers}
+        onCreateSupplier={finance.createSupplierInline}
       />
 
       <PartialPaymentHistoryModal
