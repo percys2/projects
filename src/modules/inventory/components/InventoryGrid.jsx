@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useIsDesktop } from "@/src/hooks/useMediaQuery";
 
 function computeDaysToExpire(expiresAt) {
   if (!expiresAt) return null;
@@ -22,6 +23,9 @@ export default function InventoryGrid({
   onKardex,
   orgSlug,
 }) {
+  // PERFORMANCE FIX: Use hook to conditionally render only one layout
+  const isDesktop = useIsDesktop();
+  
   const safeProducts = Array.isArray(products) ? products : [];
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deactivateConfirm, setDeactivateConfirm] = useState(null);
@@ -205,8 +209,10 @@ export default function InventoryGrid({
         </div>
       </div>
 
+      {/* PERFORMANCE FIX: Conditionally render only one layout instead of both */}
       {/* MOBILE CARDS VIEW */}
-      <div className="lg:hidden space-y-2">
+      {!isDesktop && (
+      <div className="space-y-2">
         {sortedProducts.length === 0 ? (
           <p className="text-center text-slate-400 py-8">No hay productos</p>
         ) : (
@@ -308,9 +314,11 @@ export default function InventoryGrid({
           })
         )}
       </div>
+      )}
 
       {/* DESKTOP TABLE */}
-      <div className="hidden lg:block w-full overflow-auto max-h-[520px]">
+      {isDesktop && (
+      <div className="w-full overflow-auto max-h-[520px]">
         <table className="min-w-full text-[12px]">
           <thead>
             <tr className="bg-slate-50 border-b text-[11px] uppercase text-slate-500">
@@ -436,6 +444,7 @@ export default function InventoryGrid({
 
         </table>
       </div>
+      )}
     </div>
   );
 }

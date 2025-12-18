@@ -1,16 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import { usePosStore } from "../store/usePosStore";
 
-export default function ProductCard({ product }) {
+function ProductCardComponent({ product }) {
   const addToCart = usePosStore((s) => s.addToCart);
-  const cart = usePosStore((s) => s.cart);
+  
+  // PERFORMANCE FIX: Only subscribe to this specific product's cart quantity
+  // Instead of subscribing to the entire cart array
+  const productId = product.id || product.product_id;
+  const inCart = usePosStore((s) => {
+    const cartItem = s.cart.find((c) => (c.id || c.product_id) === productId);
+    return cartItem ? cartItem.qty : 0;
+  });
   
   const availableStock = product.quantity || product.stock || product.current_stock || 0;
-  
-  const cartItem = cart.find((c) => c.id === product.id);
-  const inCart = cartItem ? cartItem.qty : 0;
   const remainingStock = availableStock - inCart;
   
   const isOutOfStock = availableStock <= 0;
@@ -65,3 +69,7 @@ export default function ProductCard({ product }) {
     </div>
   );
 }
+
+// PERFORMANCE FIX: Memoize the component to prevent unnecessary re-renders
+const ProductCard = memo(ProductCardComponent);
+export default ProductCard;

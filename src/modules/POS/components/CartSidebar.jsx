@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { usePosStore } from "../store/usePosStore";
 import CustomerSelector from "./CustomerSelector";
 import CustomerHeader from "./CustomerHeader";
@@ -8,6 +8,7 @@ import CustomerForm from "./CustomerForm";
 
 import { formatCurrency } from "../utils/formatCurrency";
 import { salesService } from "../services/salesService";
+import { printService } from "../services/printService";
 
 import { useCashRegisterStore } from "../store/useCashRegisterStore";
 import { useBranchStore } from "../store/useBranchStore";
@@ -21,10 +22,14 @@ export default function CartSidebar({ orgSlug, onClose }) {
   const client = usePosStore((s) => s.selectedClient);
 
   const branch = useBranchStore((s) => s.activeBranch);
+  const branches = useBranchStore((s) => s.branches);
   const isCashOpen = useCashRegisterStore((s) => s.isOpen);
   const addMovement = useCashRegisterStore((s) => s.addMovement);
 
   const customerForm = usePosStore((s) => s.customerForm);
+
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [lastSale, setLastSale] = useState(null);
 
   const total = cart.reduce((acc, item) => acc + item.qty * item.price, 0);
 
@@ -50,13 +55,49 @@ export default function CartSidebar({ orgSlug, onClose }) {
         time: new Date(),
       });
 
+      // Guardar datos de la venta para imprimir
+      const branchObj = branches.find((b) => b.id === branch);
+      setLastSale({
+        invoice: sale.invoice,
+        date: new Date().toLocaleString("es-NI"),
+        client_name: client?.name || customerForm?.firstName || "Consumidor Final",
+        client_ruc: client?.ruc || "",
+        branch_name: branchObj?.name || "Sucursal",
+        items: cart.map((p) => ({
+          name: p.name,
+          qty: p.qty,
+          price: p.price,
+        })),
+        subtotal: total,
+        tax: 0,
+        total: sale.total,
+      });
+
       clearCart();
-      if (onClose) onClose();
-      alert(`Venta realizada. Factura: ${sale.invoice}`);
+      setShowPrintModal(true);
 
     } catch (error) {
       alert(error.message);
     }
+  };
+
+  const handlePrint = async () => {
+    if (!lastSale) return;
+    try {
+      await printService.printTicket(lastSale);
+    } catch (err) {
+      console.error("Error al imprimir:", err);
+      alert("No se pudo imprimir. Verifique la impresora.");
+    }
+    setShowPrintModal(false);
+    setLastSale(null);
+    if (onClose) onClose();
+  };
+
+  const handleSkipPrint = () => {
+    setShowPrintModal(false);
+    setLastSale(null);
+    if (onClose) onClose();
   };
 
   return (
@@ -154,6 +195,46 @@ export default function CartSidebar({ orgSlug, onClose }) {
           Vaciar Carrito
         </button>
       </div>
+
+      {/* MODAL IMPRIMIR RECIBO */}
+      {showPrintModal && lastSale && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div className="text-center mb-4">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">Venta Completada</h3>
+              <p className="text-sm text-slate-600 mt-1">Factura: {lastSale.invoice}</p>
+              <p className="text-xl font-bold text-green-600 mt-2">{formatCurrency(lastSale.total)}</p>
+            </div>
+
+            <p className="text-sm text-slate-600 text-center mb-4">
+              Desea imprimir el recibo?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleSkipPrint}
+                className="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg text-sm font-medium"
+              >
+                No, gracias
+              </button>
+              <button
+                onClick={handlePrint}
+                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

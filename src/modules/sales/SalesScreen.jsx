@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
+// PERFORMANCE FIX: Removed static imports of heavy libraries (jsPDF, xlsx)
+// They are now dynamically imported only when needed
 
 export default function SalesScreen({ orgSlug }) {
   const [sales, setSales] = useState([]);
@@ -103,11 +102,16 @@ export default function SalesScreen({ orgSlug }) {
     }
   }
 
-  const exportToPDF = () => {
+  // PERFORMANCE FIX: Dynamic import of jsPDF only when user clicks export
+  const exportToPDF = async () => {
     if (filteredSales.length === 0) {
       alert("No hay ventas para exportar");
       return;
     }
+
+    // Dynamic import - only loads when needed
+    const jsPDF = (await import("jspdf")).default;
+    await import("jspdf-autotable");
 
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -164,11 +168,15 @@ export default function SalesScreen({ orgSlug }) {
     doc.save(fileName);
   };
 
-  const exportToExcel = () => {
+  // PERFORMANCE FIX: Dynamic import of xlsx only when user clicks export
+  const exportToExcel = async () => {
     if (filteredSales.length === 0) {
       alert("No hay ventas para exportar");
       return;
     }
+
+    // Dynamic import - only loads when needed
+    const XLSX = await import("xlsx");
 
     const summaryData = [
       ["REPORTE DE VENTAS"],
@@ -220,7 +228,11 @@ export default function SalesScreen({ orgSlug }) {
     XLSX.writeFile(wb, fileName);
   };
 
-  const printInvoice = (sale) => {
+  // PERFORMANCE FIX: Dynamic import for print invoice
+  const printInvoice = async (sale) => {
+    const jsPDF = (await import("jspdf")).default;
+    await import("jspdf-autotable");
+    
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 

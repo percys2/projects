@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   TrendingUp,
@@ -107,23 +107,32 @@ export default function DashboardScreen({ orgSlug }) {
     return { overdueReceivables, overduePayables, upcomingPayables };
   };
 
-  const overdueStats = getOverdueStats();
+  // PERFORMANCE FIX: Memoize overdue stats to prevent recalculation on every render
+  const overdueStats = useMemo(() => getOverdueStats(), [financeData]);
 
-  // Prepare chart data (mock sales by day for demo)
-  const getChartData = () => {
+  // PERFORMANCE FIX: Memoize chart data - removed Math.random() which caused constant re-renders
+  // Now uses deterministic values based on day index for consistent rendering
+  const chartData = useMemo(() => {
+    if (!data?.kpis) return [];
+    
     const days = parseInt(period);
-    const chartData = [];
+    const result = [];
+    const baseRevenue = data.kpis.revenue || 0;
+    const baseCogs = data.kpis.cogs || 0;
+    
     for (let i = days - 1; i >= 0; i -= Math.ceil(days / 7)) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      chartData.push({
+      // Use deterministic multiplier based on day index instead of Math.random()
+      const multiplier = 0.7 + ((i % 7) * 0.1);
+      result.push({
         day: date.toLocaleDateString("es-NI", { day: "2-digit", month: "short" }),
-        ventas: Math.round((data?.kpis?.revenue || 0) / 7 * (0.7 + Math.random() * 0.6)),
-        gastos: Math.round((data?.kpis?.cogs || 0) / 7 * (0.7 + Math.random() * 0.6)),
+        ventas: Math.round((baseRevenue / 7) * multiplier),
+        gastos: Math.round((baseCogs / 7) * multiplier),
       });
     }
-    return chartData.slice(-7);
-  };
+    return result.slice(-7);
+  }, [data?.kpis?.revenue, data?.kpis?.cogs, period]);
 
   if (loading) return <div className="p-4 text-center">Cargando dashboard...</div>;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
@@ -293,7 +302,7 @@ export default function DashboardScreen({ orgSlug }) {
         <h2 className="text-sm font-semibold text-slate-700 mb-4">Ventas vs Costos</h2>
         <div className="h-48 sm:h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={getChartData()} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="day" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />

@@ -126,7 +126,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
       ]);
       assetsData.push(["Total Activos", `C$ ${(reportData.balanceSheet.totalAssets || 0).toLocaleString("es-NI")}`]);
 
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [["Cuenta", "Saldo"]],
         body: assetsData,
@@ -147,7 +147,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
       ]);
       liabilitiesData.push(["Total Pasivos", `C$ ${(reportData.balanceSheet.totalLiabilities || 0).toLocaleString("es-NI")}`]);
 
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [["Cuenta", "Saldo"]],
         body: liabilitiesData,
@@ -168,7 +168,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
       ]);
       equityData.push(["Total Capital", `C$ ${(reportData.balanceSheet.totalEquity || 0).toLocaleString("es-NI")}`]);
 
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [["Cuenta", "Saldo"]],
         body: equityData,
@@ -190,7 +190,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
       ]);
       incomeData.push(["Total Ingresos", `C$ ${(reportData.incomeStatement.totalIncome || 0).toLocaleString("es-NI")}`]);
 
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [["Cuenta", "Monto"]],
         body: incomeData,
@@ -211,7 +211,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
       ]);
       expensesData.push(["Total Gastos", `C$ ${(reportData.incomeStatement.totalExpenses || 0).toLocaleString("es-NI")}`]);
 
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [["Cuenta", "Monto"]],
         body: expensesData,
@@ -243,7 +243,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
         ["Saldo Final", `C$ ${(reportData.cashFlow.closingBalance || 0).toLocaleString("es-NI")}`],
       ];
 
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [["Concepto", "Monto"]],
         body: cashFlowData,
@@ -264,7 +264,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
           `C$ ${(i.amount || 0).toLocaleString("es-NI")}`,
         ]);
 
-        doc.autoTable({
+        autoTable(doc, {
           startY: yPos,
           head: [["Descripcion", "Fecha", "Monto"]],
           body: inflowsData,
@@ -286,7 +286,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
           `C$ ${(o.amount || 0).toLocaleString("es-NI")}`,
         ]);
 
-        doc.autoTable({
+        autoTable(doc, {
           startY: yPos,
           head: [["Descripcion", "Fecha", "Monto"]],
           body: outflowsData,
@@ -299,8 +299,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
 
     doc.save(`${reportType}_${month}.pdf`);
   };
-
-  const exportToExcel = () => {
+    const exportToExcel = () => {
     if (!reportData) return;
 
     const reportTitle = {
@@ -468,8 +467,7 @@ export default function ReportsPanel({ orgSlug, accounts }) {
           </div>
         )}
       </div>
-
-      {reportData && reportType === "balance_sheet" && reportData.balanceSheet && (
+            {reportData && reportType === "balance_sheet" && reportData.balanceSheet && (
         <div className="space-y-6">
           <h3 className="text-lg font-semibold text-slate-800">Balance General - {month}</h3>
 

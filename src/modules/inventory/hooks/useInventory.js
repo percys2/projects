@@ -32,7 +32,7 @@ export function useInventory(orgSlug) {
       });
 
       const json = await res.json();
-      console.log("INVENTORY RAW JSON:", json);
+      // PERFORMANCE FIX: Removed console.log of large arrays (tanks browser performance)
 
       if (json.stock) {
         const mapped = json.stock.map((item) => ({
@@ -51,7 +51,6 @@ export function useInventory(orgSlug) {
           expiresAt: item.expires_at ?? null,
         }));
 
-        console.log("INVENTORY MAPPED:", mapped);
         setInventory(mapped);
       }
 

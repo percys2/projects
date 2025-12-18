@@ -22,6 +22,16 @@ export async function GET(req) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
+    // Get accounts
+    const { data: accounts, error: accountsError } = await supabase
+      .from("accounts")
+      .select("*")
+      .eq("org_id", org.id)
+      .eq("is_active", true);
+
+    if (accountsError) throw accountsError;
+
+    // Calculate date range for the month
     let startDate, endDate;
     if (month) {
       startDate = `${month}-01`;
@@ -34,68 +44,70 @@ export async function GET(req) {
       endDate = now.toISOString().split("T")[0];
     }
 
-    const { data: payments, error: paymentsError } = await supabase
-      .from("payments")
-      .select("*")
+    // Get journal entries for the period
+    const { data: journalLines, error: journalError } = await supabase
+      .from("journal_entry_lines")
+      .select(`
+        account_id,
+        debit,
+        credit,
+        journal_entries!inner (date)
+      `)
       .eq("org_id", org.id)
-      .gte("date", startDate)
-      .lte("date", endDate)
-      .order("date", { ascending: true });
+      .gte("journal_entries.date", startDate)
+      .lte("journal_entries.date", endDate);
 
-    if (paymentsError) throw paymentsError;
+    if (journalError) throw journalError;
 
-    const { data: priorPayments, error: priorError } = await supabase
-      .from("payments")
-      .select("amount, direction")
-      .eq("org_id", org.id)
-      .lt("date", startDate);
-
-    let openingBalance = 0;
-    (priorPayments || []).forEach((p) => {
-      if (p.direction === "in") {
-        openingBalance += p.amount || 0;
-      } else {
-        openingBalance -= p.amount || 0;
+    // Calculate balances per account
+    const balances = {};
+    (journalLines || []).forEach((line) => {
+      if (!balances[line.account_id]) {
+        balances[line.account_id] = 0;
       }
+      // For income: credits increase, debits decrease
+      // For expenses: debits increase, credits decrease
+      balances[line.account_id] += (line.credit || 0) - (line.debit || 0);
     });
 
-    const inflows = (payments || [])
-      .filter((p) => p.direction === "in")
-      .map((p) => ({
-        date: p.date,
-        description: p.notes || "Cobro",
-        amount: p.amount || 0,
-        method: p.method,
-      }));
+    // Filter income accounts (type = 'income' or 'revenue')
+    const income = (accounts || [])
+      .filter((a) => a.type === "income" || a.type === "revenue")
+      .map((a) => ({
+        id: a.id,
+        code: a.code,
+        name: a.name,
+        amount: Math.abs(balances[a.id] || 0),
+      }))
+      .filter((a) => a.amount !== 0);
 
-    const outflows = (payments || [])
-      .filter((p) => p.direction === "out")
-      .map((p) => ({
-        date: p.date,
-        description: p.notes || "Pago",
-        amount: p.amount || 0,
-        method: p.method,
-      }));
+    // Filter expense accounts
+    const expenses = (accounts || [])
+      .filter((a) => a.type === "expense")
+      .map((a) => ({
+        id: a.id,
+        code: a.code,
+        name: a.name,
+        amount: Math.abs(balances[a.id] || 0),
+      }))
+      .filter((a) => a.amount !== 0);
 
-    const totalInflows = inflows.reduce((sum, i) => sum + i.amount, 0);
-    const totalOutflows = outflows.reduce((sum, o) => sum + o.amount, 0);
-    const netFlow = totalInflows - totalOutflows;
-    const closingBalance = openingBalance + netFlow;
+    const totalIncome = income.reduce((sum, i) => sum + i.amount, 0);
+    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const netIncome = totalIncome - totalExpenses;
 
     return NextResponse.json({
-      cashFlow: {
-        openingBalance,
-        inflows,
-        outflows,
-        totalInflows,
-        totalOutflows,
-        netFlow,
-        closingBalance,
+      incomeStatement: {
+        income,
+        expenses,
+        totalIncome,
+        totalExpenses,
+        netIncome,
         period: month || "current",
       },
     });
   } catch (err) {
-    console.error("Cash Flow error:", err);
+    console.error("Income Statement error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

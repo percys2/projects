@@ -26,7 +26,7 @@ export async function POST(req) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         {
-          error: "Demasiadas solicitudes. Por favor intente más tarde.",
+          error: "Demasiadas solicitudes. Por favor intente mas tarde.",
           retryAfter: new Date(rateLimitResult.resetTime).toISOString(),
         },
         {
@@ -47,7 +47,7 @@ export async function POST(req) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { error: "Datos inválidos", details: validation.errors },
+        { error: "Datos invalidos", details: validation.errors },
         { status: 400 }
       );
     }
@@ -63,7 +63,6 @@ export async function POST(req) {
     }
 
     // Use the admin client for transactional operations
-    // Note: org context is already validated via getOrgContextWithBranch
     const supabase = supabaseAdmin;
 
     // Calculate subtotal and margin from items
@@ -76,6 +75,10 @@ export async function POST(req) {
       0
     );
     const margen = subtotal - totalCost;
+
+    // Determine payment status based on payment method
+    // credit = unpaid (cuenta por cobrar), everything else = paid
+    const paymentStatus = payment_method === "credit" ? "unpaid" : "paid";
 
     // 1. Crear venta
     const { data: sale, error: saleError } = await supabase
@@ -91,6 +94,7 @@ export async function POST(req) {
         total,
         margen,
         payment_method: payment_method || "cash",
+        status: paymentStatus,
         notes: notes || null,
         user_id: userId || null,
       })
@@ -104,7 +108,7 @@ export async function POST(req) {
       );
     }
 
-    // 2. Guardar items de venta (margin is a generated column, don't include it)
+    // 2. Guardar items de venta
     const salesItems = items.map((item) => ({
       sale_id: sale.id,
       org_id: orgId,
@@ -128,32 +132,24 @@ export async function POST(req) {
       );
     }
 
-    // 3. Stock is updated via inventory_movements (no separate inventory table)
-    // The current_stock view calculates stock from inventory_movements
-
-    // 4. Registrar movimiento en KARDEX
+    // 3. Registrar movimiento en KARDEX
     for (const item of items) {
       await supabase.from("kardex").insert({
         org_id: orgId,
         product_id: item.product_id,
-
         movement_type: "SALE",
         quantity: Number(item.quantity) * -1,
-
         branch_id: branchId,
         from_branch: branchId,
         to_branch: null,
-
         cost_unit: Number(item.cost) || 0,
         total: Number(item.cost) * Number(item.quantity),
-
         reference: `Venta #${sale.id}`,
         created_by: userId || null,
       });
     }
 
-    // 5. Registrar MOVIMIENTO en inventory_movements
-    // Use type "salida" to match existing convention (current_stock view uses from_branch/to_branch, not type)
+    // 4. Registrar MOVIMIENTO en inventory_movements
     for (const item of items) {
       const { error: movError } = await supabase.from("inventory_movements").insert({
         org_id: orgId,
@@ -172,14 +168,14 @@ export async function POST(req) {
       }
     }
 
-    // 6. Contabilidad (no bloquea)
+    // 5. Contabilidad (no bloquea)
     try {
       await postSaleToGL(orgId, sale, createdItems);
     } catch (err) {
       console.error("GL posting error:", err);
     }
 
-    // 7. Auditoría
+    // 6. Auditoria
     await logAuditEvent({
       userId,
       orgId,
@@ -189,6 +185,7 @@ export async function POST(req) {
       metadata: {
         total: sale.total,
         items: createdItems.length,
+        status: paymentStatus,
       },
     });
 
