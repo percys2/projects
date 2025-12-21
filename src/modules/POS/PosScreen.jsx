@@ -9,6 +9,26 @@ import ProductCard from "./components/ProductCard";
 import CartSidebar from "./components/CartSidebar";
 import PosHeader from "./components/PosHeader";
 
+const OPENING_HOUR = 7;
+const CLOSING_HOUR = 19;
+
+function isWithinOperatingHours() {
+  const now = new Date();
+  const managuaTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Managua" }));
+  const hour = managuaTime.getHours();
+  return hour >= OPENING_HOUR && hour < CLOSING_HOUR;
+}
+
+function getManaguaTime() {
+  const now = new Date();
+  return now.toLocaleString("es-NI", { 
+    timeZone: "America/Managua",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
 export default function PosScreen({ orgSlug }) {
   const branches = useBranchStore((s) => s.branches);
   const branch = useBranchStore((s) => s.activeBranch);
@@ -17,8 +37,19 @@ export default function PosScreen({ orgSlug }) {
   const isOpen = useCashRegisterStore((s) => s.isOpen);
   const [products, setProducts] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const [isOperatingHours, setIsOperatingHours] = useState(true);
+  const [currentTime, setCurrentTime] = useState("");
 
-  // Fetch branches from API
+  useEffect(() => {
+    const checkTime = () => {
+      setIsOperatingHours(isWithinOperatingHours());
+      setCurrentTime(getManaguaTime());
+    };
+    checkTime();
+    const interval = setInterval(checkTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     async function loadBranches() {
       if (!orgSlug) return;
@@ -29,8 +60,6 @@ export default function PosScreen({ orgSlug }) {
         const data = await res.json();
         const branchList = data.branches || [];
         setBranches(branchList);
-        
-        // Set first branch as active if none selected
         if (!branch && branchList.length > 0) {
           setBranch(branchList[0].id);
         }
@@ -41,17 +70,12 @@ export default function PosScreen({ orgSlug }) {
     loadBranches();
   }, [orgSlug]);
 
-  // Fetch products when branch changes
   useEffect(() => {
     async function loadProducts() {
       if (!orgSlug || !branch) return;
-      
-      // Find branch name for inventory filter (case-insensitive)
       const branchObj = branches.find((b) => b.id === branch);
       const branchName = branchObj?.name || branch;
-      
       const data = await inventoryService.getInventory(orgSlug, branchName);
-
       const list =
         Array.isArray(data)
           ? data
@@ -60,20 +84,42 @@ export default function PosScreen({ orgSlug }) {
           : Array.isArray(data?.data)
           ? data.data
           : [];
-
       setProducts(list);
     }
     loadProducts();
   }, [orgSlug, branch, branches]);
 
+  if (!isOperatingHours) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center bg-slate-900 text-white p-8">
+        <div className="text-center max-w-md">
+          <div className="w-24 h-24 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center">
+            <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold mb-2">POS Cerrado</h1>
+          <p className="text-slate-400 mb-4">
+            El sistema de punto de venta opera de <span className="text-white font-semibold">7:00 AM a 7:00 PM</span>
+          </p>
+          <div className="bg-slate-800 rounded-lg p-4 mb-6">
+            <p className="text-sm text-slate-400">Hora actual (Managua)</p>
+            <p className="text-3xl font-bold text-white">{currentTime}</p>
+          </div>
+          <p className="text-sm text-slate-500">
+            Por favor regrese durante el horario de operacion.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full">
-      {/* HEADER */}
       <div className="flex-shrink-0">
-        <PosHeader onCartClick={() => setShowCart(!showCart)} showCart={showCart} />
+        <PosHeader onCartClick={() => setShowCart(!showCart)} showCart={showCart} orgSlug={orgSlug} />
       </div>
 
-      {/* Mensaje si caja cerrada */}
       {!isOpen && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center mx-2 mb-4">
           <p className="text-yellow-800 font-medium text-sm">
@@ -82,9 +128,7 @@ export default function PosScreen({ orgSlug }) {
         </div>
       )}
 
-      {/* MAIN CONTENT - Mobile: Stack, Desktop: Side by side */}
       <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 overflow-hidden">
-        {/* PRODUCTOS */}
         <div className={`flex-1 overflow-y-auto p-2 ${!isOpen ? "opacity-50 pointer-events-none" : ""}`}>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
             {products.length === 0 ? (
@@ -99,37 +143,27 @@ export default function PosScreen({ orgSlug }) {
           </div>
         </div>
 
-        {/* CARRITO - Mobile: Slide up panel, Desktop: Sidebar */}
         <div className={`
           lg:w-80 lg:flex-shrink-0
           ${!isOpen ? "opacity-50 pointer-events-none" : ""}
-          
-          /* Mobile styles */
           fixed lg:relative
           bottom-0 left-0 right-0 lg:bottom-auto lg:left-auto lg:right-auto
           z-40 lg:z-auto
           transform transition-transform duration-300 ease-in-out
           ${showCart ? "translate-y-0" : "translate-y-full lg:translate-y-0"}
-          
-          /* Mobile height */
           max-h-[70vh] lg:max-h-none
-          
-          /* Background for mobile */
           bg-white lg:bg-transparent
           rounded-t-2xl lg:rounded-none
           shadow-2xl lg:shadow-none
         `}>
-          {/* Mobile drag handle */}
           <div className="lg:hidden flex justify-center py-2">
             <div className="w-12 h-1.5 bg-slate-300 rounded-full"></div>
           </div>
-          
           <div className="h-full overflow-y-auto">
             <CartSidebar orgSlug={orgSlug} onClose={() => setShowCart(false)} />
           </div>
         </div>
 
-        {/* Mobile overlay */}
         {showCart && (
           <div 
             className="fixed inset-0 bg-black/50 z-30 lg:hidden"
@@ -138,7 +172,6 @@ export default function PosScreen({ orgSlug }) {
         )}
       </div>
 
-      {/* Mobile Cart Toggle Button */}
       <button
         onClick={() => setShowCart(true)}
         className={`

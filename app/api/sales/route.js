@@ -77,10 +77,9 @@ export async function DELETE(req) {
     const body = await req.json();
     const { id, restoreInventory } = body;
 
-    // 1. Load the sale to get branch_id
     const { data: sale, error: saleError } = await supabase
       .from("sales")
-      .select("id, org_id, branch_id")
+      .select("id, org_id, branch_id, factura")
       .eq("id", id)
       .eq("org_id", org.id)
       .single();
@@ -89,16 +88,15 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Venta no encontrada" }, { status: 404 });
     }
 
-    // 2. Load sales_items BEFORE deleting (needed for inventory restoration)
+    const facturaRef = sale.factura || sale.id.slice(0, 8);
+
     const { data: items } = await supabase
       .from("sales_items")
       .select("product_id, quantity, price, cost")
       .eq("sale_id", id);
 
-    // 3. If restoreInventory flag is true, insert reverse movements
     if (restoreInventory && items && items.length > 0) {
       for (const item of items) {
-        // Insert reverse inventory_movement (entrada = stock comes back)
         const { error: movError } = await supabase.from("inventory_movements").insert({
           org_id: org.id,
           product_id: item.product_id,
@@ -108,14 +106,13 @@ export async function DELETE(req) {
           to_branch: sale.branch_id,
           cost: item.cost,
           price: item.price,
-          reference: `Anulación Venta #${sale.id}`,
+          reference: `Anulacion Factura #${facturaRef}`,
           created_by: null,
         });
         if (movError) {
           console.error("Error inserting reverse inventory_movement:", movError);
         }
 
-        // Insert reverse kardex entry
         const { error: kardexError } = await supabase.from("kardex").insert({
           org_id: org.id,
           product_id: item.product_id,
@@ -126,7 +123,7 @@ export async function DELETE(req) {
           to_branch: sale.branch_id,
           cost_unit: Number(item.cost) || 0,
           total: Number(item.cost || 0) * Number(item.quantity || 0),
-          reference: `Anulación Venta #${sale.id}`,
+          reference: `Anulacion Factura #${facturaRef}`,
           created_by: null,
         });
         if (kardexError) {
@@ -135,14 +132,13 @@ export async function DELETE(req) {
       }
     }
 
-    // 4. Delete sales_items and sale
     await supabase.from("sales_items").delete().eq("sale_id", id);
     const { error } = await supabase.from("sales").delete().eq("id", id).eq("org_id", org.id);
     if (error) throw error;
 
     return NextResponse.json({ 
       success: true, 
-      message: restoreInventory ? "Venta anulada e inventario restaurado" : "Venta eliminada" 
+      message: restoreInventory ? `Factura #${facturaRef} anulada e inventario restaurado` : `Factura #${facturaRef} eliminada` 
     });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

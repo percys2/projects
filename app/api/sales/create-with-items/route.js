@@ -7,9 +7,53 @@ import { postSaleToGL } from "@/src/lib/services/journalService";
 import { getOrgContextWithBranch } from "@/src/lib/api/getOrgContext";
 import * as Sentry from "@sentry/nextjs";
 
+async function generateServerInvoiceNumber(supabase, orgId, branchId) {
+  try {
+    const { data, error } = await supabase.rpc("get_next_invoice_number", {
+      p_org_id: orgId,
+      p_branch_id: branchId || null,
+    });
+
+    if (!error && data) {
+      return String(data);
+    }
+
+    const { data: counter } = await supabase
+      .from("invoice_counters")
+      .select("last_number")
+      .eq("org_id", orgId)
+      .is("branch_id", branchId || null)
+      .single();
+
+    if (counter) {
+      const newNumber = (counter.last_number || 0) + 1;
+      await supabase
+        .from("invoice_counters")
+        .update({ last_number: newNumber, updated_at: new Date().toISOString() })
+        .eq("org_id", orgId)
+        .is("branch_id", branchId || null);
+      return String(newNumber);
+    }
+
+    const { data: newCounter } = await supabase
+      .from("invoice_counters")
+      .insert({ org_id: orgId, branch_id: branchId || null, last_number: 1 })
+      .select("last_number")
+      .single();
+
+    if (newCounter) {
+      return String(newCounter.last_number);
+    }
+
+    return "FAC-" + Math.floor(Math.random() * 900000 + 100000);
+  } catch (err) {
+    console.error("Error generating server invoice number:", err);
+    return "FAC-" + Math.floor(Math.random() * 900000 + 100000);
+  }
+}
+
 export async function POST(req) {
   try {
-    // Securely derive org, user, and branch context from authenticated session
     const context = await getOrgContextWithBranch(req);
     
     if (!context.success) {
@@ -21,7 +65,6 @@ export async function POST(req) {
 
     const { orgId, userId, branchId } = context;
 
-    // Rate limit
     const rateLimitResult = rateLimit(`sales:${orgId}`, 50, 60000);
     if (!rateLimitResult.success) {
       return NextResponse.json(
@@ -54,7 +97,6 @@ export async function POST(req) {
 
     const { client_id, client_name, total, payment_method, items, notes, factura } = validation.data;
 
-    // Defensive guard: ensure items is a valid array
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { error: "Debe incluir al menos un producto en la venta." },
@@ -62,10 +104,13 @@ export async function POST(req) {
       );
     }
 
-    // Use the admin client for transactional operations
     const supabase = supabaseAdmin;
 
-    // Calculate subtotal and margin from items
+    let invoiceNumber = factura;
+    if (!invoiceNumber || invoiceNumber.trim() === "") {
+      invoiceNumber = await generateServerInvoiceNumber(supabase, orgId, branchId);
+    }
+
     const subtotal = items.reduce(
       (sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0),
       0
@@ -76,11 +121,8 @@ export async function POST(req) {
     );
     const margen = subtotal - totalCost;
 
-    // Determine payment status based on payment method
-    // credit = unpaid (cuenta por cobrar), everything else = paid
     const paymentStatus = payment_method === "credit" ? "unpaid" : "paid";
 
-    // 1. Crear venta
     const { data: sale, error: saleError } = await supabase
       .from("sales")
       .insert({
@@ -88,7 +130,7 @@ export async function POST(req) {
         branch_id: branchId,
         client_id,
         client_name: client_name || null,
-        factura: factura || null,
+        factura: invoiceNumber,
         fecha: new Date().toISOString().split("T")[0],
         subtotal,
         total,
@@ -108,7 +150,6 @@ export async function POST(req) {
       );
     }
 
-    // 2. Guardar items de venta
     const salesItems = items.map((item) => ({
       sale_id: sale.id,
       org_id: orgId,
@@ -132,7 +173,6 @@ export async function POST(req) {
       );
     }
 
-    // 3. Registrar movimiento en KARDEX
     for (const item of items) {
       await supabase.from("kardex").insert({
         org_id: orgId,
@@ -144,12 +184,11 @@ export async function POST(req) {
         to_branch: null,
         cost_unit: Number(item.cost) || 0,
         total: Number(item.cost) * Number(item.quantity),
-        reference: `Venta #${sale.id}`,
+        reference: `Venta Factura #${invoiceNumber}`,
         created_by: userId || null,
       });
     }
 
-    // 4. Registrar MOVIMIENTO en inventory_movements
     for (const item of items) {
       const { error: movError } = await supabase.from("inventory_movements").insert({
         org_id: orgId,
@@ -160,7 +199,7 @@ export async function POST(req) {
         to_branch: null,
         cost: item.cost,
         price: item.price,
-        reference: `Venta #${sale.id}`,
+        reference: `Venta Factura #${invoiceNumber}`,
         created_by: userId,
       });
       if (movError) {
@@ -168,14 +207,12 @@ export async function POST(req) {
       }
     }
 
-    // 5. Contabilidad (no bloquea)
     try {
       await postSaleToGL(orgId, sale, createdItems);
     } catch (err) {
       console.error("GL posting error:", err);
     }
 
-    // 6. Auditoria
     await logAuditEvent({
       userId,
       orgId,
@@ -186,6 +223,7 @@ export async function POST(req) {
         total: sale.total,
         items: createdItems.length,
         status: paymentStatus,
+        factura: invoiceNumber,
       },
     });
 

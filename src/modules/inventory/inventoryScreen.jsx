@@ -188,6 +188,8 @@ export default function InventoryScreen({ orgSlug }) {
             setBranch={inv.setBranch}
             lowStockOnly={inv.lowStockOnly}
             setLowStockOnly={inv.setLowStockOnly}
+            categories={inv.categories}
+            branches={inv.branches}
           />
         </div>
 
@@ -220,7 +222,7 @@ export default function InventoryScreen({ orgSlug }) {
         onClose={inv.closeModal}
         onSave={inv.saveProduct}
         product={inv.editingProduct}
-        categories={["Alimentos", "Medicinas", "Accesorios", "Herramientas", "Otros"]}
+        categories={inv.categories}
         branches={inv.branches}
       />
 

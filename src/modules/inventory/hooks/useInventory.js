@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-export const CATEGORIES = [
+export const DEFAULT_CATEGORIES = [
   "Alimentos",
   "Medicinas",
   "Accesorios",
@@ -32,7 +32,6 @@ export function useInventory(orgSlug) {
       });
 
       const json = await res.json();
-      // PERFORMANCE FIX: Removed console.log of large arrays (tanks browser performance)
 
       if (json.stock) {
         const mapped = json.stock.map((item) => ({
@@ -92,6 +91,15 @@ export function useInventory(orgSlug) {
       );
     });
   }, [inventory, search, category, branch, lowStockOnly]);
+
+  const categories = useMemo(() => {
+    const cats = inventory
+      .map((p) => p.category)
+      .filter((c) => c && c.trim())
+      .map((c) => c.trim());
+    const uniqueCats = [...new Set(cats)].sort();
+    return uniqueCats.length > 0 ? uniqueCats : DEFAULT_CATEGORIES;
+  }, [inventory]);
 
   const stats = useMemo(() => {
     const totalProducts = inventory.length;
@@ -194,7 +202,6 @@ export function useInventory(orgSlug) {
 
       if (!res.ok) {
         const err = await res.json();
-        // Check if error is due to historical movements
         if (err.error && err.error.includes("movimientos históricos")) {
           return { 
             success: false, 
@@ -234,7 +241,6 @@ export function useInventory(orgSlug) {
         throw new Error(err.error || "Error al cambiar estado del producto");
       }
 
-      // Reload inventory to reflect changes
       await loadInventory();
       return { success: true };
 
@@ -249,6 +255,7 @@ export function useInventory(orgSlug) {
     filteredProducts,
     stats,
     branches,
+    categories,
 
     search,
     setSearch,

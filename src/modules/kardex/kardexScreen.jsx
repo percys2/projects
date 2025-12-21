@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import KardexTable from "./kardexTable";
 import { exportKardexPDF } from "./utils/exportKardexPDF";
 import { exportKardexExcel } from "./utils/exportKardexExcel";
@@ -16,6 +16,7 @@ export default function KardexScreen({ orgSlug }) {
   const [products, setProducts] = useState([]);
   const [branches, setBranches] = useState([]);
   const [productSearch, setProductSearch] = useState("");
+  const [invoiceSearch, setInvoiceSearch] = useState("");
 
   const [selectedProduct, setSelectedProduct] = useState("all");
   const [selectedBranch, setSelectedBranch] = useState("all");
@@ -36,6 +37,7 @@ export default function KardexScreen({ orgSlug }) {
   const [exitOpen, setExitOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     async function loadFilters() {
@@ -61,7 +63,7 @@ export default function KardexScreen({ orgSlug }) {
     if (orgSlug) loadFilters();
   }, [orgSlug]);
 
-  async function loadKardex() {
+  const loadKardex = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -74,13 +76,15 @@ export default function KardexScreen({ orgSlug }) {
       if (dateStart) params.append("startDate", dateStart);
       if (dateEnd) params.append("endDate", dateEnd);
 
+      const searchTerm = invoiceSearch || search;
+
       const res = await fetch(`/api/kardex?${params.toString()}`, {
         headers: {
           "x-org-slug": orgSlug,
           "x-product-id": selectedProduct,
           "x-branch-id": selectedBranch,
           "x-movement-type": movementType,
-          "x-search": search,
+          "x-search": searchTerm,
         },
       });
 
@@ -95,22 +99,12 @@ export default function KardexScreen({ orgSlug }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [orgSlug, selectedProduct, selectedBranch, movementType, search, invoiceSearch, dateStart, dateEnd, page]);
 
   useEffect(() => {
     if (orgSlug) loadKardex();
-  }, [
-    orgSlug,
-    selectedProduct,
-    selectedBranch,
-    movementType,
-    search,
-    dateStart,
-    dateEnd,
-    page,
-  ]);
+  }, [orgSlug, loadKardex]);
 
-  // Load product stock when a product is selected
   useEffect(() => {
     async function loadProductStock() {
       if (selectedProduct === "all" || !orgSlug) {
@@ -135,7 +129,6 @@ export default function KardexScreen({ orgSlug }) {
     loadProductStock();
   }, [selectedProduct, orgSlug]);
 
-  // Date filter helpers
   const setDatePreset = (preset) => {
     const today = new Date();
     const formatDate = (d) => d.toISOString().split("T")[0];
@@ -186,14 +179,8 @@ export default function KardexScreen({ orgSlug }) {
 
     exportKardexPDF({
       org,
-      product:
-        selectedProduct !== "all"
-          ? products.find((p) => p.id === selectedProduct)
-          : null,
-      branch:
-        selectedBranch !== "all"
-          ? branches.find((b) => b.id === selectedBranch)
-          : null,
+      product: selectedProduct !== "all" ? products.find((p) => p.id === selectedProduct) : null,
+      branch: selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : null,
       movements,
       dateStart,
       dateEnd,
@@ -209,14 +196,8 @@ export default function KardexScreen({ orgSlug }) {
 
     exportKardexExcel({
       org,
-      product:
-        selectedProduct !== "all"
-          ? products.find((p) => p.id === selectedProduct)
-          : null,
-      branch:
-        selectedBranch !== "all"
-          ? branches.find((b) => b.id === selectedBranch)
-          : null,
+      product: selectedProduct !== "all" ? products.find((p) => p.id === selectedProduct) : null,
+      branch: selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : null,
       movements,
       dateStart,
       dateEnd,
@@ -234,6 +215,22 @@ export default function KardexScreen({ orgSlug }) {
         (p.sku && p.sku.toLowerCase().includes(term))
     );
   }, [productSearch, products]);
+
+  const aggregatedStock = useMemo(() => {
+    const byBranch = new Map();
+    productStock.forEach((s) => {
+      const bid = s.branch_id ?? "no-branch";
+      if (!byBranch.has(bid)) {
+        byBranch.set(bid, {
+          branch_id: s.branch_id,
+          branch_name: s.branch_name,
+          stock: 0,
+        });
+      }
+      byBranch.get(bid).stock += Number(s.stock ?? s.qty ?? 0);
+    });
+    return Array.from(byBranch.values());
+  }, [productStock]);
 
   const getSelectedProductData = () => {
     if (selectedProduct === "all") return null;
@@ -314,12 +311,7 @@ export default function KardexScreen({ orgSlug }) {
     }
   };
 
-  const handleTransferSubmit = async ({
-    productId,
-    qty,
-    fromBranchId,
-    toBranchId,
-  }) => {
+  const handleTransferSubmit = async ({ productId, qty, fromBranchId, toBranchId }) => {
     try {
       const res = await fetch("/api/inventory/movements", {
         method: "POST",
@@ -331,8 +323,7 @@ export default function KardexScreen({ orgSlug }) {
           productId,
           type: "transferencia",
           qty,
-          from_branch:
-            fromBranchId || (selectedBranch === "all" ? null : selectedBranch),
+          from_branch: fromBranchId || (selectedBranch === "all" ? null : selectedBranch),
           to_branch: toBranchId,
           notes: "Traslado desde Kardex",
         }),
@@ -352,14 +343,59 @@ export default function KardexScreen({ orgSlug }) {
     }
   };
 
-  return (
-    <div className="space-y-6">
+  const clearAllFilters = () => {
+    setSelectedProduct("all");
+    setSelectedBranch("all");
+    setMovementType("all");
+    setSearch("");
+    setInvoiceSearch("");
+    setDateStart("");
+    setDateEnd("");
+    setProductSearch("");
+    setPage(0);
+  };
 
-      {/* BOTONES */}
-      <div className="flex flex-wrap items-center gap-3 p-4 bg-white border rounded-xl shadow-sm">
-        <span className="text-sm font-semibold text-slate-700">
-          Movimientos:
-        </span>
+  const hasActiveFilters = selectedProduct !== "all" || selectedBranch !== "all" || 
+    movementType !== "all" || search || invoiceSearch || dateStart || dateEnd;
+
+  return (
+    <div className="space-y-4 p-2 sm:p-4">
+
+      {/* Header con busqueda rapida */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <h1 className="text-xl font-bold text-slate-800">Kardex de Inventario</h1>
+        
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="Buscar por factura #..."
+            value={invoiceSearch}
+            onChange={(e) => {
+              setInvoiceSearch(e.target.value);
+              setPage(0);
+            }}
+            className="flex-1 sm:w-40 p-2 text-xs border rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`px-3 py-2 text-xs rounded-lg border ${showFilters ? 'bg-blue-600 text-white' : 'bg-white hover:bg-slate-50'}`}
+          >
+            {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+          </button>
+          {hasActiveFilters && (
+            <button
+              onClick={clearAllFilters}
+              className="px-3 py-2 text-xs rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
+            >
+              Limpiar Todo
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* BOTONES DE MOVIMIENTOS */}
+      <div className="flex flex-wrap items-center gap-2 p-3 bg-white border rounded-xl shadow-sm">
+        <span className="text-xs font-semibold text-slate-700">Movimientos:</span>
 
         <button
           onClick={() => setEntryOpen(true)}
@@ -397,7 +433,7 @@ export default function KardexScreen({ orgSlug }) {
           Traslado
         </button>
 
-        <div className="border-l border-slate-300 h-6 mx-2" />
+        <div className="hidden sm:block border-l border-slate-300 h-6 mx-2" />
 
         <button
           onClick={() => setBulkOpen(true)}
@@ -408,183 +444,143 @@ export default function KardexScreen({ orgSlug }) {
               : "bg-slate-200 text-slate-400 cursor-not-allowed"
           }`}
         >
-          Movimiento Múltiple
+          Mov. Multiple
         </button>
 
         {!canMakeMovement && (
-          <span className="text-xs text-amber-600">
-            Seleccione producto y sucursal para registrar movimientos
+          <span className="text-[10px] text-amber-600 ml-2">
+            Seleccione producto y sucursal
           </span>
         )}
       </div>
 
-      {/* SEARCH BAR */}
-      <div className="p-4">
-        <input
-          type="text"
-          placeholder="Buscar en Kardex (producto, referencia, usuario)"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(0);
-          }}
-          className="w-full p-2 text-xs border rounded-lg"
-        />
-      </div>
-
-      {/* FILTROS RÁPIDOS DE FECHA */}
+      {/* FILTROS RAPIDOS DE FECHA */}
       <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 border rounded-xl">
-        <span className="text-xs font-semibold text-slate-600">Período:</span>
+        <span className="text-xs font-semibold text-slate-600">Periodo:</span>
         <button onClick={() => setDatePreset("today")} className={`px-2 py-1 text-xs rounded ${dateStart === new Date().toISOString().split("T")[0] && dateEnd === dateStart ? "bg-emerald-600 text-white" : "bg-white border hover:bg-slate-100"}`}>Hoy</button>
         <button onClick={() => setDatePreset("yesterday")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Ayer</button>
         <button onClick={() => setDatePreset("week")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Esta semana</button>
         <button onClick={() => setDatePreset("month")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Este mes</button>
         <button onClick={() => setDatePreset("lastMonth")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Mes pasado</button>
         {(dateStart || dateEnd) && (
-          <button onClick={() => setDatePreset("clear")} className="px-2 py-1 text-xs rounded bg-red-100 text-red-600 hover:bg-red-200">Limpiar</button>
-        )}
-        {(dateStart || dateEnd) && (
-          <span className="text-xs text-slate-500 ml-2">
-            {dateStart && dateEnd ? `${dateStart} - ${dateEnd}` : dateStart || dateEnd}
-          </span>
+          <>
+            <button onClick={() => setDatePreset("clear")} className="px-2 py-1 text-xs rounded bg-red-100 text-red-600 hover:bg-red-200">Limpiar</button>
+            <span className="text-xs text-slate-500 ml-2">
+              {dateStart && dateEnd ? `${dateStart} - ${dateEnd}` : dateStart || dateEnd}
+            </span>
+          </>
         )}
       </div>
+
+      {/* FILTROS EXPANDIBLES */}
+      {showFilters && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
+          <div>
+            <label className="text-xs font-semibold text-slate-600">Producto</label>
+            <input
+              type="text"
+              placeholder="Buscar producto..."
+              value={productSearch}
+              onChange={(e) => setProductSearch(e.target.value)}
+              className="w-full p-2 mb-1 text-xs border rounded-lg"
+            />
+            <select
+              value={selectedProduct}
+              onChange={(e) => {
+                setSelectedProduct(e.target.value);
+                setPage(0);
+              }}
+              className="w-full p-2 text-xs border rounded-lg"
+            >
+              <option value="all">Todos ({products.length})</option>
+              {filteredProducts.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} {p.sku ? `(${p.sku})` : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600">Sucursal</label>
+            <select
+              value={selectedBranch}
+              onChange={(e) => {
+                setSelectedBranch(e.target.value);
+                setPage(0);
+              }}
+              className="w-full p-2 text-xs border rounded-lg mt-1"
+            >
+              <option value="all">Todas</option>
+              {branches.map((b) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600">Tipo Movimiento</label>
+            <select
+              value={movementType}
+              onChange={(e) => {
+                setMovementType(e.target.value);
+                setPage(0);
+              }}
+              className="w-full p-2 text-xs border rounded-lg mt-1"
+            >
+              <option value="all">Todos</option>
+              <option value="ENTRADA">Entradas</option>
+              <option value="SALIDA">Salidas</option>
+              <option value="TRANSFER">Transferencias</option>
+              <option value="SALE">Ventas</option>
+              <option value="SALE_CANCEL">Anulaciones</option>
+              <option value="ADJUSTMENT">Ajustes</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600">Busqueda General</label>
+            <input
+              type="text"
+              placeholder="Producto, referencia, usuario..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
+              className="w-full p-2 text-xs border rounded-lg mt-1"
+            />
+          </div>
+        </div>
+      )}
 
       {/* RESUMEN DEL PRODUCTO SELECCIONADO */}
       {selectedProduct !== "all" && (
         <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold text-blue-800">
-              Resumen: {products.find(p => p.id === selectedProduct)?.name || "Producto"}
+              Stock: {products.find(p => p.id === selectedProduct)?.name || "Producto"}
             </h3>
-            {loadingStock && <span className="text-xs text-blue-500">Cargando stock...</span>}
+            {loadingStock && <span className="text-xs text-blue-500">Cargando...</span>}
           </div>
-          {!loadingStock && productStock.length > 0 ? (
+          {!loadingStock && aggregatedStock.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {productStock.map((stock) => (
-                <div key={stock.branch_id || stock.id} className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
+              {aggregatedStock.map((stock) => (
+                <div key={stock.branch_id ?? "no-branch"} className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
                   <p className="text-xs text-slate-500 truncate">{stock.branch_name || branches.find(b => b.id === stock.branch_id)?.name || "Sin sucursal"}</p>
-                  <p className="text-lg font-bold text-blue-700">{stock.stock || stock.qty || 0}</p>
-                  <p className="text-xs text-slate-400">unidades</p>
+                  <p className="text-lg font-bold text-blue-700">{stock.stock}</p>
                 </div>
               ))}
               <div className="bg-blue-600 rounded-lg p-3 text-white shadow-sm">
-                <p className="text-xs opacity-80">Stock Total</p>
-                <p className="text-lg font-bold">{productStock.reduce((sum, s) => sum + (s.stock || s.qty || 0), 0)}</p>
-                <p className="text-xs opacity-80">unidades</p>
+                <p className="text-xs opacity-80">Total</p>
+                <p className="text-lg font-bold">{aggregatedStock.reduce((sum, s) => sum + s.stock, 0)}</p>
               </div>
             </div>
           ) : !loadingStock ? (
-            <p className="text-xs text-slate-500">No hay stock registrado para este producto</p>
+            <p className="text-xs text-slate-500">No hay stock registrado</p>
           ) : null}
         </div>
       )}
-
-      {/* FILTROS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
-
-        <div>
-          <label className="text-xs font-semibold text-slate-600">
-            Producto
-          </label>
-          <input
-            type="text"
-            placeholder="Buscar producto..."
-            value={productSearch}
-            onChange={(e) => setProductSearch(e.target.value)}
-            className="w-full p-2 mb-1 text-xs border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-          />
-          <select
-            value={selectedProduct}
-            onChange={(e) => {
-              setSelectedProduct(e.target.value);
-              setPage(0);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          >
-            <option value="all">Todos ({products.length} productos)</option>
-            {filteredProducts.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name} {p.sku ? `(${p.sku})` : ""}
-              </option>
-            ))}
-          </select>
-          {productSearch && filteredProducts.length === 0 && (
-            <p className="text-xs text-amber-600 mt-1">No se encontraron productos</p>
-          )}
-          {productSearch && filteredProducts.length > 0 && (
-            <p className="text-xs text-slate-500 mt-1">{filteredProducts.length} resultados</p>
-          )}
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold text-slate-600">
-            Sucursal
-          </label>
-          <select
-            value={selectedBranch}
-            onChange={(e) => {
-              setSelectedBranch(e.target.value);
-              setPage(0);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          >
-            <option value="all">Todas</option>
-            {branches.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold text-slate-600">
-            Movimiento
-          </label>
-          <select
-            value={movementType}
-            onChange={(e) => {
-              setMovementType(e.target.value);
-              setPage(0);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          >
-            <option value="all">Todos</option>
-            <option value="entrada">Entradas</option>
-            <option value="salida">Salidas</option>
-            <option value="transferencia">Transferencias</option>
-            <option value="venta">Ventas</option>
-            <option value="ajuste">Ajustes</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold text-slate-600">Desde</label>
-          <input
-            type="date"
-            value={dateStart}
-            onChange={(e) => {
-              setDateStart(e.target.value);
-              setPage(0);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          />
-
-          <label className="text-xs font-semibold text-slate-600 mt-2 block">
-            Hasta
-          </label>
-          <input
-            type="date"
-            value={dateEnd}
-            onChange={(e) => {
-              setDateEnd(e.target.value);
-              setPage(0);
-            }}
-            className="w-full p-2 text-xs border rounded-lg"
-          />
-        </div>
-      </div>
 
       {/* TABLA */}
       {!loading && (
@@ -593,21 +589,20 @@ export default function KardexScreen({ orgSlug }) {
           page={page}
           setPage={setPage}
           limit={limit}
-          product={
-            selectedProduct === "all"
-              ? null
-              : products.find((p) => p.id === selectedProduct)
-          }
+          product={selectedProduct === "all" ? null : products.find((p) => p.id === selectedProduct)}
+          branch={selectedBranch === "all" ? null : branches.find((b) => b.id === selectedBranch)}
           onPrint={handlePrint}
           onExportExcel={handleExportExcel}
         />
       )}
 
       {loading && (
-        <p className="text-center text-slate-500 text-sm">Cargando...</p>
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+        </div>
       )}
 
-      {error && <p className="text-center text-red-600 text-sm">{error}</p>}
+      {error && <p className="text-center text-red-600 text-sm bg-red-50 p-4 rounded-lg">{error}</p>}
 
       {/* MODALES */}
       <InventoryEntryModal

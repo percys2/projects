@@ -1,4 +1,4 @@
-import { generateInvoiceNumber } from "../utils/generateInvoiceNumber";
+import { generateInvoiceNumber, getNextInvoiceNumber } from "../utils/generateInvoiceNumber";
 
 export const salesService = {
   async makeSale({ orgSlug, branchId, client, cart, paymentType, notes }) {
@@ -15,7 +15,16 @@ export const salesService = {
       ? `${client.firstName} ${client.lastName || ''}`.trim()
       : (client?.name || null);
 
-    const invoice = generateInvoiceNumber();
+    // Get consecutive invoice number from database
+    let invoice;
+    try {
+      const invoiceNumber = await getNextInvoiceNumber(orgSlug, branchId);
+      invoice = invoiceNumber ? String(invoiceNumber) : generateInvoiceNumber();
+    } catch (err) {
+      console.error("Error getting consecutive invoice number:", err);
+      invoice = generateInvoiceNumber();
+    }
+
     const total = cart.reduce((sum, p) => sum + p.qty * p.price, 0);
 
     // Build items in the exact format the API expects
