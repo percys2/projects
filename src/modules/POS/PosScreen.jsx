@@ -129,8 +129,9 @@ export default function PosScreen({ orgSlug }) {
       )}
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 overflow-hidden">
-        <div className={`flex-1 overflow-y-auto p-2 ${!isOpen ? "opacity-50 pointer-events-none" : ""}`}>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+        {/* Product Grid - takes remaining space on mobile when cart is hidden */}
+        <div className={`flex-1 overflow-y-auto p-2 ${!isOpen ? "opacity-50 pointer-events-none" : ""} ${showCart ? "hidden lg:block" : ""}`}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 pb-20 lg:pb-0">
             {products.length === 0 ? (
               <p className="text-slate-500 text-sm col-span-full text-center py-8">
                 No hay productos para esta bodega ({branch})
@@ -143,39 +144,24 @@ export default function PosScreen({ orgSlug }) {
           </div>
         </div>
 
+        {/* Cart Sidebar - Full screen on mobile when shown */}
         <div className={`
           lg:w-80 lg:flex-shrink-0
           ${!isOpen ? "opacity-50 pointer-events-none" : ""}
-          fixed lg:relative
-          bottom-0 left-0 right-0 lg:bottom-auto lg:left-auto lg:right-auto
-          z-40 lg:z-auto
-          transform transition-transform duration-300 ease-in-out
-          ${showCart ? "translate-y-0" : "translate-y-full lg:translate-y-0"}
-          max-h-[70vh] lg:max-h-none
+          ${showCart ? "fixed inset-0 z-40 lg:relative lg:inset-auto" : "hidden lg:block"}
           bg-white lg:bg-transparent
-          rounded-t-2xl lg:rounded-none
-          shadow-2xl lg:shadow-none
         `}>
-          <div className="lg:hidden flex justify-center py-2">
-            <div className="w-12 h-1.5 bg-slate-300 rounded-full"></div>
-          </div>
           <div className="h-full overflow-y-auto">
             <CartSidebar orgSlug={orgSlug} onClose={() => setShowCart(false)} />
           </div>
         </div>
-
-        {showCart && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-            onClick={() => setShowCart(false)}
-          />
-        )}
       </div>
 
+      {/* Floating Cart Button - Only visible on mobile when cart is hidden */}
       <button
         onClick={() => setShowCart(true)}
         className={`
-          lg:hidden fixed bottom-4 right-4 z-20
+          lg:hidden fixed bottom-6 right-4 z-20
           bg-emerald-600 text-white
           w-14 h-14 rounded-full
           flex items-center justify-center
@@ -183,6 +169,7 @@ export default function PosScreen({ orgSlug }) {
           ${!isOpen ? "opacity-50 pointer-events-none" : ""}
           ${showCart ? "hidden" : ""}
         `}
+        style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
