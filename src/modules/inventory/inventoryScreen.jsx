@@ -50,6 +50,7 @@ export default function InventoryScreen({ orgSlug }) {
           expiresAt: data.expiresAt,
           lot: data.lot,
           notes: data.note || "Entrada manual",
+          invoiceNumber: data.invoiceNumber || null,
         }),
       });
 
@@ -89,6 +90,7 @@ export default function InventoryScreen({ orgSlug }) {
           type: "salida",
           qty: data.qty,
           notes: data.note || "Salida manual",
+          invoiceNumber: data.invoiceNumber || null,
         }),
       });
 
@@ -119,6 +121,7 @@ export default function InventoryScreen({ orgSlug }) {
     qty,
     fromBranchId,
     toBranchId,
+    invoiceNumber,
   }) => {
     try {
       const res = await fetch("/api/inventory/movements", {
@@ -134,6 +137,7 @@ export default function InventoryScreen({ orgSlug }) {
           from_branch: fromBranchId,
           to_branch: toBranchId,
           notes: "Traslado entre sucursales",
+          invoiceNumber: invoiceNumber || null,
         }),
       });
 
@@ -250,3 +254,4 @@ export default function InventoryScreen({ orgSlug }) {
     </div>
   );
 }
+

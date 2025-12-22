@@ -8,6 +8,7 @@ export default function ReceivableFormModal({
   onSave,
   receivable,
   clients,
+  onCreateClient,
 }) {
   const [form, setForm] = useState({
     client_id: "",
@@ -20,6 +21,9 @@ export default function ReceivableFormModal({
     notes: "",
   });
   const [saving, setSaving] = useState(false);
+  const [showNewClient, setShowNewClient] = useState(false);
+  const [newClient, setNewClient] = useState({ first_name: "", last_name: "", phone: "" });
+  const [creatingClient, setCreatingClient] = useState(false);
 
   useEffect(() => {
     if (receivable) {
@@ -83,19 +87,87 @@ export default function ReceivableFormModal({
             <label className="block text-xs font-medium text-slate-600 mb-1">
               Cliente *
             </label>
-            <select
-              value={form.client_id}
-              onChange={(e) => setForm({ ...form, client_id: e.target.value })}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-              required
-            >
-              <option value="">Seleccionar cliente</option>
-              {(clients || []).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.first_name} {c.last_name}
-                </option>
-              ))}
-            </select>
+            {!showNewClient ? (
+              <div className="space-y-2">
+                <select
+                  value={form.client_id}
+                  onChange={(e) => setForm({ ...form, client_id: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                  required
+                >
+                  <option value="">Seleccionar cliente</option>
+                  {(clients || []).map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.first_name} {c.last_name}
+                    </option>
+                  ))}
+                </select>
+                {onCreateClient && (
+                  <button
+                    type="button"
+                    onClick={() => setShowNewClient(true)}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
+                    + Crear nuevo cliente
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2 p-3 bg-slate-50 rounded-lg">
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    placeholder="Nombre *"
+                    value={newClient.first_name}
+                    onChange={(e) => setNewClient({ ...newClient, first_name: e.target.value })}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Apellido"
+                    value={newClient.last_name}
+                    onChange={(e) => setNewClient({ ...newClient, last_name: e.target.value })}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Telefono"
+                  value={newClient.phone}
+                  onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowNewClient(false);
+                      setNewClient({ first_name: "", last_name: "", phone: "" });
+                    }}
+                    className="px-3 py-1 text-xs text-slate-600 hover:bg-slate-200 rounded"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!newClient.first_name || creatingClient}
+                    onClick={async () => {
+                      setCreatingClient(true);
+                      const result = await onCreateClient(newClient);
+                      setCreatingClient(false);
+                      if (result?.success && result.client) {
+                        setForm({ ...form, client_id: result.client.id });
+                        setShowNewClient(false);
+                        setNewClient({ first_name: "", last_name: "", phone: "" });
+                      }
+                    }}
+                    className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {creatingClient ? "Creando..." : "Crear Cliente"}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

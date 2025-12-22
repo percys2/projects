@@ -11,12 +11,14 @@ export default function InventoryExitModal({
   const [qty, setQty] = useState("");
   const [reason, setReason] = useState("Ajuste");
   const [note, setNote] = useState("");
+  const [invoiceNumber, setInvoiceNumber] = useState("");
 
   useEffect(() => {
     if (product) {
       setQty("");
       setReason("Ajuste");
       setNote("");
+      setInvoiceNumber("");
     }
   }, [product]);
 
@@ -39,6 +41,7 @@ export default function InventoryExitModal({
       qty: numericQty,
       reason,
       note,
+      invoiceNumber: invoiceNumber.trim() || null,
     });
 
     onClose();
@@ -88,6 +91,19 @@ export default function InventoryExitModal({
               <option>Robo / Pérdida</option>
               <option>Salida manual</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block text-slate-600 font-medium mb-1">
+              # Factura / Documento (opcional)
+            </label>
+            <input
+              type="text"
+              value={invoiceNumber}
+              onChange={(e) => setInvoiceNumber(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-sm"
+              placeholder="Ej: FAC-001, REC-123"
+            />
           </div>
 
           <div>

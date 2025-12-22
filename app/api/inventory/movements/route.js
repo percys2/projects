@@ -25,6 +25,7 @@ export async function POST(req) {
       notes,
       from_branch,
       to_branch,
+      invoiceNumber,
     } = body;
 
     if (!productId || !qty || !type)
@@ -66,6 +67,14 @@ export async function POST(req) {
       );
     }
 
+    // Build movement reference with invoice number if provided
+    let movementReference = notes || null;
+    if (invoiceNumber && invoiceNumber.trim()) {
+      movementReference = movementReference 
+        ? `FAC:${invoiceNumber.trim()} | ${movementReference}`
+        : `FAC:${invoiceNumber.trim()}`;
+    }
+
     // INSERTAR EN inventory_movements
     const { data: movement, error } = await supabase
       .from("inventory_movements")
@@ -75,7 +84,7 @@ export async function POST(req) {
         qty: Number(qty),
         type: type,
         cost: cost || null,
-        reference: notes || null,
+        reference: movementReference,
         from_branch: fromBranch,
         to_branch: toBranch,
         created_by: userId,
@@ -93,6 +102,12 @@ export async function POST(req) {
       ajuste: "ADJUSTMENT",
     };
 
+    // Build reference with invoice number if provided
+    let kardexReference = notes || `Movimiento de inventario: ${type}`;
+    if (invoiceNumber && invoiceNumber.trim()) {
+      kardexReference = `FAC:${invoiceNumber.trim()} | ${kardexReference}`;
+    }
+
     const kardexData = {
       org_id: orgId,
       product_id: productId,
@@ -103,7 +118,7 @@ export async function POST(req) {
       to_branch: toBranch,
       cost_unit: cost || 0,
       total: (cost || 0) * Number(qty),
-      reference: notes || `Movimiento de inventario: ${type}`,
+      reference: kardexReference,
       created_by: userId,
     };
 

@@ -262,6 +262,7 @@ export default function KardexScreen({ orgSlug }) {
           qty: data.qty,
           cost: data.cost,
           notes: data.note || "Entrada desde Kardex",
+          invoiceNumber: data.invoiceNumber || null,
           branchId: selectedBranch === "all" ? null : selectedBranch,
         }),
       });
@@ -293,6 +294,7 @@ export default function KardexScreen({ orgSlug }) {
           type: "salida",
           qty: data.qty,
           notes: data.note || "Salida desde Kardex",
+          invoiceNumber: data.invoiceNumber || null,
           branchId: selectedBranch === "all" ? null : selectedBranch,
         }),
       });
@@ -311,7 +313,7 @@ export default function KardexScreen({ orgSlug }) {
     }
   };
 
-  const handleTransferSubmit = async ({ productId, qty, fromBranchId, toBranchId }) => {
+  const handleTransferSubmit = async ({ productId, qty, fromBranchId, toBranchId, invoiceNumber }) => {
     try {
       const res = await fetch("/api/inventory/movements", {
         method: "POST",
@@ -326,6 +328,7 @@ export default function KardexScreen({ orgSlug }) {
           from_branch: fromBranchId || (selectedBranch === "all" ? null : selectedBranch),
           to_branch: toBranchId,
           notes: "Traslado desde Kardex",
+          invoiceNumber: invoiceNumber || null,
         }),
       });
 

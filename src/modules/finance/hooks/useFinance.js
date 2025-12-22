@@ -3,16 +3,17 @@
 import { useEffect, useState, useMemo } from "react";
 
 export function useFinance(orgSlug) {
-  const [accounts, setAccounts] = useState([]);
-  const [expenses, setExpenses] = useState([]);
-  const [payments, setPayments] = useState([]);
-  const [assets, setAssets] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [receivables, setReceivables] = useState([]);
-  const [payables, setPayables] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const [accounts, setAccounts] = useState([]);
+    const [expenses, setExpenses] = useState([]);
+    const [payments, setPayments] = useState([]);
+    const [assets, setAssets] = useState([]);
+    const [suppliers, setSuppliers] = useState([]);
+    const [clients, setClients] = useState([]);
+    const [receivables, setReceivables] = useState([]);
+    const [payables, setPayables] = useState([]);
+    const [sales, setSales] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
   const [accountModalOpen, setAccountModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
@@ -41,54 +42,59 @@ export function useFinance(orgSlug) {
       setLoading(true);
       const headers = { "x-org-slug": orgSlug };
 
-      const [
-        accountsRes,
-        expensesRes,
-        paymentsRes,
-        assetsRes,
-        suppliersRes,
-        clientsRes,
-        receivablesRes,
-        payablesRes,
-      ] = await Promise.all([
-        fetch("/api/finance/accounts", { headers }),
-        fetch("/api/finance/ap-bills", { headers }),
-        fetch("/api/finance/payments", { headers }),
-        fetch("/api/finance/assets", { headers }),
-        fetch("/api/finance/suppliers", { headers }),
-        fetch("/api/clients", { headers }),
-        fetch("/api/finance/reports/receivables", { headers }),
-        fetch("/api/finance/reports/payables", { headers }),
-      ]);
+            const [
+              accountsRes,
+              expensesRes,
+              paymentsRes,
+              assetsRes,
+              suppliersRes,
+              clientsRes,
+              receivablesRes,
+              payablesRes,
+              salesRes,
+            ] = await Promise.all([
+              fetch("/api/finance/accounts", { headers }),
+              fetch("/api/finance/ap-bills", { headers }),
+              fetch("/api/finance/payments", { headers }),
+              fetch("/api/finance/assets", { headers }),
+              fetch("/api/finance/suppliers", { headers }),
+              fetch("/api/clients", { headers }),
+              fetch("/api/finance/receivables", { headers }),
+              fetch("/api/finance/reports/payables", { headers }),
+              fetch("/api/sales?limit=1000", { headers }),
+            ]);
 
-      const [
-        accountsData,
-        expensesData,
-        paymentsData,
-        assetsData,
-        suppliersData,
-        clientsData,
-        receivablesData,
-        payablesData,
-      ] = await Promise.all([
-        accountsRes.json(),
-        expensesRes.json(),
-        paymentsRes.json(),
-        assetsRes.json(),
-        suppliersRes.json(),
-        clientsRes.json(),
-        receivablesRes.json(),
-        payablesRes.json(),
-      ]);
+            const [
+              accountsData,
+              expensesData,
+              paymentsData,
+              assetsData,
+              suppliersData,
+              clientsData,
+              receivablesData,
+              payablesData,
+              salesData,
+            ] = await Promise.all([
+              accountsRes.json(),
+              expensesRes.json(),
+              paymentsRes.json(),
+              assetsRes.json(),
+              suppliersRes.json(),
+              clientsRes.json(),
+              receivablesRes.json(),
+              payablesRes.json(),
+              salesRes.json(),
+            ]);
 
-      setAccounts(accountsData.accounts || []);
-      setExpenses(expensesData.bills || []);
-      setPayments(paymentsData.payments || []);
-      setAssets(assetsData.assets || []);
-      setSuppliers(suppliersData.suppliers || []);
-      setClients(clientsData.clients || []);
-      setReceivables(receivablesData.receivables || []);
-      setPayables(payablesData.payables || []);
+            setAccounts(accountsData.accounts || []);
+            setExpenses(expensesData.bills || []);
+            setPayments(paymentsData.payments || []);
+            setAssets(assetsData.assets || []);
+            setSuppliers(suppliersData.suppliers || []);
+            setClients(Array.isArray(clientsData) ? clientsData : (clientsData.clients || []));
+            setReceivables(receivablesData.receivables || []);
+            setPayables(payablesData.payables || []);
+            setSales(salesData.sales || []);
     } catch (err) {
       console.error("Finance fetch error:", err);
       setError(err.message);
@@ -500,6 +506,29 @@ export function useFinance(orgSlug) {
     }
   }
 
+  async function createClientInline(data) {
+    try {
+      const res = await fetch("/api/clients", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("Error al crear cliente");
+
+      const client = await res.json();
+      await loadData();
+      return { success: true, client };
+    } catch (err) {
+      console.error("Create client inline error:", err);
+      alert(err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
   function openReceivableModal() {
     setEditingReceivable(null);
     setReceivableModalOpen(true);
@@ -515,28 +544,51 @@ export function useFinance(orgSlug) {
     setEditingReceivable(null);
   }
 
-  async function saveReceivable(data) {
-    try {
-      const method = data.id ? "PUT" : "POST";
-      const res = await fetch("/api/finance/receivables", {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          "x-org-slug": orgSlug,
-        },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error("Error al guardar cuenta por cobrar");
-      await loadData();
-      closeReceivableModal();
-      return { success: true };
-    } catch (err) {
-      console.error("Save receivable error:", err);
-      return { success: false, error: err.message };
+    async function saveReceivable(data) {
+      try {
+        const method = data.id ? "PUT" : "POST";
+        const res = await fetch("/api/finance/receivables", {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "x-org-slug": orgSlug,
+          },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || "Error al guardar cuenta por cobrar");
+        }
+        await loadData();
+        closeReceivableModal();
+        return { success: true };
+      } catch (err) {
+        console.error("Save receivable error:", err);
+        return { success: false, error: err.message };
+      }
     }
-  }
 
-  function openPayableModal() {
+    async function deleteReceivable(id) {
+      if (!confirm("¿Está seguro de eliminar esta cuenta por cobrar?")) return;
+      try {
+        const res = await fetch("/api/finance/receivables", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "x-org-slug": orgSlug,
+          },
+          body: JSON.stringify({ id }),
+        });
+        if (!res.ok) throw new Error("Error al eliminar cuenta por cobrar");
+        await loadData();
+        return { success: true };
+      } catch (err) {
+        console.error("Delete receivable error:", err);
+        return { success: false, error: err.message };
+      }
+    }
+
+    function openPayableModal(){
     setEditingPayable(null);
     setPayableModalOpen(true);
   }
@@ -572,22 +624,23 @@ export function useFinance(orgSlug) {
     }
   }
 
-  return {
-    accounts,
-    expenses,
-    payments,
-    assets,
-    suppliers,
-    clients,
-    receivables,
-    payables,
-    loading,
-    error,
-    stats,
-    recentPayments,
-    expenseAccounts,
-    assetAccounts,
-    cashAccounts,
+    return {
+      accounts,
+      expenses,
+      payments,
+      assets,
+      suppliers,
+      clients,
+      receivables,
+      payables,
+      sales,
+      loading,
+      error,
+      stats,
+      recentPayments,
+      expenseAccounts,
+      assetAccounts,
+      cashAccounts,
 
     accountModalOpen,
     editingAccount,
@@ -632,14 +685,17 @@ export function useFinance(orgSlug) {
     createSupplierInline,
     deleteSupplier,
 
-    receivableModalOpen,
-    editingReceivable,
-    openReceivableModal,
-    openEditReceivable,
-    closeReceivableModal,
-    saveReceivable,
+        createClientInline,
 
-    payableModalOpen,
+        receivableModalOpen,
+        editingReceivable,
+        openReceivableModal,
+        openEditReceivable,
+        closeReceivableModal,
+        saveReceivable,
+        deleteReceivable,
+
+        payableModalOpen,
     editingPayable,
     openPayableModal,
     openEditPayable,

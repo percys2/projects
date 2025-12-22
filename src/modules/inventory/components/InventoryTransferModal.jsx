@@ -14,6 +14,7 @@ export default function InventoryTransferModal({
   const [to, setTo] = useState("");
   const [fromBranchId, setFromBranchId] = useState("");
   const [toBranchId, setToBranchId] = useState("");
+  const [invoiceNumber, setInvoiceNumber] = useState("");
 
   useEffect(() => {
     if (product) {
@@ -22,6 +23,7 @@ export default function InventoryTransferModal({
       setFromBranchId(product.branchId || "");
       setTo("");
       setToBranchId("");
+      setInvoiceNumber("");
     }
   }, [product]);
 
@@ -41,6 +43,7 @@ export default function InventoryTransferModal({
       to,
       fromBranchId,
       toBranchId,
+      invoiceNumber: invoiceNumber.trim() || null,
     });
 
     onClose();
@@ -109,6 +112,20 @@ export default function InventoryTransferModal({
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Factura / Documento */}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-slate-600">
+            # Factura / Documento (opcional)
+          </label>
+          <input
+            type="text"
+            value={invoiceNumber}
+            onChange={(e) => setInvoiceNumber(e.target.value)}
+            className="w-full border rounded px-3 py-2 text-sm"
+            placeholder="Ej: TRF-001, DOC-123"
+          />
         </div>
 
         {/* Botones */}

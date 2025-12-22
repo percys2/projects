@@ -18,6 +18,7 @@ export default function EmployeeFormModal({
     position: "",
     department: "",
     salary: "",
+    commissions: "",
     hire_date: "",
     contract_type: "indefinido",
     status: "activo",
@@ -35,6 +36,7 @@ export default function EmployeeFormModal({
       setForm({
         ...employee,
         salary: employee.salary?.toString() || "",
+        commissions: employee.commissions?.toString() || "",
         hire_date: employee.hire_date?.split("T")[0] || "",
       });
     } else {
@@ -47,6 +49,7 @@ export default function EmployeeFormModal({
         position: "",
         department: "",
         salary: "",
+        commissions: "",
         hire_date: "",
         contract_type: "indefinido",
         status: "activo",
@@ -73,6 +76,7 @@ export default function EmployeeFormModal({
     const data = {
       ...form,
       salary: parseFloat(form.salary) || 0,
+      commissions: parseFloat(form.commissions) || 0,
     };
 
     if (employee?.id) {
@@ -120,7 +124,7 @@ export default function EmployeeFormModal({
 
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">
-                Cédula *
+                Cedula *
               </label>
               <input
                 type="text"
@@ -148,7 +152,7 @@ export default function EmployeeFormModal({
 
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">
-                Teléfono
+                Telefono
               </label>
               <input
                 type="tel"
@@ -161,7 +165,7 @@ export default function EmployeeFormModal({
 
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">
-                Número INSS
+                Numero INSS
               </label>
               <input
                 type="text"
@@ -223,6 +227,22 @@ export default function EmployeeFormModal({
 
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">
+                Comisiones Mensuales (C$)
+              </label>
+              <input
+                type="number"
+                name="commissions"
+                value={form.commissions}
+                onChange={handleChange}
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
                 Fecha de Ingreso *
               </label>
               <input
@@ -271,7 +291,7 @@ export default function EmployeeFormModal({
 
             <div className="col-span-2">
               <label className="block text-xs font-medium text-slate-600 mb-1">
-                Dirección
+                Direccion
               </label>
               <input
                 type="text"
@@ -297,7 +317,7 @@ export default function EmployeeFormModal({
 
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">
-                Teléfono de Emergencia
+                Telefono de Emergencia
               </label>
               <input
                 type="tel"
