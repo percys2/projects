@@ -40,8 +40,12 @@ export default function BulkInventoryModal({
       return;
     }
     const numQty = Number(qty);
-    if (!qty || isNaN(numQty) || numQty <= 0) {
-      alert("Ingrese una cantidad válida mayor a 0");
+    if (!qty || isNaN(numQty) || numQty === 0) {
+      alert("Ingrese una cantidad válida (puede ser positiva o negativa para ajustes)");
+      return;
+    }
+    if (movementType !== "ajuste" && numQty < 0) {
+      alert("Solo los ajustes permiten cantidades negativas");
       return;
     }
     const product = products.find((p) => p.id === selectedProductId);
@@ -80,7 +84,8 @@ export default function BulkInventoryModal({
 
   const handleUpdateQty = (index, newQty) => {
     const numQty = Number(newQty);
-    if (isNaN(numQty) || numQty <= 0) return;
+    if (isNaN(numQty) || numQty === 0) return;
+    if (movementType !== "ajuste" && numQty < 0) return;
     const newCart = [...cart];
     newCart[index].qty = numQty;
     setCart(newCart);
@@ -202,7 +207,7 @@ export default function BulkInventoryModal({
               </div>
               <div>
                 <label className="text-xs text-slate-600 block mb-1">Cantidad</label>
-                <input type="number" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="0" min="1" className="w-full p-2 text-xs border rounded-lg mt-6" />
+                <input type="number" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="0" className="w-full p-2 text-xs border rounded-lg mt-6" />
               </div>
               {movementType === "entrada" && (
                 <div>
@@ -241,7 +246,7 @@ export default function BulkInventoryModal({
                   {cart.map((item, index) => (
                     <tr key={index} className="border-t hover:bg-slate-50">
                       <td className="p-2"><span className="font-medium">{item.productName}</span>{item.productSku && <span className="text-slate-400 ml-1">({item.productSku})</span>}</td>
-                      <td className="p-2 text-center"><input type="number" value={item.qty} onChange={(e) => handleUpdateQty(index, e.target.value)} min="1" className="w-16 p-1 text-center border rounded text-xs" /></td>
+                      <td className="p-2 text-center"><input type="number" value={item.qty} onChange={(e) => handleUpdateQty(index, e.target.value)} className="w-16 p-1 text-center border rounded text-xs" /></td>
                       {movementType === "entrada" && <td className="p-2 text-right">{formatCurrency(item.cost)}</td>}
                       {movementType === "entrada" && <td className="p-2 text-right font-medium">{formatCurrency(item.qty * item.cost)}</td>}
                       <td className="p-2 text-slate-500">{item.note || "-"}</td>

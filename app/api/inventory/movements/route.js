@@ -37,6 +37,9 @@ export async function POST(req) {
     // NORMALIZACIÓN - accept both branchId and to_branch/from_branch for compatibility
     let fromBranch = null;
     let toBranch = null;
+    let isAdjustment = type === "ajuste";
+    let dbType = type;
+    let adjustmentQty = Number(qty);
 
     if (type === "entrada") {
       toBranch = branchId || to_branch;
@@ -48,19 +51,25 @@ export async function POST(req) {
       fromBranch = from_branch;
       toBranch = to_branch;
     }
-    if (type === "ajuste") {
+    if (isAdjustment) {
       const adjustBranch = branchId || from_branch || to_branch;
-      fromBranch = adjustBranch;
-      toBranch = adjustBranch;
+      if (adjustmentQty >= 0) {
+        dbType = "entrada";
+        toBranch = adjustBranch;
+      } else {
+        dbType = "salida";
+        fromBranch = adjustBranch;
+        adjustmentQty = Math.abs(adjustmentQty);
+      }
     }
 
-    if (type === "entrada" && !toBranch) {
+    if (dbType === "entrada" && !toBranch) {
       return NextResponse.json(
         { error: "Debe seleccionar una sucursal para registrar la entrada" },
         { status: 400 }
       );
     }
-    if (type === "salida" && !fromBranch) {
+    if (dbType === "salida" && !fromBranch) {
       return NextResponse.json(
         { error: "Debe seleccionar una sucursal para registrar la salida" },
         { status: 400 }
@@ -76,15 +85,16 @@ export async function POST(req) {
     }
 
     // INSERTAR EN inventory_movements
+    // Para ajustes, usamos dbType (entrada/salida) y adjustmentQty (siempre positivo)
     const { data: movement, error } = await supabase
       .from("inventory_movements")
       .insert({
         org_id: orgId,
         product_id: productId,
-        qty: Number(qty),
-        type: type,
+        qty: isAdjustment ? adjustmentQty : Number(qty),
+        type: dbType,
         cost: cost || null,
-        reference: movementReference,
+        reference: isAdjustment ? `[AJUSTE] ${movementReference || 'Ajuste de inventario'}` : movementReference,
         from_branch: fromBranch,
         to_branch: toBranch,
         created_by: userId,
@@ -99,7 +109,6 @@ export async function POST(req) {
       entrada: "ENTRY",
       salida: "EXIT",
       transferencia: "TRANSFER",
-      ajuste: "ADJUSTMENT",
     };
 
     // Build reference with invoice number if provided
@@ -108,17 +117,29 @@ export async function POST(req) {
       kardexReference = `FAC:${invoiceNumber.trim()} | ${kardexReference}`;
     }
 
+    // Para ajustes: mostrar ADJUSTMENT en kardex, con signo segun la cantidad original
+    let kardexMovementType;
+    let kardexQuantity;
+    if (isAdjustment) {
+      const originalQty = Number(qty);
+      kardexMovementType = originalQty >= 0 ? "ADJUSTMENT_IN" : "ADJUSTMENT_OUT";
+      kardexQuantity = originalQty;
+    } else {
+      kardexMovementType = movementTypeMap[type] || type.toUpperCase();
+      kardexQuantity = type === "salida" ? Number(qty) * -1 : Number(qty);
+    }
+    
     const kardexData = {
       org_id: orgId,
       product_id: productId,
-      movement_type: movementTypeMap[type] || type.toUpperCase(),
-      quantity: type === "salida" ? Number(qty) * -1 : Number(qty),
+      movement_type: kardexMovementType,
+      quantity: kardexQuantity,
       branch_id: toBranch || fromBranch,
       from_branch: fromBranch,
       to_branch: toBranch,
       cost_unit: cost || 0,
-      total: (cost || 0) * Number(qty),
-      reference: kardexReference,
+      total: (cost || 0) * Math.abs(Number(qty)),
+      reference: isAdjustment ? `[AJUSTE] ${kardexReference}` : kardexReference,
       created_by: userId,
     };
 
@@ -131,23 +152,24 @@ export async function POST(req) {
     }
 
     // ACTUALIZAR current_stock
-    if (type === "entrada")
+    // Usamos dbType que ya mapea "ajuste" a "entrada" o "salida"
+    if (dbType === "entrada")
       await supabase.rpc("increase_inventory", {
         p_org_id: orgId,
         p_product_id: productId,
         p_branch_id: toBranch,
-        p_quantity: Number(qty),
+        p_quantity: isAdjustment ? adjustmentQty : Number(qty),
       });
 
-    if (type === "salida")
+    if (dbType === "salida")
       await supabase.rpc("decrease_inventory", {
         p_org_id: orgId,
         p_product_id: productId,
         p_branch_id: fromBranch,
-        p_quantity: Number(qty),
+        p_quantity: isAdjustment ? adjustmentQty : Number(qty),
       });
 
-    if (type === "transferencia")
+    if (dbType === "transferencia")
       await supabase.rpc("transfer_inventory", {
         p_org_id: orgId,
         p_product_id: productId,

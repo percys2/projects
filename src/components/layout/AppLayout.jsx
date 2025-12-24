@@ -17,6 +17,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import NotificationCenter from "@/src/components/notifications/NotificationCenter";
 
 const menuItems = [
   {
@@ -41,11 +42,11 @@ const menuItems = [
     ],
   },
   {
-    section: "Administración",
+    section: "Administracion",
     items: [
       { key: "finance", label: "Finanzas", icon: Wallet },
       { key: "hr", label: "RRHH", icon: Users2 },
-      { key: "settings", label: "Configuración", icon: Settings },
+      { key: "settings", label: "Configuracion", icon: Settings },
     ],
   },
 ];
@@ -61,7 +62,7 @@ export default function AppLayout({ children, orgSlug }) {
 
   const goTo = (key) => {
     router.push(`/${orgSlug}/${key}`);
-    setIsSidebarOpen(false); // Close sidebar on mobile after navigation
+    setIsSidebarOpen(false);
   };
 
   const handleLogout = async () => {
@@ -83,12 +84,18 @@ export default function AppLayout({ children, orgSlug }) {
           </div>
           <span className="text-sm font-bold text-white">AgroCentro ERP</span>
         </div>
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
-        >
-          {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Notification Center for Mobile */}
+          <div className="text-white">
+            <NotificationCenter orgSlug={orgSlug} />
+          </div>
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
+          >
+            {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Overlay */}
@@ -108,17 +115,23 @@ export default function AppLayout({ children, orgSlug }) {
       `}>
         {/* Brand Header */}
         <div className="px-4 py-5 border-b border-slate-800/50">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Store className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <Store className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-sm font-bold tracking-wide text-white">
+                  AgroCentro ERP
+                </h1>
+                <p className="text-[11px] text-slate-400">
+                  Gestion para agroservicios
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-sm font-bold tracking-wide text-white">
-                AgroCentro ERP
-              </h1>
-              <p className="text-[11px] text-slate-400">
-                Gestión para agroservicios
-              </p>
+            {/* Notification Center for Desktop */}
+            <div className="hidden md:block">
+              <NotificationCenter orgSlug={orgSlug} />
             </div>
           </div>
         </div>
@@ -147,12 +160,9 @@ export default function AppLayout({ children, orgSlug }) {
                         }
                       `}
                     >
-                      {/* Active indicator bar */}
                       {isActive && (
                         <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-400 rounded-r-full shadow-lg shadow-emerald-400/50" />
                       )}
-                      
-                      {/* Icon container */}
                       <span
                         className={`
                           inline-flex h-8 w-8 items-center justify-center rounded-lg
@@ -165,13 +175,9 @@ export default function AppLayout({ children, orgSlug }) {
                       >
                         <Icon className="h-4 w-4" />
                       </span>
-                      
-                      {/* Label */}
                       <span className="flex-1 text-left truncate">
                         {item.label}
                       </span>
-                      
-                      {/* Active dot indicator */}
                       {isActive && (
                         <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50" />
                       )}
@@ -185,7 +191,6 @@ export default function AppLayout({ children, orgSlug }) {
 
         {/* Footer */}
         <div className="px-3 py-4 border-t border-slate-800/50 bg-slate-950/50">
-          {/* Branch info */}
           <div className="flex items-center gap-3 px-3 py-2 mb-3 rounded-lg bg-slate-800/30">
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-xs font-bold text-slate-300 uppercase shadow-inner">
               {orgSlug?.slice(0, 2) || "AC"}
@@ -200,7 +205,6 @@ export default function AppLayout({ children, orgSlug }) {
             </div>
           </div>
           
-          {/* Logout button */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg
@@ -210,7 +214,7 @@ export default function AppLayout({ children, orgSlug }) {
               transition-all duration-200"
           >
             <LogOut className="h-4 w-4" />
-            <span>Cerrar sesión</span>
+            <span>Cerrar sesion</span>
           </button>
         </div>
       </aside>

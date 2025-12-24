@@ -14,18 +14,20 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
+    const branchId = searchParams.get("branchId");
     const limit = Number(searchParams.get("limit") || 100);
     const offset = Number(searchParams.get("offset") || 0);
 
     let query = supabase
       .from("sales")
-      .select(`*, clients(*), sales_items(*, products(id, name, sku, category))`)
+      .select(`*, clients(*), sales_items(*, products:product_id(id, name, sku, category))`)
       .eq("org_id", org.id)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (startDate) query = query.gte("fecha", startDate);
     if (endDate) query = query.lte("fecha", endDate);
+    if (branchId) query = query.eq("branch_id", branchId);
 
     const { data: sales, error } = await query;
     if (error) throw error;

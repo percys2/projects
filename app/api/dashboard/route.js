@@ -19,27 +19,35 @@ export async function GET(req) {
     periodStart.setDate(periodStart.getDate() - parseInt(range));
     const periodStartISO = periodStart.toISOString();
 
-    // 1. SALES DATA with items
-    const { data: salesData } = await supabase
+    // 1. SALES DATA with items - include product cost/price as fallback
+    const { data: salesData, error: salesError } = await supabase
       .from("sales")
       .select(`
         id, total, client_id, created_at,
-        sales_items (quantity, price, cost, subtotal, margin, product_id)
+        sales_items (quantity, price, cost, subtotal, margin, product_id, products (cost, price))
       `)
       .eq("org_id", orgId)
       .gte("created_at", periodStartISO);
+
+    if (salesError) {
+      console.error("Sales query error:", salesError);
+    }
 
     let revenue = 0, grossProfit = 0, cogs = 0;
     const clientSales = {}, productSales = {};
 
     (salesData || []).forEach((sale) => {
       (sale.sales_items || []).forEach((item) => {
-        const itemRevenue = Number(item.subtotal) || (Number(item.quantity) * Number(item.price));
-        const itemCost = Number(item.cost || 0) * Number(item.quantity);
-        const itemMargin = Number(item.margin) || (itemRevenue - itemCost);
+        const itemPrice = Number(item.price) || Number(item.products?.price) || 0;
+        const itemCost = Number(item.cost) || Number(item.products?.cost) || 0;
+        const qty = Number(item.quantity) || 0;
+        
+        const itemRevenue = Number(item.subtotal) || (qty * itemPrice);
+        const itemCostTotal = itemCost * qty;
+        const itemMargin = Number(item.margin) || (itemRevenue - itemCostTotal);
 
         revenue += itemRevenue;
-        cogs += itemCost;
+        cogs += itemCostTotal;
         grossProfit += itemMargin;
 
         if (sale.client_id) {
@@ -54,7 +62,7 @@ export async function GET(req) {
           if (!productSales[item.product_id]) {
             productSales[item.product_id] = { quantitySold: 0, revenue: 0, grossProfit: 0 };
           }
-          productSales[item.product_id].quantitySold += Number(item.quantity);
+          productSales[item.product_id].quantitySold += qty;
           productSales[item.product_id].revenue += itemRevenue;
           productSales[item.product_id].grossProfit += itemMargin;
         }
@@ -68,20 +76,24 @@ export async function GET(req) {
     const grossMarginPct = revenue > 0 ? (grossProfit / revenue) * 100 : 0;
     const markupPct = cogs > 0 ? ((revenue - cogs) / cogs) * 100 : 0;
 
-    // 2. INVENTORY DATA
-    const { data: inventory } = await supabase
-      .from("inventory")
-      .select(`quantity, cost, price, product_id, products (id, name, category)`)
+    // 2. INVENTORY DATA - Use current_stock view (correct table!)
+    const { data: stockData, error: invError } = await supabase
+      .from("current_stock")
+      .select("*")
       .eq("org_id", orgId);
+
+    if (invError) {
+      console.error("Inventory query error:", invError);
+    }
 
     let inventoryValue = 0, potentialRevenue = 0, potentialGrossProfit = 0;
     const categoryInventory = {};
 
-    (inventory || []).forEach((item) => {
-      const qty = Number(item.quantity) || 0;
+    (stockData || []).forEach((item) => {
+      const qty = Number(item.stock) || 0;
       const cost = Number(item.cost) || 0;
       const price = Number(item.price) || 0;
-      const category = item.products?.category || "Sin categoría";
+      const category = item.category || "Sin categoria";
 
       inventoryValue += qty * cost;
       potentialRevenue += qty * price;
@@ -97,8 +109,9 @@ export async function GET(req) {
     });
 
     const periodDays = parseInt(range);
-    const inventoryTurnover = inventoryValue > 0 ? ((cogs / periodDays) * 365) / inventoryValue : 0;
-    const daysInventoryOnHand = cogs > 0 ? (inventoryValue / cogs) * periodDays : 0;
+    const effectiveCogs = cogs > 0 ? cogs : (potentialRevenue * 0.6);
+    const inventoryTurnover = inventoryValue > 0 ? ((effectiveCogs / periodDays) * 365) / inventoryValue : 0;
+    const daysInventoryOnHand = effectiveCogs > 0 ? (inventoryValue / effectiveCogs) * periodDays : (inventoryValue > 0 ? 999 : 0);
 
     // 3. TOP 10 CLIENTS
     const clientIds = Object.keys(clientSales);
@@ -136,12 +149,22 @@ export async function GET(req) {
       marginPct: data.potentialRevenue > 0 ? (data.potentialGrossProfit / data.potentialRevenue) * 100 : 0,
     })).sort((a, b) => b.inventoryValue - a.inventoryValue);
 
-    // 6. LOW STOCK
-    const { data: lowStock } = await supabase
-      .from("inventory")
-      .select(`quantity, products (id, name, min_stock, category)`)
-      .eq("org_id", orgId)
-      .lt("quantity", 10);
+    // 6. LOW STOCK - Use current_stock view
+    const lowStock = (stockData || [])
+      .filter(item => {
+        const qty = Number(item.stock) || 0;
+        const minStock = Number(item.min_stock) || 10;
+        return qty < minStock && item.active !== false;
+      })
+      .map(item => ({
+        quantity: item.stock,
+        products: {
+          id: item.product_id,
+          name: item.name,
+          min_stock: item.min_stock,
+          category: item.category
+        }
+      }));
 
     // 7. COUNTS
     const { count: clientsCount } = await supabase.from("clients").select("*", { count: "exact", head: true }).eq("org_id", orgId);
@@ -177,7 +200,7 @@ export async function GET(req) {
       topClients,
       topProducts,
       inventoryByCategory,
-      lowStock: lowStock || [],
+      lowStock,
     });
   } catch (error) {
     Sentry.captureException(error);

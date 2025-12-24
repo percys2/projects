@@ -156,7 +156,7 @@ export default function InventoryScreen({ orgSlug }) {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5 max-w-6xl mx-auto px-2 sm:px-0">
+    <div className="space-y-4 sm:space-y-5 max-w-full mx-auto px-2 sm:px-4">
 
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
@@ -254,4 +254,3 @@ export default function InventoryScreen({ orgSlug }) {
     </div>
   );
 }
-
