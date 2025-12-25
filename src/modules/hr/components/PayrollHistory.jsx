@@ -1,16 +1,54 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { calculateNetSalary, calculateEmployerINSS } from "../services/laborConfig";
 
-export default function PayrollHistory({ employees, orgSlug, onSavePayroll }) {
+export default function PayrollHistory({ employees, orgSlug }) {
   const [payrollRuns, setPayrollRuns] = useState([]);
-  const [selectedRun, setSelectedRun] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [selectedRun, setSelectedRun] = useState(null);
 
   const activeEmployees = useMemo(() => {
     return employees.filter((emp) => emp.status === "activo" && emp.salary > 0);
   }, [employees]);
+
+  const loadPayrollHistory = useCallback(async () => {
+    if (!orgSlug) return;
+    try {
+      setLoading(true);
+      const res = await fetch("/api/hr/payroll", {
+        headers: { "x-org-slug": orgSlug },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const runs = (data.payrolls || []).map((p) => ({
+          id: p.id,
+          period: p.period_label || `${p.period_month}/${p.period_year}`,
+          periodMonth: p.period_month,
+          periodYear: p.period_year,
+          createdAt: p.created_at,
+          employeeCount: p.total_employees,
+          totalGross: Number(p.total_gross) || 0,
+          totalNet: Number(p.total_net) || 0,
+          totalDeductions: (Number(p.total_inss) || 0) + (Number(p.total_ir) || 0),
+          totalInss: Number(p.total_inss) || 0,
+          totalIr: Number(p.total_ir) || 0,
+          totalEmployerInss: Number(p.total_employer_inss) || 0,
+          items: [],
+        }));
+        setPayrollRuns(runs);
+      }
+    } catch (err) {
+      console.error("Error loading payroll history:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [orgSlug]);
+
+  useEffect(() => {
+    loadPayrollHistory();
+  }, [loadPayrollHistory]);
 
   const currentPayroll = useMemo(() => {
     return activeEmployees.map((emp) => {
@@ -32,6 +70,15 @@ export default function PayrollHistory({ employees, orgSlug, onSavePayroll }) {
 
   const totals = useMemo(() => {
     const data = selectedRun ? selectedRun.items : currentPayroll;
+    if (selectedRun && selectedRun.items.length === 0) {
+      return {
+        grossSalary: selectedRun.totalGross,
+        inss: selectedRun.totalInss,
+        ir: selectedRun.totalIr,
+        netSalary: selectedRun.totalNet,
+        employerINSS: selectedRun.totalEmployerInss,
+      };
+    }
     return data.reduce(
       (acc, emp) => ({
         grossSalary: acc.grossSalary + (emp.totalGross || 0),
@@ -52,35 +99,82 @@ export default function PayrollHistory({ employees, orgSlug, onSavePayroll }) {
   };
 
   const handleSavePayroll = async () => {
-    setSaving(true);
-    const now = new Date();
-    const period = now.toLocaleDateString("es-NI", { year: "numeric", month: "long" });
-    
-    const newRun = {
-      id: Date.now().toString(),
-      period,
-      createdAt: now.toISOString(),
-      employeeCount: currentPayroll.length,
-      totalGross: totals.grossSalary,
-      totalNet: totals.netSalary,
-      totalDeductions: totals.inss + totals.ir,
-      items: currentPayroll,
-    };
-
-    if (onSavePayroll) {
-      try {
-        await onSavePayroll(newRun);
-      } catch (err) {
-        console.error("Error saving payroll:", err);
-      }
+    if (!orgSlug) {
+      alert("Error: No se pudo identificar la organizacion");
+      return;
     }
 
-    setPayrollRuns((prev) => [newRun, ...prev]);
-    setSaving(false);
-    alert(`Planilla guardada para ${period}`);
+    try {
+      setSaving(true);
+      const now = new Date();
+      const periodMonth = now.getMonth() + 1;
+      const periodYear = now.getFullYear();
+      const periodLabel = now.toLocaleDateString("es-NI", { year: "numeric", month: "long" });
+
+      const res = await fetch("/api/hr/payroll", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          periodMonth,
+          periodYear,
+          periodLabel,
+          totals: {
+            totalEmployees: currentPayroll.length,
+            totalGross: totals.grossSalary,
+            totalInss: totals.inss,
+            totalIr: totals.ir,
+            totalNet: totals.netSalary,
+            totalEmployerInss: totals.employerINSS,
+            totalAguinaldoProvision: totals.grossSalary / 12,
+            totalVacationProvision: (totals.grossSalary / 12) * 1.25,
+            totalEmployerCost: totals.grossSalary + totals.employerINSS + (totals.grossSalary / 12) + ((totals.grossSalary / 12) * 1.25),
+          },
+          items: currentPayroll.map((emp) => ({
+            employeeId: emp.employeeId,
+            employeeName: emp.employeeName,
+            employeeCedula: emp.cedula,
+            employeePosition: emp.position,
+            employeeDepartment: emp.department,
+            salary: emp.grossSalary || emp.salary,
+            commissions: emp.commissions,
+            totalGross: emp.totalGross,
+            inss: emp.inss,
+            ir: emp.ir,
+            netSalary: emp.netSalary,
+            employerInss: emp.employerINSS,
+            aguinaldoProvision: emp.totalGross / 12,
+            vacationProvision: (emp.totalGross / 12) * 1.25,
+            totalEmployerCost: emp.totalGross + emp.employerINSS + (emp.totalGross / 12) + ((emp.totalGross / 12) * 1.25),
+          })),
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al guardar planilla");
+      }
+
+      alert(`Planilla guardada para ${periodLabel}`);
+      await loadPayrollHistory();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const displayData = selectedRun ? selectedRun.items : currentPayroll;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -107,7 +201,7 @@ export default function PayrollHistory({ employees, orgSlug, onSavePayroll }) {
 
       {payrollRuns.length > 0 && (
         <div className="bg-slate-50 border rounded-lg p-3">
-          <p className="text-xs font-medium text-slate-600 mb-2">Planillas Guardadas:</p>
+          <p className="text-xs font-medium text-slate-600 mb-2">Planillas Guardadas ({payrollRuns.length}):</p>
           <div className="flex flex-wrap gap-2">
             {payrollRuns.map((run) => (
               <button
@@ -126,55 +220,57 @@ export default function PayrollHistory({ employees, orgSlug, onSavePayroll }) {
         </div>
       )}
 
-      <div className="overflow-x-auto border rounded-lg">
-        <table className="min-w-full text-sm">
-          <thead>
-            <tr className="bg-slate-100 border-b text-xs uppercase tracking-wide text-slate-600">
-              <th className="px-3 py-2 text-left">Empleado</th>
-              <th className="px-3 py-2 text-left">Cargo</th>
-              <th className="px-3 py-2 text-right">Salario</th>
-              <th className="px-3 py-2 text-right">Comisiones</th>
-              <th className="px-3 py-2 text-right">Bruto</th>
-              <th className="px-3 py-2 text-right">INSS</th>
-              <th className="px-3 py-2 text-right">IR</th>
-              <th className="px-3 py-2 text-right">Neto</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayData.map((emp, idx) => (
-              <tr key={emp.employeeId || idx} className="border-b hover:bg-slate-50">
-                <td className="px-3 py-2">
-                  <p className="font-medium text-slate-800">{emp.employeeName || emp.name}</p>
-                  <p className="text-xs text-slate-400">{emp.cedula}</p>
-                </td>
-                <td className="px-3 py-2 text-slate-600">{emp.position}</td>
-                <td className="px-3 py-2 text-right">{formatCurrency(emp.grossSalary || emp.salary)}</td>
-                <td className="px-3 py-2 text-right text-blue-600">{formatCurrency(emp.commissions)}</td>
-                <td className="px-3 py-2 text-right font-medium">{formatCurrency(emp.totalGross)}</td>
-                <td className="px-3 py-2 text-right text-red-600">{formatCurrency(emp.inss)}</td>
-                <td className="px-3 py-2 text-right text-red-600">{formatCurrency(emp.ir)}</td>
-                <td className="px-3 py-2 text-right font-semibold text-emerald-600">{formatCurrency(emp.netSalary)}</td>
+      {(displayData.length > 0 || selectedRun) && (
+        <div className="overflow-x-auto border rounded-lg">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="bg-slate-100 border-b text-xs uppercase tracking-wide text-slate-600">
+                <th className="px-3 py-2 text-left">Empleado</th>
+                <th className="px-3 py-2 text-left">Cargo</th>
+                <th className="px-3 py-2 text-right">Salario</th>
+                <th className="px-3 py-2 text-right">Comisiones</th>
+                <th className="px-3 py-2 text-right">Bruto</th>
+                <th className="px-3 py-2 text-right">INSS</th>
+                <th className="px-3 py-2 text-right">IR</th>
+                <th className="px-3 py-2 text-right">Neto</th>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr className="bg-slate-100 font-semibold">
-              <td colSpan={4} className="px-3 py-2 text-right">TOTALES:</td>
-              <td className="px-3 py-2 text-right">{formatCurrency(totals.grossSalary)}</td>
-              <td className="px-3 py-2 text-right text-red-600">{formatCurrency(totals.inss)}</td>
-              <td className="px-3 py-2 text-right text-red-600">{formatCurrency(totals.ir)}</td>
-              <td className="px-3 py-2 text-right text-emerald-600">{formatCurrency(totals.netSalary)}</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {displayData.map((emp, idx) => (
+                <tr key={emp.employeeId || idx} className="border-b hover:bg-slate-50">
+                  <td className="px-3 py-2">
+                    <p className="font-medium text-slate-800">{emp.employeeName || emp.name}</p>
+                    <p className="text-xs text-slate-400">{emp.cedula}</p>
+                  </td>
+                  <td className="px-3 py-2 text-slate-600">{emp.position}</td>
+                  <td className="px-3 py-2 text-right">{formatCurrency(emp.grossSalary || emp.salary)}</td>
+                  <td className="px-3 py-2 text-right text-blue-600">{formatCurrency(emp.commissions)}</td>
+                  <td className="px-3 py-2 text-right font-medium">{formatCurrency(emp.totalGross)}</td>
+                  <td className="px-3 py-2 text-right text-red-600">{formatCurrency(emp.inss)}</td>
+                  <td className="px-3 py-2 text-right text-red-600">{formatCurrency(emp.ir)}</td>
+                  <td className="px-3 py-2 text-right font-semibold text-emerald-600">{formatCurrency(emp.netSalary)}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="bg-slate-100 font-semibold">
+                <td colSpan={4} className="px-3 py-2 text-right">TOTALES:</td>
+                <td className="px-3 py-2 text-right">{formatCurrency(totals.grossSalary)}</td>
+                <td className="px-3 py-2 text-right text-red-600">{formatCurrency(totals.inss)}</td>
+                <td className="px-3 py-2 text-right text-red-600">{formatCurrency(totals.ir)}</td>
+                <td className="px-3 py-2 text-right text-emerald-600">{formatCurrency(totals.netSalary)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      )}
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="text-sm font-semibold text-blue-700 mb-2">
           {selectedRun ? `Resumen - ${selectedRun.period}` : "Resumen Actual"}
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-          <div><p className="text-xl font-bold text-slate-700">{displayData.length}</p><p className="text-xs text-slate-500">Empleados</p></div>
+          <div><p className="text-xl font-bold text-slate-700">{selectedRun ? selectedRun.employeeCount : displayData.length}</p><p className="text-xs text-slate-500">Empleados</p></div>
           <div><p className="text-xl font-bold text-slate-700">{formatCurrency(totals.grossSalary)}</p><p className="text-xs text-slate-500">Total Bruto</p></div>
           <div><p className="text-xl font-bold text-red-600">{formatCurrency(totals.inss + totals.ir)}</p><p className="text-xs text-slate-500">Deducciones</p></div>
           <div><p className="text-xl font-bold text-emerald-600">{formatCurrency(totals.netSalary)}</p><p className="text-xs text-slate-500">Total Neto</p></div>

@@ -34,10 +34,23 @@ export default function EmployeeFormModal({
   useEffect(() => {
     if (employee) {
       setForm({
-        ...employee,
+        name: employee.name || "",
+        email: employee.email || "",
+        phone: employee.phone || "",
+        cedula: employee.cedula || "",
+        inss_number: employee.inss_number || "",
+        position: employee.position || "",
+        department: employee.department || "",
         salary: employee.salary?.toString() || "",
         commissions: employee.commissions?.toString() || "",
         hire_date: employee.hire_date?.split("T")[0] || "",
+        contract_type: employee.contract_type || "indefinido",
+        status: employee.status || "activo",
+        address: employee.address || "",
+        emergency_contact: employee.emergency_contact || "",
+        emergency_phone: employee.emergency_phone || "",
+        bank_account: employee.bank_account || "",
+        bank_name: employee.bank_name || "",
       });
     } else {
       setForm({

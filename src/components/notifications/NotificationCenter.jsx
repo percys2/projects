@@ -194,8 +194,8 @@ export default function NotificationCenter({ orgSlug }) {
             onClick={() => setIsOpen(false)}
           />
           
-          {/* Panel */}
-          <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border z-50 max-h-[80vh] overflow-hidden">
+          {/* Panel - Opens to the right on desktop (sidebar), to the left on mobile (header) */}
+          <div className="absolute left-0 md:left-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border z-50 max-h-[80vh] overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b bg-slate-50">
               <h3 className="font-semibold text-slate-800">Notificaciones</h3>

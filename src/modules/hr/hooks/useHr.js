@@ -103,7 +103,17 @@ export function useHr(orgSlug) {
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) throw new Error("Error al guardar empleado");
+      if (!res.ok) {
+        let errorMsg = "Error al guardar empleado";
+        try {
+          const errorData = await res.json();
+          errorMsg = errorData.details?.[0]?.message || errorData.error || errorMsg;
+        } catch {
+          const textError = await res.text().catch(() => "");
+          if (textError) errorMsg = textError.substring(0, 200);
+        }
+        throw new Error(errorMsg);
+      }
 
       const result = await res.json();
 
@@ -152,7 +162,13 @@ export function useHr(orgSlug) {
 
   function calculateEmployeePayroll(employee) {
     if (!employee?.salary) return null;
-    return calculateNetSalary(employee.salary);
+    const result = calculateNetSalary(employee.salary, employee.commissions || 0);
+    return {
+      gross: result.totalGross,
+      inss: result.inss,
+      ir: result.ir,
+      net: result.netSalary,
+    };
   }
 
   function calculateEmployeeVacation(employee) {

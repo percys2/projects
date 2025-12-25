@@ -1,11 +1,18 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function EmployeeDocuments({ employees, orgSlug }) {
+  const supabase = createClientComponentClient();
+  const fileInputRef = useRef(null);
   const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [documentForm, setDocumentForm] = useState({
     type: "contrato",
     name: "",
@@ -30,9 +37,31 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
     otro: { label: "Otro", color: "bg-slate-100 text-slate-700" },
   };
 
+  const loadDocuments = useCallback(async () => {
+    if (!orgSlug) return;
+    try {
+      setLoading(true);
+      const res = await fetch("/api/hr/documents", {
+        headers: { "x-org-slug": orgSlug },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDocuments(data.documents || []);
+      }
+    } catch (err) {
+      console.error("Error loading documents:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [orgSlug]);
+
+  useEffect(() => {
+    loadDocuments();
+  }, [loadDocuments]);
+
   const filteredDocuments = useMemo(() => {
     return documents.filter((doc) => {
-      if (filterEmployee && doc.employeeId !== filterEmployee) return false;
+      if (filterEmployee && doc.employee_id !== filterEmployee) return false;
       if (filterType && doc.type !== filterType) return false;
       return true;
     });
@@ -42,8 +71,8 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
     return documents.filter((doc) => {
-      if (!doc.expiryDate) return false;
-      const expiry = new Date(doc.expiryDate);
+      if (!doc.expiry_date) return false;
+      const expiry = new Date(doc.expiry_date);
       return expiry <= thirtyDaysFromNow && expiry >= new Date();
     });
   }, [documents]);
@@ -51,36 +80,118 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
   const expiredDocuments = useMemo(() => {
     const today = new Date();
     return documents.filter((doc) => {
-      if (!doc.expiryDate) return false;
-      return new Date(doc.expiryDate) < today;
+      if (!doc.expiry_date) return false;
+      return new Date(doc.expiry_date) < today;
     });
   }, [documents]);
 
-  const handleAddDocument = () => {
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert("El archivo es muy grande. Maximo 10MB.");
+        return;
+      }
+      setSelectedFile(file);
+      if (!documentForm.name) {
+        setDocumentForm({ ...documentForm, name: file.name.split(".")[0] });
+      }
+    }
+  };
+
+  const uploadFile = async (file) => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `${orgSlug}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("employee-documents")
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("employee-documents")
+      .getPublicUrl(filePath);
+
+    return { url: publicUrl, fileName: file.name, fileSize: file.size };
+  };
+
+  const handleAddDocument = async () => {
     if (!selectedEmployee || !documentForm.name) {
       alert("Complete los campos requeridos");
       return;
     }
-    const employee = activeEmployees.find((e) => e.id === selectedEmployee);
-    const newDocument = {
-      id: Date.now().toString(),
-      employeeId: selectedEmployee,
-      employeeName: employee?.name || "",
-      type: documentForm.type,
-      name: documentForm.name,
-      expiryDate: documentForm.expiryDate || null,
-      notes: documentForm.notes,
-      createdAt: new Date().toISOString(),
-    };
-    setDocuments((prev) => [newDocument, ...prev]);
-    setShowModal(false);
-    setDocumentForm({ type: "contrato", name: "", expiryDate: "", notes: "" });
-    setSelectedEmployee("");
+
+    try {
+      setSaving(true);
+      let fileData = null;
+
+      if (selectedFile) {
+        setUploading(true);
+        try {
+          fileData = await uploadFile(selectedFile);
+        } catch (err) {
+          console.error("Upload error:", err);
+          alert("Error al subir archivo. El documento se guardara sin archivo adjunto.");
+        }
+        setUploading(false);
+      }
+
+      const res = await fetch("/api/hr/documents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          employeeId: selectedEmployee,
+          type: documentForm.type,
+          name: documentForm.name,
+          fileUrl: fileData?.url || null,
+          fileName: fileData?.fileName || null,
+          fileSize: fileData?.fileSize || null,
+          expiryDate: documentForm.expiryDate || null,
+          notes: documentForm.notes || null,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al guardar documento");
+      }
+
+      const { document } = await res.json();
+      setDocuments((prev) => [document, ...prev]);
+      setShowModal(false);
+      setDocumentForm({ type: "contrato", name: "", expiryDate: "", notes: "" });
+      setSelectedEmployee("");
+      setSelectedFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDeleteDocument = (docId) => {
-    if (confirm("Eliminar este documento?")) {
+  const handleDeleteDocument = async (docId) => {
+    if (!confirm("Eliminar este documento?")) return;
+
+    try {
+      const res = await fetch(`/api/hr/documents?id=${docId}`, {
+        method: "DELETE",
+        headers: { "x-org-slug": orgSlug },
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al eliminar documento");
+      }
+
       setDocuments((prev) => prev.filter((d) => d.id !== docId));
+    } catch (err) {
+      alert(err.message);
     }
   };
 
@@ -94,6 +205,21 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
     if (expiry <= thirtyDaysFromNow) return { label: "Por vencer", color: "bg-amber-100 text-amber-700" };
     return { label: "Vigente", color: "bg-emerald-100 text-emerald-700" };
   };
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return "";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -126,14 +252,14 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
           <div className="space-y-2">
             {expiredDocuments.map((doc) => (
               <div key={doc.id} className="flex justify-between items-center text-sm">
-                <span className="text-red-700">{doc.employeeName} - {documentTypes[doc.type]?.label}: {doc.name}</span>
-                <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700">Vencido {new Date(doc.expiryDate).toLocaleDateString("es-NI")}</span>
+                <span className="text-red-700">{doc.employee?.name || "Empleado"} - {documentTypes[doc.type]?.label}: {doc.name}</span>
+                <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700">Vencido {new Date(doc.expiry_date).toLocaleDateString("es-NI")}</span>
               </div>
             ))}
             {expiringDocuments.map((doc) => (
               <div key={doc.id} className="flex justify-between items-center text-sm">
-                <span className="text-amber-700">{doc.employeeName} - {documentTypes[doc.type]?.label}: {doc.name}</span>
-                <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700">Vence {new Date(doc.expiryDate).toLocaleDateString("es-NI")}</span>
+                <span className="text-amber-700">{doc.employee?.name || "Empleado"} - {documentTypes[doc.type]?.label}: {doc.name}</span>
+                <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700">Vence {new Date(doc.expiry_date).toLocaleDateString("es-NI")}</span>
               </div>
             ))}
           </div>
@@ -160,20 +286,27 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
             <p className="p-4 text-sm text-slate-400 text-center">No hay documentos registrados</p>
           ) : (
             filteredDocuments.map((doc) => {
-              const expiryStatus = getExpiryStatus(doc.expiryDate);
+              const expiryStatus = getExpiryStatus(doc.expiry_date);
               return (
                 <div key={doc.id} className="p-4 flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className={`px-2 py-0.5 text-xs rounded-full ${documentTypes[doc.type]?.color}`}>{documentTypes[doc.type]?.label}</span>
                       {expiryStatus && <span className={`px-2 py-0.5 text-xs rounded-full ${expiryStatus.color}`}>{expiryStatus.label}</span>}
+                      {doc.file_url && <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700">Archivo adjunto</span>}
                     </div>
                     <p className="font-medium text-slate-800">{doc.name}</p>
-                    <p className="text-xs text-slate-500">{doc.employeeName}</p>
-                    {doc.expiryDate && <p className="text-xs text-slate-400">Vence: {new Date(doc.expiryDate).toLocaleDateString("es-NI")}</p>}
+                    <p className="text-xs text-slate-500">{doc.employee?.name || "Empleado"}</p>
+                    {doc.expiry_date && <p className="text-xs text-slate-400">Vence: {new Date(doc.expiry_date).toLocaleDateString("es-NI")}</p>}
+                    {doc.file_name && <p className="text-xs text-slate-400">Archivo: {doc.file_name} ({formatFileSize(doc.file_size)})</p>}
                     {doc.notes && <p className="text-xs text-slate-400 mt-1">{doc.notes}</p>}
                   </div>
-                  <button onClick={() => handleDeleteDocument(doc.id)} className="text-xs text-red-600 hover:text-red-800">Eliminar</button>
+                  <div className="flex gap-2">
+                    {doc.file_url && (
+                      <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-800">Ver</a>
+                    )}
+                    <button onClick={() => handleDeleteDocument(doc.id)} className="text-xs text-red-600 hover:text-red-800">Eliminar</button>
+                  </div>
                 </div>
               );
             })
@@ -204,6 +337,11 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
                 <input type="text" value={documentForm.name} onChange={(e) => setDocumentForm({ ...documentForm, name: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Ej: Contrato Indefinido 2024" />
               </div>
               <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Archivo (PDF, imagen - max 10MB)</label>
+                <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp" onChange={handleFileSelect} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                {selectedFile && <p className="text-xs text-slate-500 mt-1">Seleccionado: {selectedFile.name} ({formatFileSize(selectedFile.size)})</p>}
+              </div>
+              <div>
                 <label className="block text-xs font-medium text-slate-600 mb-1">Fecha de Vencimiento</label>
                 <input type="date" value={documentForm.expiryDate} onChange={(e) => setDocumentForm({ ...documentForm, expiryDate: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
               </div>
@@ -213,8 +351,10 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => { setShowModal(false); setSelectedEmployee(""); }} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800">Cancelar</button>
-              <button onClick={handleAddDocument} className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800">Guardar</button>
+              <button onClick={() => { setShowModal(false); setSelectedEmployee(""); setSelectedFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800" disabled={saving}>Cancelar</button>
+              <button onClick={handleAddDocument} className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50" disabled={saving}>
+                {uploading ? "Subiendo archivo..." : saving ? "Guardando..." : "Guardar"}
+              </button>
             </div>
           </div>
         </div>

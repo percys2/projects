@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import * as XLSX from "xlsx";
 import { calculateNetSalary, calculateEmployerINSS, LABOR_CONFIG } from "../services/laborConfig";
 
-export default function PayrollSheet({ employees, orgName = "Mi Empresa" }) {
+export default function PayrollSheet({ employees, orgName = "Mi Empresa", orgSlug }) {
   const [showEmployerCosts, setShowEmployerCosts] = useState(true);
   const [showProvisions, setShowProvisions] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const activeEmployees = useMemo(() => {
     return employees.filter((emp) => emp.status === "activo" && emp.salary > 0);
@@ -82,48 +84,129 @@ export default function PayrollSheet({ employees, orgName = "Mi Empresa" }) {
       emp.cedula || "",
       emp.position || "",
       emp.department || "",
-      (emp.calc?.grossSalary || 0).toFixed(2),
-      (emp.calc?.commissions || 0).toFixed(2),
-      (emp.calc?.totalGross || 0).toFixed(2),
-      (emp.calc?.inss || 0).toFixed(2),
-      (emp.calc?.ir || 0).toFixed(2),
-      (emp.calc?.netSalary || 0).toFixed(2),
-      (emp.employerINSS || 0).toFixed(2),
-      (emp.aguinaldoProvision || 0).toFixed(2),
-      (emp.vacationProvision || 0).toFixed(2),
-      (emp.totalEmployerCost || 0).toFixed(2),
+      emp.calc?.grossSalary || 0,
+      emp.calc?.commissions || 0,
+      emp.calc?.totalGross || 0,
+      emp.calc?.inss || 0,
+      emp.calc?.ir || 0,
+      emp.calc?.netSalary || 0,
+      emp.employerINSS || 0,
+      emp.aguinaldoProvision || 0,
+      emp.vacationProvision || 0,
+      emp.totalEmployerCost || 0,
     ]);
 
     const totalsRow = [
       "", "TOTALES", "", "", "",
-      totals.salary.toFixed(2),
-      totals.commissions.toFixed(2),
-      totals.grossSalary.toFixed(2),
-      totals.inss.toFixed(2),
-      totals.ir.toFixed(2),
-      totals.netSalary.toFixed(2),
-      totals.employerINSS.toFixed(2),
-      totals.aguinaldoProvision.toFixed(2),
-      totals.vacationProvision.toFixed(2),
-      totals.totalEmployerCost.toFixed(2),
+      totals.salary,
+      totals.commissions,
+      totals.grossSalary,
+      totals.inss,
+      totals.ir,
+      totals.netSalary,
+      totals.employerINSS,
+      totals.aguinaldoProvision,
+      totals.vacationProvision,
+      totals.totalEmployerCost,
     ];
     
     rows.push(totalsRow);
 
-    const csvContent = [
-      `Planilla de Nomina - ${orgName}`,
-      `Periodo: ${currentPeriod}`,
-      `Fecha: ${currentDate}`,
-      "",
-      headers.join(","),
-      ...rows.map(row => row.join(","))
-    ].join("\n");
+    const wsData = [
+      [`Planilla de Nomina - ${orgName}`],
+      [`Periodo: ${currentPeriod}`],
+      [`Fecha: ${currentDate}`],
+      [],
+      headers,
+      ...rows
+    ];
 
-    const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `planilla_${new Date().toISOString().split("T")[0]}.csv`;
-    link.click();
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    
+    ws["!cols"] = [
+      { wch: 5 },
+      { wch: 25 },
+      { wch: 15 },
+      { wch: 20 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 15 },
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Planilla");
+
+    XLSX.writeFile(wb, `planilla_${new Date().toISOString().split("T")[0]}.xlsx`);
+  };
+
+  const handleSavePayroll = async () => {
+    if (!orgSlug) {
+      alert("Error: No se pudo identificar la organizacion");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const now = new Date();
+      const res = await fetch("/api/hr/payroll", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          periodMonth: now.getMonth() + 1,
+          periodYear: now.getFullYear(),
+          totals: {
+            totalEmployees: payrollData.length,
+            totalGross: totals.grossSalary,
+            totalInss: totals.inss,
+            totalIr: totals.ir,
+            totalNet: totals.netSalary,
+            totalEmployerInss: totals.employerINSS,
+            totalAguinaldoProvision: totals.aguinaldoProvision,
+            totalVacationProvision: totals.vacationProvision,
+            totalEmployerCost: totals.totalEmployerCost,
+          },
+          items: payrollData.map((emp) => ({
+            employeeId: emp.id,
+            employeeName: emp.name,
+            employeeCedula: emp.cedula,
+            employeePosition: emp.position,
+            employeeDepartment: emp.department,
+            salary: emp.calc?.grossSalary || 0,
+            commissions: emp.calc?.commissions || 0,
+            totalGross: emp.calc?.totalGross || 0,
+            inss: emp.calc?.inss || 0,
+            ir: emp.calc?.ir || 0,
+            netSalary: emp.calc?.netSalary || 0,
+            employerInss: emp.employerINSS || 0,
+            aguinaldoProvision: emp.aguinaldoProvision || 0,
+            vacationProvision: emp.vacationProvision || 0,
+            totalEmployerCost: emp.totalEmployerCost || 0,
+          })),
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al guardar planilla");
+      }
+
+      alert("Planilla guardada exitosamente");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handlePrint = () => {
@@ -307,56 +390,54 @@ export default function PayrollSheet({ employees, orgName = "Mi Empresa" }) {
                 <td className="px-3 py-2 text-right text-red-600">{formatCurrency(emp.calc?.inss)}</td>
                 <td className="px-3 py-2 text-right text-red-600">{formatCurrency(emp.calc?.ir)}</td>
                 <td className="px-3 py-2 text-right font-semibold text-emerald-600">{formatCurrency(emp.calc?.netSalary)}</td>
-                {showEmployerCosts && <td className="px-3 py-2 text-right text-amber-600 bg-amber-50">{formatCurrency(emp.employerINSS)}</td>}
+                {showEmployerCosts && <td className="px-3 py-2 text-right bg-amber-50 text-amber-700">{formatCurrency(emp.employerINSS)}</td>}
                 {showProvisions && (
                   <>
-                    <td className="px-3 py-2 text-right text-purple-600 bg-purple-50">{formatCurrency(emp.aguinaldoProvision)}</td>
-                    <td className="px-3 py-2 text-right text-purple-600 bg-purple-50">{formatCurrency(emp.vacationProvision)}</td>
+                    <td className="px-3 py-2 text-right bg-purple-50 text-purple-700">{formatCurrency(emp.aguinaldoProvision)}</td>
+                    <td className="px-3 py-2 text-right bg-purple-50 text-purple-700">{formatCurrency(emp.vacationProvision)}</td>
                   </>
                 )}
-                {(showEmployerCosts || showProvisions) && <td className="px-3 py-2 text-right font-semibold text-orange-600 bg-orange-50">{formatCurrency(emp.totalEmployerCost)}</td>}
+                {(showEmployerCosts || showProvisions) && <td className="px-3 py-2 text-right bg-orange-50 font-semibold text-orange-700">{formatCurrency(emp.totalEmployerCost)}</td>}
               </tr>
             ))}
-          </tbody>
-          <tfoot>
             <tr className="bg-slate-100 font-semibold">
-              <td colSpan={4} className="px-3 py-2 text-right">TOTALES:</td>
-              <td className="px-3 py-2 text-right">{formatCurrency(totals.salary)}</td>
-              <td className="px-3 py-2 text-right text-blue-600">{formatCurrency(totals.commissions)}</td>
-              <td className="px-3 py-2 text-right">{formatCurrency(totals.grossSalary)}</td>
-              <td className="px-3 py-2 text-right text-red-600">{formatCurrency(totals.inss)}</td>
-              <td className="px-3 py-2 text-right text-red-600">{formatCurrency(totals.ir)}</td>
-              <td className="px-3 py-2 text-right text-emerald-600">{formatCurrency(totals.netSalary)}</td>
-              {showEmployerCosts && <td className="px-3 py-2 text-right text-amber-600 bg-amber-50">{formatCurrency(totals.employerINSS)}</td>}
+              <td colSpan={4} className="px-3 py-3 text-right">TOTALES:</td>
+              <td className="px-3 py-3 text-right">{formatCurrency(totals.salary)}</td>
+              <td className="px-3 py-3 text-right text-blue-600">{formatCurrency(totals.commissions)}</td>
+              <td className="px-3 py-3 text-right">{formatCurrency(totals.grossSalary)}</td>
+              <td className="px-3 py-3 text-right text-red-600">{formatCurrency(totals.inss)}</td>
+              <td className="px-3 py-3 text-right text-red-600">{formatCurrency(totals.ir)}</td>
+              <td className="px-3 py-3 text-right text-emerald-600">{formatCurrency(totals.netSalary)}</td>
+              {showEmployerCosts && <td className="px-3 py-3 text-right bg-amber-50 text-amber-700">{formatCurrency(totals.employerINSS)}</td>}
               {showProvisions && (
                 <>
-                  <td className="px-3 py-2 text-right text-purple-600 bg-purple-50">{formatCurrency(totals.aguinaldoProvision)}</td>
-                  <td className="px-3 py-2 text-right text-purple-600 bg-purple-50">{formatCurrency(totals.vacationProvision)}</td>
+                  <td className="px-3 py-3 text-right bg-purple-50 text-purple-700">{formatCurrency(totals.aguinaldoProvision)}</td>
+                  <td className="px-3 py-3 text-right bg-purple-50 text-purple-700">{formatCurrency(totals.vacationProvision)}</td>
                 </>
               )}
-              {(showEmployerCosts || showProvisions) && <td className="px-3 py-2 text-right text-orange-600 bg-orange-50">{formatCurrency(totals.totalEmployerCost)}</td>}
+              {(showEmployerCosts || showProvisions) && <td className="px-3 py-3 text-right bg-orange-50 text-orange-700">{formatCurrency(totals.totalEmployerCost)}</td>}
             </tr>
-          </tfoot>
+          </tbody>
         </table>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-blue-700 mb-2">Resumen de Nomina</h4>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div><p className="text-slate-500">Empleados</p><p className="font-bold text-slate-700">{activeEmployees.length}</p></div>
-            <div><p className="text-slate-500">Total Bruto</p><p className="font-bold text-slate-700">{formatCurrency(totals.grossSalary)}</p></div>
-            <div><p className="text-slate-500">Total Deducciones</p><p className="font-bold text-red-600">{formatCurrency(totals.inss + totals.ir)}</p></div>
-            <div><p className="text-slate-500">Total a Pagar</p><p className="font-bold text-emerald-600">{formatCurrency(totals.netSalary)}</p></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <div className="bg-slate-50 border rounded-lg p-4">
+          <h4 className="text-sm font-semibold text-slate-700 mb-3">Resumen de Nomina</h4>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div><p className="text-slate-500">Empleados</p><p className="font-semibold">{payrollData.length}</p></div>
+            <div><p className="text-slate-500">Total Bruto</p><p className="font-semibold">{formatCurrency(totals.grossSalary)}</p></div>
+            <div><p className="text-slate-500">Total Deducciones</p><p className="font-semibold text-red-600">{formatCurrency(totals.inss + totals.ir)}</p></div>
+            <div><p className="text-slate-500">Total a Pagar</p><p className="font-semibold text-emerald-600">{formatCurrency(totals.netSalary)}</p></div>
           </div>
         </div>
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-amber-700 mb-2">Costos Patronales</h4>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div><p className="text-slate-500">INSS Patronal ({(LABOR_CONFIG.inss.employerRateSmall * 100).toFixed(1)}%)</p><p className="font-bold text-amber-600">{formatCurrency(totals.employerINSS)}</p></div>
-            <div><p className="text-slate-500">Prov. Aguinaldo (8.33%)</p><p className="font-bold text-purple-600">{formatCurrency(totals.aguinaldoProvision)}</p></div>
-            <div><p className="text-slate-500">Prov. Vacaciones (10.42%)</p><p className="font-bold text-purple-600">{formatCurrency(totals.vacationProvision)}</p></div>
-            <div><p className="text-slate-500">Costo Total Empleador</p><p className="font-bold text-orange-600">{formatCurrency(totals.totalEmployerCost)}</p></div>
+          <h4 className="text-sm font-semibold text-amber-700 mb-3">Costos Patronales</h4>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div><p className="text-slate-500">INSS Patronal (21.5%)</p><p className="font-semibold text-amber-700">{formatCurrency(totals.employerINSS)}</p></div>
+            <div><p className="text-slate-500">Prov. Aguinaldo (8.33%)</p><p className="font-semibold text-amber-700">{formatCurrency(totals.aguinaldoProvision)}</p></div>
+            <div><p className="text-slate-500">Prov. Vacaciones (10.42%)</p><p className="font-semibold text-amber-700">{formatCurrency(totals.vacationProvision)}</p></div>
+            <div><p className="text-slate-500">Costo Total Empleador</p><p className="font-semibold text-orange-700">{formatCurrency(totals.totalEmployerCost)}</p></div>
           </div>
         </div>
       </div>

@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { calculateVacationDays } from "../services/laborConfig";
 
 export default function VacationRequests({ employees, orgSlug }) {
   const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [requestForm, setRequestForm] = useState({
@@ -18,6 +20,28 @@ export default function VacationRequests({ employees, orgSlug }) {
     return employees.filter((emp) => emp.status === "activo");
   }, [employees]);
 
+  const loadRequests = useCallback(async () => {
+    if (!orgSlug) return;
+    try {
+      setLoading(true);
+      const res = await fetch("/api/hr/vacations", {
+        headers: { "x-org-slug": orgSlug },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setRequests(data.requests || []);
+      }
+    } catch (err) {
+      console.error("Error loading vacation requests:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [orgSlug]);
+
+  useEffect(() => {
+    loadRequests();
+  }, [loadRequests]);
+
   const getEmployeeVacationDays = (employee) => {
     if (!employee?.hire_date) return 0;
     const hireDate = new Date(employee.hire_date);
@@ -28,8 +52,8 @@ export default function VacationRequests({ employees, orgSlug }) {
 
   const getUsedVacationDays = (employeeId) => {
     return requests
-      .filter((r) => r.employeeId === employeeId && r.status === "aprobado" && r.type === "vacaciones")
-      .reduce((sum, r) => sum + r.days, 0);
+      .filter((r) => r.employee_id === employeeId && r.status === "aprobado" && r.type === "vacaciones")
+      .reduce((sum, r) => sum + (r.days || 0), 0);
   };
 
   const calculateDays = (start, end) => {
@@ -40,33 +64,69 @@ export default function VacationRequests({ employees, orgSlug }) {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   };
 
-  const handleSubmitRequest = () => {
+  const handleSubmitRequest = async () => {
     if (!selectedEmployee || !requestForm.startDate || !requestForm.endDate) {
       alert("Complete todos los campos requeridos");
       return;
     }
-    const employee = activeEmployees.find((e) => e.id === selectedEmployee);
-    const days = calculateDays(requestForm.startDate, requestForm.endDate);
-    const newRequest = {
-      id: Date.now().toString(),
-      employeeId: selectedEmployee,
-      employeeName: employee?.name || "",
-      startDate: requestForm.startDate,
-      endDate: requestForm.endDate,
-      days,
-      type: requestForm.type,
-      notes: requestForm.notes,
-      status: "pendiente",
-      createdAt: new Date().toISOString(),
-    };
-    setRequests((prev) => [newRequest, ...prev]);
-    setShowModal(false);
-    setRequestForm({ startDate: "", endDate: "", type: "vacaciones", notes: "" });
-    setSelectedEmployee("");
+
+    try {
+      setSaving(true);
+      const days = calculateDays(requestForm.startDate, requestForm.endDate);
+      const res = await fetch("/api/hr/vacations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          employeeId: selectedEmployee,
+          startDate: requestForm.startDate,
+          endDate: requestForm.endDate,
+          days,
+          type: requestForm.type,
+          notes: requestForm.notes,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al crear solicitud");
+      }
+
+      const { request } = await res.json();
+      setRequests((prev) => [request, ...prev]);
+      setShowModal(false);
+      setRequestForm({ startDate: "", endDate: "", type: "vacaciones", notes: "" });
+      setSelectedEmployee("");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleUpdateStatus = (requestId, newStatus) => {
-    setRequests((prev) => prev.map((r) => (r.id === requestId ? { ...r, status: newStatus } : r)));
+  const handleUpdateStatus = async (requestId, newStatus) => {
+    try {
+      const res = await fetch("/api/hr/vacations", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({ id: requestId, status: newStatus }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al actualizar solicitud");
+      }
+
+      const { request } = await res.json();
+      setRequests((prev) => prev.map((r) => (r.id === requestId ? request : r)));
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const statusColors = {
@@ -85,6 +145,14 @@ export default function VacationRequests({ employees, orgSlug }) {
 
   const pendingRequests = requests.filter((r) => r.status === "pendiente");
   const approvedRequests = requests.filter((r) => r.status === "aprobado");
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -106,7 +174,7 @@ export default function VacationRequests({ employees, orgSlug }) {
           <p className="text-xs text-slate-500">Aprobadas</p>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-          <p className="text-2xl font-bold text-blue-600">{approvedRequests.reduce((sum, r) => sum + r.days, 0)}</p>
+          <p className="text-2xl font-bold text-blue-600">{approvedRequests.reduce((sum, r) => sum + (r.days || 0), 0)}</p>
           <p className="text-xs text-slate-500">Dias Aprobados Total</p>
         </div>
       </div>
@@ -124,13 +192,13 @@ export default function VacationRequests({ employees, orgSlug }) {
                 <div key={request.id} className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-medium text-slate-800">{request.employeeName}</p>
+                      <p className="font-medium text-slate-800">{request.employee?.name || "Empleado"}</p>
                       <p className="text-xs text-slate-500">{typeLabels[request.type]}</p>
                     </div>
                     <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700">{request.days} dias</span>
                   </div>
                   <p className="text-xs text-slate-600 mb-2">
-                    {new Date(request.startDate).toLocaleDateString("es-NI")} - {new Date(request.endDate).toLocaleDateString("es-NI")}
+                    {new Date(request.start_date).toLocaleDateString("es-NI")} - {new Date(request.end_date).toLocaleDateString("es-NI")}
                   </p>
                   {request.notes && <p className="text-xs text-slate-400 mb-2">{request.notes}</p>}
                   <div className="flex gap-2">
@@ -154,10 +222,10 @@ export default function VacationRequests({ employees, orgSlug }) {
               requests.filter((r) => r.status !== "pendiente").map((request) => (
                 <div key={request.id} className="p-4 flex justify-between items-center">
                   <div>
-                    <p className="font-medium text-slate-800">{request.employeeName}</p>
+                    <p className="font-medium text-slate-800">{request.employee?.name || "Empleado"}</p>
                     <p className="text-xs text-slate-500">{typeLabels[request.type]} - {request.days} dias</p>
                     <p className="text-xs text-slate-400">
-                      {new Date(request.startDate).toLocaleDateString("es-NI")} - {new Date(request.endDate).toLocaleDateString("es-NI")}
+                      {new Date(request.start_date).toLocaleDateString("es-NI")} - {new Date(request.end_date).toLocaleDateString("es-NI")}
                     </p>
                   </div>
                   <span className={`px-2 py-0.5 text-xs rounded-full ${statusColors[request.status]}`}>
@@ -247,8 +315,8 @@ export default function VacationRequests({ employees, orgSlug }) {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => { setShowModal(false); setSelectedEmployee(""); }} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800">Cancelar</button>
-              <button onClick={handleSubmitRequest} className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800">Enviar Solicitud</button>
+              <button onClick={() => { setShowModal(false); setSelectedEmployee(""); }} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800" disabled={saving}>Cancelar</button>
+              <button onClick={handleSubmitRequest} className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50" disabled={saving}>{saving ? "Guardando..." : "Enviar Solicitud"}</button>
             </div>
           </div>
         </div>

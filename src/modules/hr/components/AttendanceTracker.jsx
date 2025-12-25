@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 
 export default function AttendanceTracker({ employees, orgSlug }) {
   const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [showModal, setShowModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState("");
@@ -19,47 +21,91 @@ export default function AttendanceTracker({ employees, orgSlug }) {
     return employees.filter((emp) => emp.status === "activo");
   }, [employees]);
 
+  const loadAttendance = useCallback(async () => {
+    if (!orgSlug) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/hr/attendance?month=${selectedMonth}`, {
+        headers: { "x-org-slug": orgSlug },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAttendance(data.attendance || []);
+      }
+    } catch (err) {
+      console.error("Error loading attendance:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [orgSlug, selectedMonth]);
+
+  useEffect(() => {
+    loadAttendance();
+  }, [loadAttendance]);
+
   const monthAttendance = useMemo(() => {
-    return attendance.filter((a) => a.date.startsWith(selectedMonth));
+    return attendance.filter((a) => a.date && a.date.startsWith(selectedMonth));
   }, [attendance, selectedMonth]);
 
   const employeeStats = useMemo(() => {
     const stats = {};
     activeEmployees.forEach((emp) => {
-      const empAttendance = monthAttendance.filter((a) => a.employeeId === emp.id);
+      const empAttendance = monthAttendance.filter((a) => a.employee_id === emp.id);
       stats[emp.id] = {
         present: empAttendance.filter((a) => a.status === "presente").length,
         absent: empAttendance.filter((a) => a.status === "ausente").length,
         late: empAttendance.filter((a) => a.status === "tardanza").length,
         vacation: empAttendance.filter((a) => a.status === "vacaciones").length,
         sick: empAttendance.filter((a) => a.status === "enfermedad").length,
-        totalHours: empAttendance.reduce((sum, a) => sum + (a.hoursWorked || 0), 0),
-        overtimeHours: empAttendance.reduce((sum, a) => sum + (a.overtimeHours || 0), 0),
+        totalHours: empAttendance.reduce((sum, a) => sum + (Number(a.hours_worked) || 0), 0),
+        overtimeHours: empAttendance.reduce((sum, a) => sum + (Number(a.overtime_hours) || 0), 0),
       };
     });
     return stats;
   }, [activeEmployees, monthAttendance]);
 
-  const handleAddAttendance = () => {
+  const handleAddAttendance = async () => {
     if (!selectedEmployee || !attendanceForm.date) {
       alert("Seleccione empleado y fecha");
       return;
     }
-    const employee = activeEmployees.find((e) => e.id === selectedEmployee);
-    const newAttendance = {
-      id: Date.now().toString(),
-      employeeId: selectedEmployee,
-      employeeName: employee?.name || "",
-      date: attendanceForm.date,
-      status: attendanceForm.status,
-      hoursWorked: parseFloat(attendanceForm.hoursWorked) || 0,
-      overtimeHours: parseFloat(attendanceForm.overtimeHours) || 0,
-      notes: attendanceForm.notes,
-    };
-    setAttendance((prev) => [...prev, newAttendance]);
-    setShowModal(false);
-    setAttendanceForm({ date: new Date().toISOString().split("T")[0], status: "presente", hoursWorked: "8", overtimeHours: "0", notes: "" });
-    setSelectedEmployee("");
+
+    try {
+      setSaving(true);
+      const res = await fetch("/api/hr/attendance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({
+          employeeId: selectedEmployee,
+          date: attendanceForm.date,
+          status: attendanceForm.status,
+          hoursWorked: attendanceForm.hoursWorked,
+          overtimeHours: attendanceForm.overtimeHours,
+          notes: attendanceForm.notes,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al guardar asistencia");
+      }
+
+      const { attendance: newAttendance } = await res.json();
+      setAttendance((prev) => {
+        const filtered = prev.filter((a) => a.id !== newAttendance.id);
+        return [newAttendance, ...filtered];
+      });
+      setShowModal(false);
+      setAttendanceForm({ date: new Date().toISOString().split("T")[0], status: "presente", hoursWorked: "8", overtimeHours: "0", notes: "" });
+      setSelectedEmployee("");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const statusColors = {
@@ -90,6 +136,14 @@ export default function AttendanceTracker({ employees, orgSlug }) {
       { present: 0, absent: 0, late: 0, totalHours: 0, overtimeHours: 0 }
     );
   }, [employeeStats]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -167,18 +221,18 @@ export default function AttendanceTracker({ employees, orgSlug }) {
       {monthAttendance.length > 0 && (
         <div className="border rounded-lg">
           <div className="px-4 py-3 border-b bg-slate-50">
-            <h4 className="text-sm font-semibold text-slate-700">Registros del Mes</h4>
+            <h4 className="text-sm font-semibold text-slate-700">Registros del Mes ({monthAttendance.length})</h4>
           </div>
           <div className="divide-y max-h-64 overflow-y-auto">
             {monthAttendance.slice(0, 20).map((record) => (
               <div key={record.id} className="p-3 flex justify-between items-center">
                 <div>
-                  <p className="font-medium text-slate-800">{record.employeeName}</p>
+                  <p className="font-medium text-slate-800">{record.employee?.name || "Empleado"}</p>
                   <p className="text-xs text-slate-500">{new Date(record.date).toLocaleDateString("es-NI")}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`px-2 py-0.5 text-xs rounded-full ${statusColors[record.status]}`}>{statusLabels[record.status]}</span>
-                  <span className="text-xs text-slate-500">{record.hoursWorked}h</span>
+                  <span className="text-xs text-slate-500">{record.hours_worked}h</span>
                 </div>
               </div>
             ))}
@@ -228,8 +282,8 @@ export default function AttendanceTracker({ employees, orgSlug }) {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => { setShowModal(false); setSelectedEmployee(""); }} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800">Cancelar</button>
-              <button onClick={handleAddAttendance} className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800">Guardar</button>
+              <button onClick={() => { setShowModal(false); setSelectedEmployee(""); }} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800" disabled={saving}>Cancelar</button>
+              <button onClick={handleAddAttendance} className="px-4 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50" disabled={saving}>{saving ? "Guardando..." : "Guardar"}</button>
             </div>
           </div>
         </div>

@@ -46,6 +46,18 @@ const optionalNumberFromString = z.preprocess(
   z.number().optional().nullable()
 );
 
+// Helper para convertir strings vacios a undefined para campos string opcionales
+const optionalString = z.preprocess(
+  (val) => (val === "" || val === undefined || val === null ? undefined : val),
+  z.string().optional().nullable()
+);
+
+// Helper para email opcional que acepta strings vacios
+const optionalEmail = z.preprocess(
+  (val) => (val === "" || val === undefined || val === null ? undefined : val),
+  z.string().email('Email inválido').optional().nullable()
+);
+
 // Client Schema (updated for actual fields used)
 export const clientSchema = z.object({
   first_name: z.string().min(1, 'El nombre es requerido'),
@@ -77,22 +89,23 @@ export const inventoryMovementSchema = z.object({
 // Employee Schema (matches actual fields used)
 export const employeeSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
-  email: z.string().email('Email inválido').optional().nullable(),
-  phone: z.string().optional().nullable(),
-  cedula: z.string().optional().nullable(),
-  inss_number: z.string().optional().nullable(),
-  position: z.string().optional().nullable(),
-  department: z.string().optional().nullable(),
-  salary: z.number().nonnegative('El salario no puede ser negativo').optional().nullable(),
-  hire_date: z.string().optional().nullable(),
-  contract_type: z.string().optional().nullable(),
-  status: z.string().optional(),
-  address: z.string().optional().nullable(),
-  emergency_contact: z.string().optional().nullable(),
-  emergency_phone: z.string().optional().nullable(),
-  bank_account: z.string().optional().nullable(),
-  bank_name: z.string().optional().nullable(),
-  vacation_days_used: z.number().int().nonnegative().optional(),
+  email: optionalEmail,
+  phone: optionalString,
+  cedula: optionalString,
+  inss_number: optionalString,
+  position: optionalString,
+  department: optionalString,
+  salary: optionalNumberFromString,
+  commissions: optionalNumberFromString,
+  hire_date: optionalString,
+  contract_type: optionalString,
+  status: optionalString,
+  address: optionalString,
+  emergency_contact: optionalString,
+  emergency_phone: optionalString,
+  bank_account: optionalString,
+  bank_name: optionalString,
+  vacation_days_used: optionalNumberFromString,
 });
 
 // Employee Update Schema
