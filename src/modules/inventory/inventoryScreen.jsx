@@ -9,8 +9,8 @@ import ProductFormModal from "./components/ProductFormModal";
 import InventoryEntryModal from "./components/InventoryEntryModal";
 import InventoryExitModal from "./components/InventoryExitModal";
 import InventoryTransferModal from "./components/InventoryTransferModal";
-
 import KardexDrawer from "../kardex/KardexDrawer";
+
 
 export default function InventoryScreen({ orgSlug }) {
   const inv = useInventory(orgSlug);

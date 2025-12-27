@@ -55,13 +55,12 @@ export async function POST(request) {
 
     if (orgError) throw orgError;
 
-    // Check if user already exists in auth
     const { data: existingUsers } = await supabase.auth.admin.listUsers();
     const existingUser = existingUsers?.users?.find(u => u.email === body.email);
 
+    let userId = existingUser?.id;
     let inviteSent = false;
 
-    // If user doesn't exist in auth, send invitation email
     if (!existingUser) {
       const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(body.email, {
         data: {
@@ -75,17 +74,19 @@ export async function POST(request) {
       if (inviteError) {
         console.error("Invite error:", inviteError);
       } else {
+        userId = inviteData?.user?.id;
         inviteSent = true;
       }
     }
 
-    // Insert into org_users (only use columns that definitely exist)
     const { error: insertError } = await supabase.from("org_users").insert({
       org_id: org.id,
+      user_id: userId || null,
       email: body.email,
-      full_name: body.full_name || null,
+      full_name: body.full_name,
       role: body.role || "user",
       is_active: body.is_active !== false,
+      invited_at: new Date().toISOString(),
     });
 
     if (insertError) throw insertError;

@@ -7,6 +7,7 @@ export default function PayrollHistory({ employees, orgSlug }) {
   const [payrollRuns, setPayrollRuns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [loadingItems, setLoadingItems] = useState(false);
   const [selectedRun, setSelectedRun] = useState(null);
 
   const activeEmployees = useMemo(() => {
@@ -166,6 +167,51 @@ export default function PayrollHistory({ employees, orgSlug }) {
     }
   };
 
+  const handleViewPayroll = async (run) => {
+    try {
+      setLoadingItems(true);
+      const res = await fetch(`/api/hr/payroll/${run.id}`, {
+        headers: { "x-org-slug": orgSlug },
+      });
+      
+      if (!res.ok) {
+        throw new Error("Error al cargar detalles de la planilla");
+      }
+      
+      const data = await res.json();
+      const items = (data.payroll?.items || []).map((item) => ({
+        employeeId: item.employee_id,
+        employeeName: item.employee_name,
+        cedula: item.employee_cedula,
+        position: item.employee_position,
+        department: item.employee_department,
+        salary: Number(item.salary) || 0,
+        commissions: Number(item.commissions) || 0,
+        totalGross: Number(item.total_gross) || 0,
+        inss: Number(item.inss) || 0,
+        ir: Number(item.ir) || 0,
+        netSalary: Number(item.net_salary) || 0,
+        employerINSS: Number(item.employer_inss) || 0,
+      }));
+      
+      setSelectedRun({ ...run, items });
+    } catch (err) {
+      console.error("Error loading payroll items:", err);
+      alert("Error al cargar los detalles de la planilla");
+    } finally {
+      setLoadingItems(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString("es-NI", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   const displayData = selectedRun ? selectedRun.items : currentPayroll;
 
   if (loading) {
@@ -198,27 +244,6 @@ export default function PayrollHistory({ employees, orgSlug }) {
           )}
         </div>
       </div>
-
-      {payrollRuns.length > 0 && (
-        <div className="bg-slate-50 border rounded-lg p-3">
-          <p className="text-xs font-medium text-slate-600 mb-2">Planillas Guardadas ({payrollRuns.length}):</p>
-          <div className="flex flex-wrap gap-2">
-            {payrollRuns.map((run) => (
-              <button
-                key={run.id}
-                onClick={() => setSelectedRun(run)}
-                className={`px-3 py-1.5 text-xs rounded-lg border ${
-                  selectedRun?.id === run.id
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white text-slate-700 border-slate-300 hover:bg-slate-100"
-                }`}
-              >
-                {run.period} ({run.employeeCount} emp.)
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {(displayData.length > 0 || selectedRun) && (
         <div className="overflow-x-auto border rounded-lg">
@@ -276,6 +301,52 @@ export default function PayrollHistory({ employees, orgSlug }) {
           <div><p className="text-xl font-bold text-emerald-600">{formatCurrency(totals.netSalary)}</p><p className="text-xs text-slate-500">Total Neto</p></div>
         </div>
       </div>
+
+      {payrollRuns.length > 0 && (
+        <div className="border rounded-lg overflow-hidden">
+          <div className="bg-slate-100 px-4 py-3 border-b">
+            <h4 className="text-sm font-semibold text-slate-700">Planillas Guardadas ({payrollRuns.length})</h4>
+          </div>
+          <div className="divide-y">
+            {payrollRuns.map((run) => (
+              <div
+                key={run.id}
+                className={`px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${
+                  selectedRun?.id === run.id ? "bg-blue-50" : "hover:bg-slate-50"
+                }`}
+              >
+                <div className="flex-1">
+                  <p className="font-medium text-slate-800">{run.period}</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 mt-1">
+                    <span>{run.employeeCount} empleados</span>
+                    <span>Bruto: {formatCurrency(run.totalGross)}</span>
+                    <span>Neto: {formatCurrency(run.totalNet)}</span>
+                    {run.createdAt && <span>Guardado: {formatDate(run.createdAt)}</span>}
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleViewPayroll(run)}
+                  disabled={loadingItems}
+                  className={`px-4 py-2 text-xs rounded-lg min-h-[36px] ${
+                    selectedRun?.id === run.id
+                      ? "bg-blue-600 text-white"
+                      : "bg-slate-900 text-white hover:bg-slate-800"
+                  } disabled:opacity-50`}
+                >
+                  {loadingItems && selectedRun?.id === run.id ? "Cargando..." : "Ver Planilla"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {payrollRuns.length === 0 && !selectedRun && (
+        <div className="text-center py-8 text-slate-400 border rounded-lg">
+          <p>No hay planillas guardadas</p>
+          <p className="text-xs mt-1">Guarda la planilla actual para verla en el historial</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import KardexTable from "./kardexTable";
 import { exportKardexPDF } from "./utils/exportKardexPDF";
 import { exportKardexExcel } from "./utils/exportKardexExcel";
@@ -8,15 +8,13 @@ import { exportKardexExcel } from "./utils/exportKardexExcel";
 import InventoryEntryModal from "../inventory/components/InventoryEntryModal";
 import InventoryExitModal from "../inventory/components/InventoryExitModal";
 import InventoryTransferModal from "../inventory/components/InventoryTransferModal";
-import BulkInventoryModal from "../inventory/components/BulkInventoryModal";
+import BatchEntryModal from "./components/BatchEntryModal";
 
 export default function KardexScreen({ orgSlug }) {
   const [loading, setLoading] = useState(false);
   const [movements, setMovements] = useState([]);
   const [products, setProducts] = useState([]);
   const [branches, setBranches] = useState([]);
-  const [productSearch, setProductSearch] = useState("");
-  const [invoiceSearch, setInvoiceSearch] = useState("");
 
   const [selectedProduct, setSelectedProduct] = useState("all");
   const [selectedBranch, setSelectedBranch] = useState("all");
@@ -30,14 +28,15 @@ export default function KardexScreen({ orgSlug }) {
   const limit = 50;
 
   const [error, setError] = useState(null);
-  const [productStock, setProductStock] = useState([]);
-  const [loadingStock, setLoadingStock] = useState(false);
 
   const [entryOpen, setEntryOpen] = useState(false);
   const [exitOpen, setExitOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-  const [bulkOpen, setBulkOpen] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+
+  // Batch modals
+  const [batchEntryOpen, setBatchEntryOpen] = useState(false);
+  const [batchExitOpen, setBatchExitOpen] = useState(false);
+  const [batchAjusteOpen, setBatchAjusteOpen] = useState(false);
 
   useEffect(() => {
     async function loadFilters() {
@@ -63,7 +62,7 @@ export default function KardexScreen({ orgSlug }) {
     if (orgSlug) loadFilters();
   }, [orgSlug]);
 
-  const loadKardex = useCallback(async () => {
+  async function loadKardex() {
     try {
       setLoading(true);
       setError(null);
@@ -76,15 +75,13 @@ export default function KardexScreen({ orgSlug }) {
       if (dateStart) params.append("startDate", dateStart);
       if (dateEnd) params.append("endDate", dateEnd);
 
-      const searchTerm = invoiceSearch || search;
-
       const res = await fetch(`/api/kardex?${params.toString()}`, {
         headers: {
           "x-org-slug": orgSlug,
           "x-product-id": selectedProduct,
           "x-branch-id": selectedBranch,
           "x-movement-type": movementType,
-          "x-search": searchTerm,
+          "x-search": search,
         },
       });
 
@@ -99,75 +96,20 @@ export default function KardexScreen({ orgSlug }) {
     } finally {
       setLoading(false);
     }
-  }, [orgSlug, selectedProduct, selectedBranch, movementType, search, invoiceSearch, dateStart, dateEnd, page]);
+  }
 
   useEffect(() => {
     if (orgSlug) loadKardex();
-  }, [orgSlug, loadKardex]);
-
-  useEffect(() => {
-    async function loadProductStock() {
-      if (selectedProduct === "all" || !orgSlug) {
-        setProductStock([]);
-        return;
-      }
-      try {
-        setLoadingStock(true);
-        const res = await fetch(`/api/inventory/stock?productId=${selectedProduct}`, {
-          headers: { "x-org-slug": orgSlug },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setProductStock(data.stock || []);
-        }
-      } catch (err) {
-        console.error("Error loading product stock:", err);
-      } finally {
-        setLoadingStock(false);
-      }
-    }
-    loadProductStock();
-  }, [selectedProduct, orgSlug]);
-
-  const setDatePreset = (preset) => {
-    const today = new Date();
-    const formatDate = (d) => d.toISOString().split("T")[0];
-    
-    switch (preset) {
-      case "today":
-        setDateStart(formatDate(today));
-        setDateEnd(formatDate(today));
-        break;
-      case "yesterday":
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        setDateStart(formatDate(yesterday));
-        setDateEnd(formatDate(yesterday));
-        break;
-      case "week":
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - today.getDay());
-        setDateStart(formatDate(weekStart));
-        setDateEnd(formatDate(today));
-        break;
-      case "month":
-        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-        setDateStart(formatDate(monthStart));
-        setDateEnd(formatDate(today));
-        break;
-      case "lastMonth":
-        const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-        const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
-        setDateStart(formatDate(lastMonthStart));
-        setDateEnd(formatDate(lastMonthEnd));
-        break;
-      case "clear":
-        setDateStart("");
-        setDateEnd("");
-        break;
-    }
-    setPage(0);
-  };
+  }, [
+    orgSlug,
+    selectedProduct,
+    selectedBranch,
+    movementType,
+    search,
+    dateStart,
+    dateEnd,
+    page,
+  ]);
 
   function handlePrint() {
     const org = {
@@ -179,8 +121,14 @@ export default function KardexScreen({ orgSlug }) {
 
     exportKardexPDF({
       org,
-      product: selectedProduct !== "all" ? products.find((p) => p.id === selectedProduct) : null,
-      branch: selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : null,
+      product:
+        selectedProduct !== "all"
+          ? products.find((p) => p.id === selectedProduct)
+          : null,
+      branch:
+        selectedBranch !== "all"
+          ? branches.find((b) => b.id === selectedBranch)
+          : null,
       movements,
       dateStart,
       dateEnd,
@@ -196,41 +144,21 @@ export default function KardexScreen({ orgSlug }) {
 
     exportKardexExcel({
       org,
-      product: selectedProduct !== "all" ? products.find((p) => p.id === selectedProduct) : null,
-      branch: selectedBranch !== "all" ? branches.find((b) => b.id === selectedBranch) : null,
+      product:
+        selectedProduct !== "all"
+          ? products.find((p) => p.id === selectedProduct)
+          : null,
+      branch:
+        selectedBranch !== "all"
+          ? branches.find((b) => b.id === selectedBranch)
+          : null,
       movements,
       dateStart,
       dateEnd,
     });
   }
 
-  const canMakeMovement = selectedProduct !== "all" && selectedBranch !== "all";
-
-  const filteredProducts = useMemo(() => {
-    if (!productSearch.trim()) return products;
-    const term = productSearch.toLowerCase();
-    return products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(term) ||
-        (p.sku && p.sku.toLowerCase().includes(term))
-    );
-  }, [productSearch, products]);
-
-  const aggregatedStock = useMemo(() => {
-    const byBranch = new Map();
-    productStock.forEach((s) => {
-      const bid = s.branch_id ?? "no-branch";
-      if (!byBranch.has(bid)) {
-        byBranch.set(bid, {
-          branch_id: s.branch_id,
-          branch_name: s.branch_name,
-          stock: 0,
-        });
-      }
-      byBranch.get(bid).stock += Number(s.stock ?? s.qty ?? 0);
-    });
-    return Array.from(byBranch.values());
-  }, [productStock]);
+  const canMakeMovement = selectedProduct !== "all";
 
   const getSelectedProductData = () => {
     if (selectedProduct === "all") return null;
@@ -262,8 +190,7 @@ export default function KardexScreen({ orgSlug }) {
           qty: data.qty,
           cost: data.cost,
           notes: data.note || "Entrada desde Kardex",
-          invoiceNumber: data.invoiceNumber || null,
-          branchId: selectedBranch === "all" ? null : selectedBranch,
+          to_branch: selectedBranch === "all" ? null : selectedBranch,
         }),
       });
 
@@ -294,8 +221,7 @@ export default function KardexScreen({ orgSlug }) {
           type: "salida",
           qty: data.qty,
           notes: data.note || "Salida desde Kardex",
-          invoiceNumber: data.invoiceNumber || null,
-          branchId: selectedBranch === "all" ? null : selectedBranch,
+          from_branch: selectedBranch === "all" ? null : selectedBranch,
         }),
       });
 
@@ -313,7 +239,12 @@ export default function KardexScreen({ orgSlug }) {
     }
   };
 
-  const handleTransferSubmit = async ({ productId, qty, fromBranchId, toBranchId, invoiceNumber }) => {
+  const handleTransferSubmit = async ({
+    productId,
+    qty,
+    fromBranchId,
+    toBranchId,
+  }) => {
     try {
       const res = await fetch("/api/inventory/movements", {
         method: "POST",
@@ -325,10 +256,10 @@ export default function KardexScreen({ orgSlug }) {
           productId,
           type: "transferencia",
           qty,
-          from_branch: fromBranchId || (selectedBranch === "all" ? null : selectedBranch),
+          from_branch:
+            fromBranchId || (selectedBranch === "all" ? null : selectedBranch),
           to_branch: toBranchId,
           notes: "Traslado desde Kardex",
-          invoiceNumber: invoiceNumber || null,
         }),
       });
 
@@ -346,59 +277,71 @@ export default function KardexScreen({ orgSlug }) {
     }
   };
 
-  const clearAllFilters = () => {
-    setSelectedProduct("all");
-    setSelectedBranch("all");
-    setMovementType("all");
-    setSearch("");
-    setInvoiceSearch("");
-    setDateStart("");
-    setDateEnd("");
-    setProductSearch("");
-    setPage(0);
+  const handleBatchSubmit = async (data) => {
+    try {
+      const userName = localStorage.getItem("userName") || "Usuario";
+      
+      const res = await fetch("/api/inventory/movements/batch", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+          "x-user-name": userName,
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || !result.success) {
+        throw new Error(result.error || "Error registrando movimiento");
+      }
+
+   const handleBatchSubmit = async (data) => {
+    try {
+      const userName = localStorage.getItem("userName") || "Usuario";
+      
+      const res = await fetch("/api/inventory/movements/batch", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify({ ...data, userName }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || !result.success) {
+        throw new Error(result.error || "Error registrando movimiento");
+      }
+
+      if (result.printData) {
+        localStorage.setItem("kardex_print_data", JSON.stringify(result.printData));
+        window.open(`/print/kardex?org=${orgSlug}`, "_blank");
+      }
+
+      await loadKardex();
+      
+      if (data.type === "entrada") setBatchEntryOpen(false);
+      if (data.type === "salida") setBatchExitOpen(false);
+      if (data.type === "ajuste") setBatchAjusteOpen(false);
+
+      return result;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   };
 
-  const hasActiveFilters = selectedProduct !== "all" || selectedBranch !== "all" || 
-    movementType !== "all" || search || invoiceSearch || dateStart || dateEnd;
-
   return (
-    <div className="space-y-4 p-2 sm:p-4">
+    <div className="space-y-6">
 
-      {/* Header con busqueda rapida */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-        <h1 className="text-xl font-bold text-slate-800">Kardex de Inventario</h1>
-        
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Buscar por factura #..."
-            value={invoiceSearch}
-            onChange={(e) => {
-              setInvoiceSearch(e.target.value);
-              setPage(0);
-            }}
-            className="flex-1 sm:w-40 p-2 text-xs border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`px-3 py-2 text-xs rounded-lg border ${showFilters ? 'bg-blue-600 text-white' : 'bg-white hover:bg-slate-50'}`}
-          >
-            {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
-          </button>
-          {hasActiveFilters && (
-            <button
-              onClick={clearAllFilters}
-              className="px-3 py-2 text-xs rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
-            >
-              Limpiar Todo
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* BOTONES DE MOVIMIENTOS */}
-      <div className="flex flex-wrap items-center gap-2 p-3 bg-white border rounded-xl shadow-sm">
-        <span className="text-xs font-semibold text-slate-700">Movimientos:</span>
+      {/* BOTONES - Movimientos individuales */}
+      <div className="flex flex-wrap items-center gap-3 p-4 bg-white border rounded-xl shadow-sm">
+        <span className="text-sm font-semibold text-slate-700">
+          Movimiento Individual:
+        </span>
 
         <button
           onClick={() => setEntryOpen(true)}
@@ -436,154 +379,140 @@ export default function KardexScreen({ orgSlug }) {
           Traslado
         </button>
 
-        <div className="hidden sm:block border-l border-slate-300 h-6 mx-2" />
+        <div className="w-px h-6 bg-slate-300 mx-2"></div>
+
+        <span className="text-sm font-semibold text-slate-700">
+          Movimiento Masivo:
+        </span>
 
         <button
-          onClick={() => setBulkOpen(true)}
-          disabled={selectedBranch === "all"}
-          className={`px-3 py-1.5 text-xs rounded-lg ${
-            selectedBranch !== "all"
-              ? "bg-purple-600 text-white hover:bg-purple-700"
-              : "bg-slate-200 text-slate-400 cursor-not-allowed"
-          }`}
+          onClick={() => setBatchEntryOpen(true)}
+          className="px-3 py-1.5 text-xs rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-300"
         >
-          Mov. Multiple
+          + Entrada Masiva
         </button>
 
-        {!canMakeMovement && (
-          <span className="text-[10px] text-amber-600 ml-2">
-            Seleccione producto y sucursal
-          </span>
-        )}
+        <button
+          onClick={() => setBatchExitOpen(true)}
+          className="px-3 py-1.5 text-xs rounded-lg bg-red-100 text-red-700 hover:bg-red-200 border border-red-300"
+        >
+          - Salida Masiva
+        </button>
+
+        <button
+          onClick={() => setBatchAjusteOpen(true)}
+          className="px-3 py-1.5 text-xs rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-300"
+        >
+          Ajuste Masivo
+        </button>
       </div>
 
-      {/* FILTROS RAPIDOS DE FECHA */}
-      <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 border rounded-xl">
-        <span className="text-xs font-semibold text-slate-600">Periodo:</span>
-        <button onClick={() => setDatePreset("today")} className={`px-2 py-1 text-xs rounded ${dateStart === new Date().toISOString().split("T")[0] && dateEnd === dateStart ? "bg-emerald-600 text-white" : "bg-white border hover:bg-slate-100"}`}>Hoy</button>
-        <button onClick={() => setDatePreset("yesterday")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Ayer</button>
-        <button onClick={() => setDatePreset("week")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Esta semana</button>
-        <button onClick={() => setDatePreset("month")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Este mes</button>
-        <button onClick={() => setDatePreset("lastMonth")} className="px-2 py-1 text-xs rounded bg-white border hover:bg-slate-100">Mes pasado</button>
-        {(dateStart || dateEnd) && (
-          <>
-            <button onClick={() => setDatePreset("clear")} className="px-2 py-1 text-xs rounded bg-red-100 text-red-600 hover:bg-red-200">Limpiar</button>
-            <span className="text-xs text-slate-500 ml-2">
-              {dateStart && dateEnd ? `${dateStart} - ${dateEnd}` : dateStart || dateEnd}
-            </span>
-          </>
-        )}
+      {/* SEARCH BAR */}
+      <div className="p-4">
+        <input
+          type="text"
+          placeholder="Buscar en Kardex (producto, referencia, usuario)"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(0);
+          }}
+          className="w-full p-2 text-xs border rounded-lg"
+        />
       </div>
 
-      {/* FILTROS EXPANDIBLES */}
-      {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Producto</label>
-            <input
-              type="text"
-              placeholder="Buscar producto..."
-              value={productSearch}
-              onChange={(e) => setProductSearch(e.target.value)}
-              className="w-full p-2 mb-1 text-xs border rounded-lg"
-            />
-            <select
-              value={selectedProduct}
-              onChange={(e) => {
-                setSelectedProduct(e.target.value);
-                setPage(0);
-              }}
-              className="w-full p-2 text-xs border rounded-lg"
-            >
-              <option value="all">Todos ({products.length})</option>
-              {filteredProducts.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} {p.sku ? `(${p.sku})` : ""}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* FILTROS */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
 
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Sucursal</label>
-            <select
-              value={selectedBranch}
-              onChange={(e) => {
-                setSelectedBranch(e.target.value);
-                setPage(0);
-              }}
-              className="w-full p-2 text-xs border rounded-lg mt-1"
-            >
-              <option value="all">Todas</option>
-              {branches.map((b) => (
-                <option key={b.id} value={b.id}>{b.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Tipo Movimiento</label>
-            <select
-              value={movementType}
-              onChange={(e) => {
-                setMovementType(e.target.value);
-                setPage(0);
-              }}
-              className="w-full p-2 text-xs border rounded-lg mt-1"
-            >
-              <option value="all">Todos</option>
-              <option value="ENTRADA">Entradas</option>
-              <option value="SALIDA">Salidas</option>
-              <option value="TRANSFER">Transferencias</option>
-              <option value="SALE">Ventas</option>
-              <option value="SALE_CANCEL">Anulaciones</option>
-              <option value="ADJUSTMENT">Ajustes</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-slate-600">Busqueda General</label>
-            <input
-              type="text"
-              placeholder="Producto, referencia, usuario..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(0);
-              }}
-              className="w-full p-2 text-xs border rounded-lg mt-1"
-            />
-          </div>
+        <div>
+          <label className="text-xs font-semibold text-slate-600">
+            Producto
+          </label>
+          <select
+            value={selectedProduct}
+            onChange={(e) => {
+              setSelectedProduct(e.target.value);
+              setPage(0);
+            }}
+            className="w-full p-2 text-xs border rounded-lg"
+          >
+            <option value="all">Todos</option>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
 
-      {/* RESUMEN DEL PRODUCTO SELECCIONADO */}
-      {selectedProduct !== "all" && (
-        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-blue-800">
-              Stock: {products.find(p => p.id === selectedProduct)?.name || "Producto"}
-            </h3>
-            {loadingStock && <span className="text-xs text-blue-500">Cargando...</span>}
-          </div>
-          {!loadingStock && aggregatedStock.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {aggregatedStock.map((stock) => (
-                <div key={stock.branch_id ?? "no-branch"} className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
-                  <p className="text-xs text-slate-500 truncate">{stock.branch_name || branches.find(b => b.id === stock.branch_id)?.name || "Sin sucursal"}</p>
-                  <p className="text-lg font-bold text-blue-700">{stock.stock}</p>
-                </div>
-              ))}
-              <div className="bg-blue-600 rounded-lg p-3 text-white shadow-sm">
-                <p className="text-xs opacity-80">Total</p>
-                <p className="text-lg font-bold">{aggregatedStock.reduce((sum, s) => sum + s.stock, 0)}</p>
-              </div>
-            </div>
-          ) : !loadingStock ? (
-            <p className="text-xs text-slate-500">No hay stock registrado</p>
-          ) : null}
+        <div>
+          <label className="text-xs font-semibold text-slate-600">
+            Sucursal
+          </label>
+          <select
+            value={selectedBranch}
+            onChange={(e) => {
+              setSelectedBranch(e.target.value);
+              setPage(0);
+            }}
+            className="w-full p-2 text-xs border rounded-lg"
+          >
+            <option value="all">Todas</option>
+            {branches.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+
+        <div>
+          <label className="text-xs font-semibold text-slate-600">
+            Movimiento
+          </label>
+          <select
+            value={movementType}
+            onChange={(e) => {
+              setMovementType(e.target.value);
+              setPage(0);
+            }}
+            className="w-full p-2 text-xs border rounded-lg"
+          >
+            <option value="all">Todos</option>
+            <option value="entrada">Entradas</option>
+            <option value="salida">Salidas</option>
+            <option value="transferencia">Transferencias</option>
+            <option value="venta">Ventas</option>
+            <option value="ajuste">Ajustes</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold text-slate-600">Desde</label>
+          <input
+            type="date"
+            value={dateStart}
+            onChange={(e) => {
+              setDateStart(e.target.value);
+              setPage(0);
+            }}
+            className="w-full p-2 text-xs border rounded-lg"
+          />
+
+          <label className="text-xs font-semibold text-slate-600 mt-2 block">
+            Hasta
+          </label>
+          <input
+            type="date"
+            value={dateEnd}
+            onChange={(e) => {
+              setDateEnd(e.target.value);
+              setPage(0);
+            }}
+            className="w-full p-2 text-xs border rounded-lg"
+          />
+        </div>
+      </div>
 
       {/* TABLA */}
       {!loading && (
@@ -592,20 +521,21 @@ export default function KardexScreen({ orgSlug }) {
           page={page}
           setPage={setPage}
           limit={limit}
-          product={selectedProduct === "all" ? null : products.find((p) => p.id === selectedProduct)}
-          branch={selectedBranch === "all" ? null : branches.find((b) => b.id === selectedBranch)}
+          product={
+            selectedProduct === "all"
+              ? null
+              : products.find((p) => p.id === selectedProduct)
+          }
           onPrint={handlePrint}
           onExportExcel={handleExportExcel}
         />
       )}
 
       {loading && (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-        </div>
+        <p className="text-center text-slate-500 text-sm">Cargando...</p>
       )}
 
-      {error && <p className="text-center text-red-600 text-sm bg-red-50 p-4 rounded-lg">{error}</p>}
+      {error && <p className="text-center text-red-600 text-sm">{error}</p>}
 
       {/* MODALES */}
       <InventoryEntryModal
@@ -630,14 +560,35 @@ export default function KardexScreen({ orgSlug }) {
         branches={branches}
       />
 
-      <BulkInventoryModal
-        isOpen={bulkOpen}
-        onClose={() => setBulkOpen(false)}
+      {/* MODALES MASIVOS */}
+      <BatchEntryModal
+        isOpen={batchEntryOpen}
+        onClose={() => setBatchEntryOpen(false)}
+        onSubmit={handleBatchSubmit}
         products={products}
         branches={branches}
-        selectedBranch={selectedBranch}
+        type="entrada"
         orgSlug={orgSlug}
-        onSuccess={loadKardex}
+      />
+
+      <BatchEntryModal
+        isOpen={batchExitOpen}
+        onClose={() => setBatchExitOpen(false)}
+        onSubmit={handleBatchSubmit}
+        products={products}
+        branches={branches}
+        type="salida"
+        orgSlug={orgSlug}
+      />
+
+      <BatchEntryModal
+        isOpen={batchAjusteOpen}
+        onClose={() => setBatchAjusteOpen(false)}
+        onSubmit={handleBatchSubmit}
+        products={products}
+        branches={branches}
+        type="ajuste"
+        orgSlug={orgSlug}
       />
     </div>
   );

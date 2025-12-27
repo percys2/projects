@@ -3,6 +3,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+const getTodayManagua = () => {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Managua" }).format(new Date());
+};
+
 export const useCashRegisterStore = create(
   persist(
     (set, get) => ({
@@ -13,9 +17,39 @@ export const useCashRegisterStore = create(
       branch: null,
       user: null,
       movements: [],
-      
-      // Historial de cierres para auditoria
+      businessDate: null,
+      dayChangedWhileOpen: false,
       closingHistory: [],
+
+      checkAndResetForNewDay: () => {
+        const state = get();
+        const today = getTodayManagua();
+        
+        if (state.businessDate && state.businessDate !== today) {
+          if (state.isOpen) {
+            set({ dayChangedWhileOpen: true });
+            return { needsClosing: true, previousDate: state.businessDate };
+          } else {
+            set({
+              openingAmount: 0,
+              openingTime: null,
+              closingTime: null,
+              movements: [],
+              businessDate: today,
+              dayChangedWhileOpen: false,
+            });
+            return { wasReset: true, previousDate: state.businessDate };
+          }
+        }
+        
+        if (!state.businessDate) {
+          set({ businessDate: today });
+        }
+        
+        return { noChange: true };
+      },
+
+      clearDayChangedWarning: () => set({ dayChangedWhileOpen: false }),
 
       openCashRegister: ({ amount, user, branch }) =>
         set({
@@ -26,6 +60,8 @@ export const useCashRegisterStore = create(
           openingTime: new Date().toISOString(),
           movements: [],
           closingTime: null,
+          businessDate: getTodayManagua(),
+          dayChangedWhileOpen: false,
         }),
 
       addMovement: (movement) =>
@@ -33,7 +69,6 @@ export const useCashRegisterStore = create(
           movements: [...state.movements, { ...movement, timestamp: new Date().toISOString() }],
         })),
 
-      // Calcular totales desglosados
       getTotals: () => {
         const { openingAmount, movements } = get();
         let totalEntradas = 0;
@@ -50,19 +85,16 @@ export const useCashRegisterStore = create(
           }
         }
         
-        const expectedTotal = openingAmount + totalEntradas - totalSalidas;
-        
         return {
           openingAmount,
           totalEntradas,
           totalSalidas,
-          expectedTotal,
+          expectedTotal: openingAmount + totalEntradas - totalSalidas,
           salesCount,
           movementsCount: movements.length,
         };
       },
 
-      // Mantener getTotal para compatibilidad
       getTotal: () => {
         const { openingAmount, movements } = get();
         let income = 0;
@@ -74,11 +106,11 @@ export const useCashRegisterStore = create(
         return openingAmount + income - expense;
       },
 
-      // Cerrar caja con cotejo
-      closeCashRegister: ({ countedAmount, notes }) => {
+      closeCashRegister: ({ countedAmount, notes } = {}) => {
         const state = get();
         const totals = state.getTotals();
-        const difference = countedAmount - totals.expectedTotal;
+        const counted = countedAmount || totals.expectedTotal;
+        const difference = counted - totals.expectedTotal;
         
         const closingRecord = {
           id: Date.now(),
@@ -90,7 +122,7 @@ export const useCashRegisterStore = create(
           totalEntradas: totals.totalEntradas,
           totalSalidas: totals.totalSalidas,
           expectedTotal: totals.expectedTotal,
-          countedAmount,
+          countedAmount: counted,
           difference,
           notes: notes || "",
           salesCount: totals.salesCount,
@@ -106,7 +138,6 @@ export const useCashRegisterStore = create(
         return closingRecord;
       },
 
-      // Obtener historial de cierres
       getClosingHistory: () => get().closingHistory,
 
       resetCashRegister: () =>

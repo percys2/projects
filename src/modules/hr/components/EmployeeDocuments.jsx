@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserSupabaseClient } from "@/src/lib/supabase/browser";
 
 export default function EmployeeDocuments({ employees, orgSlug }) {
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserSupabaseClient();
   const fileInputRef = useRef(null);
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,11 +110,38 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
 
     if (uploadError) throw uploadError;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from("employee-documents")
-      .getPublicUrl(filePath);
+    return { url: filePath, fileName: file.name, fileSize: file.size };
+  };
 
-    return { url: publicUrl, fileName: file.name, fileSize: file.size };
+  const handleViewDocument = async (fileUrlOrPath) => {
+    if (!fileUrlOrPath) return;
+    try {
+      let filePath = fileUrlOrPath;
+      
+      // Handle old documents that have full URLs stored
+      if (fileUrlOrPath.startsWith("http")) {
+        // Extract the path from the full URL
+        // URL format: https://xxx.supabase.co/storage/v1/object/public/employee-documents/orgSlug/filename.ext
+        const match = fileUrlOrPath.match(/\/employee-documents\/(.+)$/);
+        if (match) {
+          filePath = match[1];
+        } else {
+          // If we can't extract the path, try opening the URL directly (for old public URLs)
+          window.open(fileUrlOrPath, "_blank");
+          return;
+        }
+      }
+      
+      const { data, error } = await supabase.storage
+        .from("employee-documents")
+        .createSignedUrl(filePath, 600);
+      
+      if (error) throw error;
+      window.open(data.signedUrl, "_blank");
+    } catch (err) {
+      console.error("Error getting signed URL:", err);
+      alert("Error al abrir el documento. El archivo puede no existir en el storage.");
+    }
   };
 
   const handleAddDocument = async () => {
@@ -303,7 +330,7 @@ export default function EmployeeDocuments({ employees, orgSlug }) {
                   </div>
                   <div className="flex gap-2">
                     {doc.file_url && (
-                      <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-800">Ver</a>
+                      <button onClick={() => handleViewDocument(doc.file_url)} className="text-xs text-blue-600 hover:text-blue-800">Ver</button>
                     )}
                     <button onClick={() => handleDeleteDocument(doc.id)} className="text-xs text-red-600 hover:text-red-800">Eliminar</button>
                   </div>

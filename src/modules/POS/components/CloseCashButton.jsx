@@ -26,12 +26,8 @@ export default function CloseCashButton() {
       return;
     }
 
-    const record = closeCashRegister({
-      countedAmount: counted,
-      notes,
-    });
+    closeCashRegister({ countedAmount: counted, notes });
 
-    // Mostrar resumen
     const diffText = difference === 0 
       ? "Sin diferencia" 
       : difference > 0 
@@ -58,54 +54,45 @@ export default function CloseCashButton() {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium"
+        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs"
       >
         Cerrar Caja
       </button>
 
-      {/* MODAL DE COTEJO */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            {/* Header */}
             <div className="bg-slate-800 text-white p-4 rounded-t-xl">
               <h2 className="text-lg font-bold">Cierre de Caja</h2>
               <p className="text-sm text-slate-300">Cotejo y arqueo</p>
             </div>
 
             <div className="p-4 space-y-4">
-              {/* Info de apertura */}
               <div className="bg-slate-50 rounded-lg p-3 text-sm">
                 <p className="text-slate-500">Apertura: {formatTime(openingTime)}</p>
                 <p className="text-slate-500">Movimientos: {movements.length}</p>
               </div>
 
-              {/* Resumen del sistema */}
               <div className="space-y-2">
                 <h3 className="font-semibold text-slate-700 text-sm">Resumen del Sistema</h3>
-                
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-sm text-slate-600">Monto de apertura</span>
                   <span className="text-sm font-medium">{formatCurrency(totals.openingAmount)}</span>
                 </div>
-                
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-sm text-green-600">+ Entradas (ventas)</span>
                   <span className="text-sm font-medium text-green-600">{formatCurrency(totals.totalEntradas)}</span>
                 </div>
-                
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-sm text-red-600">- Salidas (retiros)</span>
                   <span className="text-sm font-medium text-red-600">{formatCurrency(totals.totalSalidas)}</span>
                 </div>
-                
                 <div className="flex justify-between py-3 bg-blue-50 rounded-lg px-3">
                   <span className="font-bold text-blue-800">Total Esperado</span>
                   <span className="font-bold text-blue-800 text-lg">{formatCurrency(totals.expectedTotal)}</span>
                 </div>
               </div>
 
-              {/* Conteo fisico */}
               <div className="space-y-2">
                 <h3 className="font-semibold text-slate-700 text-sm">Conteo Fisico</h3>
                 <div className="relative">
@@ -122,47 +109,21 @@ export default function CloseCashButton() {
                 </div>
               </div>
 
-              {/* Diferencia */}
               {countedAmount && (
-                <div className={`p-4 rounded-lg ${
-                  difference === 0 
-                    ? "bg-green-50 border border-green-200" 
-                    : difference > 0 
-                      ? "bg-green-50 border border-green-200"
-                      : "bg-red-50 border border-red-200"
-                }`}>
+                <div className={`p-4 rounded-lg ${difference === 0 || difference > 0 ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
                   <div className="flex justify-between items-center">
-                    <span className={`font-semibold ${
-                      difference === 0 
-                        ? "text-green-700" 
-                        : difference > 0 
-                          ? "text-green-700"
-                          : "text-red-700"
-                    }`}>
-                      {difference === 0 
-                        ? "Sin diferencia" 
-                        : difference > 0 
-                          ? "SOBRANTE"
-                          : "FALTANTE"}
+                    <span className={`font-semibold ${difference >= 0 ? "text-green-700" : "text-red-700"}`}>
+                      {difference === 0 ? "Sin diferencia" : difference > 0 ? "SOBRANTE" : "FALTANTE"}
                     </span>
-                    <span className={`text-xl font-bold ${
-                      difference === 0 
-                        ? "text-green-700" 
-                        : difference > 0 
-                          ? "text-green-700"
-                          : "text-red-700"
-                    }`}>
+                    <span className={`text-xl font-bold ${difference >= 0 ? "text-green-700" : "text-red-700"}`}>
                       {difference === 0 ? "-" : formatCurrency(Math.abs(difference))}
                     </span>
                   </div>
                 </div>
               )}
 
-              {/* Notas */}
               <div className="space-y-2">
-                <label className="font-semibold text-slate-700 text-sm">
-                  Notas {difference !== 0 && "(explique la diferencia)"}
-                </label>
+                <label className="font-semibold text-slate-700 text-sm">Notas</label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -172,14 +133,9 @@ export default function CloseCashButton() {
                 />
               </div>
 
-              {/* Acciones */}
               <div className="flex gap-3 pt-2">
                 <button
-                  onClick={() => {
-                    setShowModal(false);
-                    setCountedAmount("");
-                    setNotes("");
-                  }}
+                  onClick={() => { setShowModal(false); setCountedAmount(""); setNotes(""); }}
                   className="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-medium"
                 >
                   Cancelar

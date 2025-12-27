@@ -12,6 +12,7 @@ export async function GET(req) {
     if (!org) return NextResponse.json({ error: "Organization not found" }, { status: 404 });
 
     const { searchParams } = new URL(req.url);
+    const date = searchParams.get("date");
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const branchId = searchParams.get("branchId");
@@ -25,8 +26,12 @@ export async function GET(req) {
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
-    if (startDate) query = query.gte("fecha", startDate);
-    if (endDate) query = query.lte("fecha", endDate);
+    if (date) {
+      query = query.eq("fecha", date);
+    } else {
+      if (startDate) query = query.gte("fecha", startDate);
+      if (endDate) query = query.lte("fecha", endDate);
+    }
     if (branchId) query = query.eq("branch_id", branchId);
 
     const { data: sales, error } = await query;
