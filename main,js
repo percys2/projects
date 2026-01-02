@@ -1,0 +1,16 @@
+const { app, BrowserWindow } = require("electron");
+
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+  });
+
+  // OPTION A: load online app
+  win.loadURL("https://your-app.vercel.app");
+
+  // OPTION B: load local build
+  // win.loadFile("index.html");
+}
+
+app.whenReady().then(createWindow);

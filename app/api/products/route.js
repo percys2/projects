@@ -45,6 +45,7 @@ export async function POST(req) {
       name: body.name,
       sku: body.sku,
       category: body.category,
+      subcategory: body.subcategory || null,
       unit_weight: body.unitWeight || body.unit_weight || null,
       min_stock: body.minStock || body.min_stock || 0,
       cost: body.cost || 0,
@@ -79,11 +80,11 @@ export async function PUT(req) {
       return NextResponse.json({ error: "Missing product ID" }, { status: 400 });
     }
 
-    // Cost, price are stored directly in products table
     const updateData = {};
     if (body.name !== undefined) updateData.name = body.name;
     if (body.sku !== undefined) updateData.sku = body.sku;
     if (body.category !== undefined) updateData.category = body.category;
+    if (body.subcategory !== undefined) updateData.subcategory = body.subcategory;
     if (body.unitWeight !== undefined || body.unit_weight !== undefined) {
       updateData.unit_weight = body.unitWeight || body.unit_weight;
     }

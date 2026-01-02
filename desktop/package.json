@@ -1,0 +1,61 @@
+{
+  "name": "agrocentro-erp-desktop",
+  "version": "1.0.0",
+  "description": "AgroCentro ERP - Aplicacion de Escritorio",
+  "main": "main.js",
+  "author": "AgroCentro",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "NODE_ENV=development electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "electron-updater": "^6.1.7",
+    "electron-store": "^8.1.0",
+    "escpos": "^3.0.0-alpha.6",
+    "escpos-usb": "^3.0.0-alpha.4",
+    "escpos-network": "^3.0.0-alpha.4"
+  },
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.agrocentro.erp",
+    "productName": "AgroCentro ERP",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.business",
+      "icon": "assets/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "percys2",
+      "repo": "projects"
+    }
+  }
+}

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import {
   LayoutDashboard,
   Boxes,
@@ -13,7 +14,6 @@ import {
   Users2,
   Settings,
   LogOut,
-  Store,
   Menu,
   X,
 } from "lucide-react";
@@ -23,42 +23,72 @@ const menuItems = [
   {
     section: "General",
     items: [
-      { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, module: "dashboard" },
     ],
   },
   {
     section: "Operaciones",
     items: [
-      { key: "inventory", label: "Inventario", icon: Boxes },
-      { key: "kardex", label: "Kardex", icon: ClipboardList },
-      { key: "pos", label: "Punto de Venta", icon: ShoppingCart },
-      { key: "sales", label: "Ventas", icon: Receipt },
+      { key: "inventory", label: "Inventario", icon: Boxes, module: "inventory" },
+      { key: "kardex", label: "Kardex", icon: ClipboardList, module: "kardex" },
+      { key: "pos", label: "Punto de Venta", icon: ShoppingCart, module: "pos" },
+      { key: "sales", label: "Ventas", icon: Receipt, module: "sales" },
     ],
   },
   {
     section: "Comercial",
     items: [
-      { key: "crm", label: "CRM Ventas", icon: TrendingUp },
+      { key: "crm", label: "CRM Ventas", icon: TrendingUp, module: "crm" },
     ],
   },
   {
     section: "Administracion",
     items: [
-      { key: "finance", label: "Finanzas", icon: Wallet },
-      { key: "hr", label: "RRHH", icon: Users2 },
-      { key: "settings", label: "Configuracion", icon: Settings },
+      { key: "finance", label: "Finanzas", icon: Wallet, module: "finance" },
+      { key: "hr", label: "RRHH", icon: Users2, module: "hr" },
+      { key: "settings", label: "Configuracion", icon: Settings, module: "settings" },
     ],
   },
 ];
+
+const ROLE_MODULES = {
+  admin: ["dashboard", "inventory", "kardex", "pos", "sales", "crm", "finance", "hr", "settings"],
+  manager: ["dashboard", "inventory", "kardex", "pos", "sales", "crm", "finance", "hr", "settings"],
+  accountant: ["dashboard", "inventory", "finance", "hr", "settings"],
+  cashier: ["dashboard", "pos", "sales"],
+  warehouse: ["dashboard", "inventory", "kardex"],
+  viewer: ["dashboard", "inventory", "sales"],
+};
 
 export default function AppLayout({ children, orgSlug }) {
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userRole, setUserRole] = useState("admin");
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    if (orgSlug) {
+      fetch("/api/auth/me", { headers: { "x-org-slug": orgSlug } })
+        .then(res => res.json())
+        .then(data => {
+          if (data.role) setUserRole(data.role);
+          if (data.user?.user_metadata?.full_name) setUserName(data.user.user_metadata.full_name);
+          else if (data.user?.email) setUserName(data.user.email.split("@")[0]);
+        })
+        .catch(() => setUserRole("admin"));
+    }
+  }, [orgSlug]);
 
   if (!orgSlug) return <main>{children}</main>;
 
   const activeKey = pathname.split("/")[2] || "dashboard";
+  const allowedModules = ROLE_MODULES[userRole] || ROLE_MODULES.admin;
+
+  const filteredMenuItems = menuItems.map(group => ({
+    ...group,
+    items: group.items.filter(item => !item.module || allowedModules.includes(item.module))
+  })).filter(group => group.items.length > 0);
 
   const goTo = (key) => {
     router.push(`/${orgSlug}/${key}`);
@@ -76,16 +106,14 @@ export default function AppLayout({ children, orgSlug }) {
 
   return (
     <div className="flex h-screen bg-slate-100">
-      {/* Mobile Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-slate-900 md:hidden">
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-black md:hidden">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-            <Store className="h-4 w-4 text-white" />
+          <div className="h-8 w-8 rounded-lg overflow-hidden">
+            <Image src="/assets/logo.png" alt="Logo" width={32} height={32} className="object-contain" />
           </div>
-          <span className="text-sm font-bold text-white">AgroCentro ERP</span>
+          <span className="text-sm font-bold text-white">{orgSlug}</span>
         </div>
         <div className="flex items-center gap-2">
-          {/* Notification Center for Mobile */}
           <div className="text-white">
             <NotificationCenter orgSlug={orgSlug} />
           </div>
@@ -98,7 +126,6 @@ export default function AppLayout({ children, orgSlug }) {
         </div>
       </div>
 
-      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
@@ -106,41 +133,33 @@ export default function AppLayout({ children, orgSlug }) {
         />
       )}
 
-      {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-950 to-slate-900 text-slate-100 flex flex-col border-r border-slate-800/50 shadow-xl
+        fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-black to-gray-900 text-gray-100 flex flex-col border-r border-gray-800/50 shadow-xl
         transform transition-transform duration-300 ease-in-out
         md:relative md:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        {/* Brand Header */}
-        <div className="px-4 py-5 border-b border-slate-800/50 overflow-visible">
+        <div className="px-4 py-5 border-b border-gray-800/50 overflow-visible">
           <div className="flex items-center justify-between overflow-visible">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <Store className="h-5 w-5 text-white" />
+              <div className="h-10 w-10 rounded-xl overflow-hidden bg-gray-800 flex items-center justify-center">
+                <Image src="/assets/logo.png" alt="Logo" width={40} height={40} className="object-contain" />
               </div>
               <div>
-                <h1 className="text-sm font-bold tracking-wide text-white">
-                  AgroCentro ERP
-                </h1>
-                <p className="text-[11px] text-slate-400">
-                  Gestion para agroservicios
-                </p>
+                <h1 className="text-sm font-bold tracking-wide text-white">{orgSlug}</h1>
+                <p className="text-[11px] text-gray-400">Gestion para agroservicios</p>
               </div>
             </div>
-            {/* Notification Center for Desktop */}
             <div className="hidden md:block">
               <NotificationCenter orgSlug={orgSlug} />
             </div>
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-          {menuItems.map((group) => (
+          {filteredMenuItems.map((group) => (
             <div key={group.section}>
-              <p className="px-3 mb-2 text-[10px] font-semibold tracking-[0.15em] uppercase text-slate-500">
+              <p className="px-3 mb-2 text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-500">
                 {group.section}
               </p>
               <div className="space-y-1">
@@ -155,32 +174,25 @@ export default function AppLayout({ children, orgSlug }) {
                         w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
                         transition-all duration-200 ease-out group relative
                         ${isActive
-                          ? "bg-gradient-to-r from-emerald-500/20 to-emerald-500/5 text-emerald-300 shadow-sm"
-                          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                          ? "bg-gradient-to-r from-gray-700/50 to-gray-700/20 text-white shadow-sm"
+                          : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
                         }
                       `}
                     >
                       {isActive && (
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-400 rounded-r-full shadow-lg shadow-emerald-400/50" />
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full shadow-lg" />
                       )}
-                      <span
-                        className={`
-                          inline-flex h-8 w-8 items-center justify-center rounded-lg
-                          transition-all duration-200
-                          ${isActive
-                            ? "bg-emerald-500/20 text-emerald-300 shadow-inner"
-                            : "bg-slate-800/50 text-slate-500 group-hover:bg-slate-700/50 group-hover:text-slate-300"
-                          }
-                        `}
-                      >
+                      <span className={`
+                        inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200
+                        ${isActive
+                          ? "bg-gray-700 text-white shadow-inner"
+                          : "bg-gray-800/50 text-gray-500 group-hover:bg-gray-700/50 group-hover:text-gray-300"
+                        }
+                      `}>
                         <Icon className="h-4 w-4" />
                       </span>
-                      <span className="flex-1 text-left truncate">
-                        {item.label}
-                      </span>
-                      {isActive && (
-                        <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50" />
-                      )}
+                      <span className="flex-1 text-left truncate">{item.label}</span>
+                      {isActive && <span className="h-2 w-2 rounded-full bg-white shadow-lg" />}
                     </button>
                   );
                 })}
@@ -189,19 +201,16 @@ export default function AppLayout({ children, orgSlug }) {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="px-3 py-4 border-t border-slate-800/50 bg-slate-950/50">
-          <div className="flex items-center gap-3 px-3 py-2 mb-3 rounded-lg bg-slate-800/30">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-xs font-bold text-slate-300 uppercase shadow-inner">
-              {orgSlug?.slice(0, 2) || "AC"}
+        <div className="px-3 py-4 border-t border-gray-800/50 bg-black/50">
+          <div className="flex items-center gap-3 px-3 py-2 mb-3 rounded-lg bg-gray-800/30">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center text-xs font-bold text-gray-300 uppercase shadow-inner">
+              {userName?.slice(0, 2) || orgSlug?.slice(0, 2) || "AC"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">
-                Sucursal
+              <p className="text-[10px] text-gray-500 uppercase tracking-wider">
+                {userRole === "cashier" ? "Cajero" : userRole === "admin" ? "Admin" : userRole}
               </p>
-              <p className="text-sm font-medium text-slate-200 truncate">
-                {orgSlug}
-              </p>
+              <p className="text-sm font-medium text-gray-200 truncate">{userName || orgSlug}</p>
             </div>
           </div>
           

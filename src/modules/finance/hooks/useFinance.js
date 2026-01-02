@@ -448,8 +448,10 @@ export function useFinance(orgSlug) {
         },
         body: JSON.stringify(data),
       });
-
-      if (!res.ok) throw new Error("Error al guardar proveedor");
+      if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || "Error al guardar proveedor");
+    }
 
       await loadData();
       closeSupplierModal();

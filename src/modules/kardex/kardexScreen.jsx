@@ -33,7 +33,6 @@ export default function KardexScreen({ orgSlug }) {
   const [exitOpen, setExitOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
 
-  // Batch modals
   const [batchEntryOpen, setBatchEntryOpen] = useState(false);
   const [batchExitOpen, setBatchExitOpen] = useState(false);
   const [batchAjusteOpen, setBatchAjusteOpen] = useState(false);
@@ -286,26 +285,6 @@ export default function KardexScreen({ orgSlug }) {
         headers: {
           "Content-Type": "application/json",
           "x-org-slug": orgSlug,
-          "x-user-name": userName,
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok || !result.success) {
-        throw new Error(result.error || "Error registrando movimiento");
-      }
-
-   const handleBatchSubmit = async (data) => {
-    try {
-      const userName = localStorage.getItem("userName") || "Usuario";
-      
-      const res = await fetch("/api/inventory/movements/batch", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-org-slug": orgSlug,
         },
         body: JSON.stringify({ ...data, userName }),
       });
@@ -337,7 +316,6 @@ export default function KardexScreen({ orgSlug }) {
   return (
     <div className="space-y-6">
 
-      {/* BOTONES - Movimientos individuales */}
       <div className="flex flex-wrap items-center gap-3 p-4 bg-white border rounded-xl shadow-sm">
         <span className="text-sm font-semibold text-slate-700">
           Movimiento Individual:
@@ -407,7 +385,6 @@ export default function KardexScreen({ orgSlug }) {
         </button>
       </div>
 
-      {/* SEARCH BAR */}
       <div className="p-4">
         <input
           type="text"
@@ -421,7 +398,6 @@ export default function KardexScreen({ orgSlug }) {
         />
       </div>
 
-      {/* FILTROS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-white border rounded-xl shadow-sm">
 
         <div>
@@ -514,7 +490,6 @@ export default function KardexScreen({ orgSlug }) {
         </div>
       </div>
 
-      {/* TABLA */}
       {!loading && (
         <KardexTable
           data={movements}
@@ -537,7 +512,6 @@ export default function KardexScreen({ orgSlug }) {
 
       {error && <p className="text-center text-red-600 text-sm">{error}</p>}
 
-      {/* MODALES */}
       <InventoryEntryModal
         isOpen={entryOpen}
         onClose={() => setEntryOpen(false)}
@@ -560,7 +534,6 @@ export default function KardexScreen({ orgSlug }) {
         branches={branches}
       />
 
-      {/* MODALES MASIVOS */}
       <BatchEntryModal
         isOpen={batchEntryOpen}
         onClose={() => setBatchEntryOpen(false)}

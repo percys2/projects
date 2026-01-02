@@ -8,11 +8,14 @@ export default function InventoryFilters({
   setSearch,
   category,
   setCategory,
+  subcategory,
+  setSubcategory,
   branch,
   setBranch,
   lowStockOnly,
   setLowStockOnly,
   categories = [],
+  subcategories = [],
   branches = [],
 }) {
   return (
@@ -44,10 +47,10 @@ export default function InventoryFilters({
         </div>
       </div>
 
-      {/* CATEGORY & BRANCH - Side by side on mobile */}
-      <div className="flex gap-3 w-full sm:w-auto">
+      {/* CATEGORY & SUBCATEGORY & BRANCH */}
+      <div className="flex flex-wrap gap-3 w-full sm:w-auto">
         {/* CATEGORY */}
-        <div className="flex-1 sm:w-[140px]">
+        <div className="flex-1 sm:w-[130px] min-w-[100px]">
           <label className="text-xs font-semibold text-slate-600">
             Categoria
           </label>
@@ -72,8 +75,34 @@ export default function InventoryFilters({
           </select>
         </div>
 
+        {/* SUBCATEGORY (Animal) */}
+        <div className="flex-1 sm:w-[150px] min-w-[120px]">
+          <label className="text-xs font-semibold text-slate-600">
+            Tipo Animal
+          </label>
+          <select
+            value={subcategory}
+            onChange={(e) => setSubcategory(e.target.value)}
+            className="
+              w-full
+              border border-slate-300
+              rounded-xl
+              text-sm
+              py-2.5 px-3
+              bg-white
+              focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              min-h-[44px]
+            "
+          >
+            <option value="TODOS">Todos</option>
+            {subcategories.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+
         {/* BRANCH */}
-        <div className="flex-1 sm:w-[140px]">
+        <div className="flex-1 sm:w-[130px] min-w-[100px]">
           <label className="text-xs font-semibold text-slate-600">
             Bodega
           </label>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
 import { getOrgContext } from "@/src/lib/api/getOrgContext";
-import { postAPBillToGL } from "@/src/lib/services/journalService";
+import { postAPBillToGL, postPaymentToGL } from "@/src/lib/services/journalService";
 import { deleteSchema, validateRequest } from "@/src/lib/validation/schemas";
 import { rateLimit } from "@/src/lib/middleware/rateLimit";
 import { logAuditEvent, AuditActions } from "@/src/lib/audit/auditLog";
@@ -74,6 +74,9 @@ export async function POST(req) {
 
     const total = parseFloat(body.total) || 0;
 
+    // Si is_paid es true o no se especifica (por defecto pagado), marcar como pagado
+    const isPaid = body.is_paid !== false;
+    
     const billData = {
       org_id: orgId,
       supplier_id: body.supplier_id || null,
@@ -81,8 +84,8 @@ export async function POST(req) {
       due_date: body.due_date || null,
       reference: body.reference || null,
       total,
-      amount_paid: 0,
-      status: "open",
+      amount_paid: isPaid ? total : 0,
+      status: isPaid ? "paid" : "open",
       notes: body.notes || null,
     };
 
@@ -121,13 +124,47 @@ export async function POST(req) {
       console.error("GL posting error (non-blocking):", glError);
     }
 
+    // Si el gasto está pagado, crear automáticamente el registro de pago
+    if (isPaid && total > 0) {
+      try {
+        const paymentData = {
+          org_id: orgId,
+          date: body.date,
+          supplier_id: body.supplier_id || null,
+          bill_id: bill.id,
+          amount: total,
+          method: body.payment_method || "efectivo",
+          direction: "out",
+          notes: `Pago automático - ${bill.reference || bill.notes || "Gasto"}`,
+        };
+
+        const { data: payment, error: paymentError } = await supabase
+          .from("payments")
+          .insert(paymentData)
+          .select()
+          .single();
+
+        if (paymentError) {
+          console.error("Auto-payment creation error:", paymentError);
+        } else {
+          try {
+            await postPaymentToGL(orgId, payment);
+          } catch (glError) {
+            console.error("Payment GL posting error (non-blocking):", glError);
+          }
+        }
+      } catch (paymentErr) {
+        console.error("Auto-payment error (non-blocking):", paymentErr);
+      }
+    }
+
     await logAuditEvent({
       userId,
       orgId,
       action: AuditActions.AP_BILL_CREATE,
       resourceType: "ap_bill",
       resourceId: bill.id,
-      metadata: { reference: bill.reference, total: bill.total },
+      metadata: { reference: bill.reference, total: bill.total, isPaid },
     });
 
     return NextResponse.json({ bill }, { status: 201 });
@@ -249,11 +286,20 @@ export async function DELETE(req) {
 
     const supabase = supabaseAdmin;
 
+    // Primero eliminar los pagos asociados a este gasto
+    await supabase
+      .from("payments")
+      .delete()
+      .eq("bill_id", validation.data.id)
+      .eq("org_id", orgId);
+
+    // Luego eliminar los items del gasto
     await supabase
       .from("ap_bill_items")
       .delete()
       .eq("bill_id", validation.data.id);
 
+    // Finalmente eliminar el gasto
     const { error } = await supabase
       .from("ap_bills")
       .delete()

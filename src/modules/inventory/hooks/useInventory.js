@@ -10,6 +10,22 @@ export const DEFAULT_CATEGORIES = [
   "Otros",
 ];
 
+export const SUBCATEGORY_ORDER = [
+  "BROILER",
+  "CABALLO",
+  "CRIOLLO",
+  "PERRO",
+  "PERRO DOGUI",
+  "PERRO DOGUI CACHO",
+  "PERRO GATO",
+  "PERRO PET",
+  "PONEDORAS",
+  "PORCICULTURA",
+  "FERRETERIA",
+  "VETERINARIA",
+  "PET ACCESORIES",
+];
+
 export function useInventory(orgSlug) {
   const [inventory, setInventory] = useState([]);
   const [branches, setBranches] = useState([]);
@@ -17,6 +33,7 @@ export function useInventory(orgSlug) {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("TODOS");
+  const [subcategory, setSubcategory] = useState("TODOS");
   const [branch, setBranch] = useState("TODAS");
   const [lowStockOnly, setLowStockOnly] = useState(false);
 
@@ -42,6 +59,7 @@ export function useInventory(orgSlug) {
           name: item.name,
           sku: item.sku ?? item.product_id,
           category: item.category,
+          subcategory: item.subcategory || null,
           stock: Number(item.stock ?? 0),
           minStock: item.min_stock ?? 0,
           cost: item.cost ?? 0,
@@ -71,8 +89,9 @@ export function useInventory(orgSlug) {
   const filteredProducts = useMemo(() => {
     const term = search.toLowerCase();
 
-    return inventory.filter((p) => {
+    let filtered = inventory.filter((p) => {
       const matchesCategory = category === "TODOS" || p.category === category;
+      const matchesSubcategory = subcategory === "TODOS" || p.subcategory === subcategory;
       const matchesBranch = branch === "TODAS" || p.branch === branch;
 
       const matchesSearch =
@@ -85,12 +104,32 @@ export function useInventory(orgSlug) {
 
       return (
         matchesCategory &&
+        matchesSubcategory &&
         matchesBranch &&
         matchesSearch &&
         matchesLowStock
       );
     });
-  }, [inventory, search, category, branch, lowStockOnly]);
+
+    // Ordenar por subcategory según SUBCATEGORY_ORDER
+    filtered.sort((a, b) => {
+      const idxA = SUBCATEGORY_ORDER.indexOf(a.subcategory);
+      const idxB = SUBCATEGORY_ORDER.indexOf(b.subcategory);
+      
+      // Si ambos tienen subcategory en el orden
+      if (idxA !== -1 && idxB !== -1) {
+        if (idxA !== idxB) return idxA - idxB;
+      }
+      // Si solo uno tiene subcategory
+      if (idxA !== -1 && idxB === -1) return -1;
+      if (idxA === -1 && idxB !== -1) return 1;
+      
+      // Si ambos no tienen subcategory o tienen la misma, ordenar por nombre
+      return (a.name || "").localeCompare(b.name || "");
+    });
+
+    return filtered;
+  }, [inventory, search, category, subcategory, branch, lowStockOnly]);
 
   const categories = useMemo(() => {
     const cats = inventory
@@ -101,25 +140,43 @@ export function useInventory(orgSlug) {
     return uniqueCats.length > 0 ? uniqueCats : DEFAULT_CATEGORIES;
   }, [inventory]);
 
-  const stats = useMemo(() => {
-    const totalProducts = inventory.length;
+  const subcategories = useMemo(() => {
+    const subs = inventory
+      .map((p) => p.subcategory)
+      .filter((s) => s && s.trim())
+      .map((s) => s.trim());
+    const uniqueSubs = [...new Set(subs)];
+    return uniqueSubs.sort((a, b) => {
+      const idxA = SUBCATEGORY_ORDER.indexOf(a);
+      const idxB = SUBCATEGORY_ORDER.indexOf(b);
+      if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
+  }, [inventory]);
 
-    const totalUnits = inventory.reduce(
+  const stats = useMemo(() => {
+    const dataSource = filteredProducts;
+    
+    const totalProducts = dataSource.length;
+
+    const totalUnits = dataSource.reduce(
       (sum, p) => sum + getStock(p),
       0
     );
 
-    const inventoryValue = inventory.reduce(
+    const inventoryValue = dataSource.reduce(
       (sum, p) => sum + getStock(p) * (p.cost ?? 0),
       0
     );
 
-    const potentialRevenue = inventory.reduce(
+    const potentialRevenue = dataSource.reduce(
       (sum, p) => sum + getStock(p) * (p.price ?? 0),
       0
     );
 
-    const lowStockCount = inventory.filter(
+    const lowStockCount = dataSource.filter(
       (p) => getStock(p) <= Number(p.minStock ?? 0)
     ).length;
 
@@ -130,7 +187,7 @@ export function useInventory(orgSlug) {
       potentialRevenue,
       lowStockCount,
     };
-  }, [inventory]);
+  }, [filteredProducts]);
 
   function openNewProduct() {
     setEditingProduct(null);
@@ -162,6 +219,7 @@ export function useInventory(orgSlug) {
           name: data.name,
           sku: data.sku,
           category: data.category,
+          subcategory: data.subcategory || null,
           unitWeight: data.unitWeight,
           minStock: data.minStock,
           cost: data.cost,
@@ -256,11 +314,14 @@ export function useInventory(orgSlug) {
     stats,
     branches,
     categories,
+    subcategories,
 
     search,
     setSearch,
     category,
     setCategory,
+    subcategory,
+    setSubcategory,
     branch,
     setBranch,
     lowStockOnly,

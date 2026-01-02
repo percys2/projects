@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useSales } from "./hooks/useSales";
 import {
   SalesKpiCards,
@@ -16,8 +16,10 @@ import {
   exportSalesToCsv,
   printSaleInvoice,
 } from "./utils/exports";
+import CashClosingHistory from "../POS/components/CashClosingHistory";
 
 export default function SalesScreen({ orgSlug }) {
+  const [showCashHistory, setShowCashHistory] = useState(false);
   const {
     filteredSales,
     totals,
@@ -80,11 +82,22 @@ export default function SalesScreen({ orgSlug }) {
           <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Ventas</h1>
           <p className="text-xs sm:text-sm text-slate-500">Historial de ventas del POS</p>
         </div>
-        <SalesExportButtons
-          onExportCsv={handleExportCsv}
-          onExportExcel={handleExportExcel}
-          onExportPdf={handleExportPdf}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setShowCashHistory(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            Cierres de Caja
+          </button>
+          <SalesExportButtons
+            onExportCsv={handleExportCsv}
+            onExportExcel={handleExportExcel}
+            onExportPdf={handleExportPdf}
+          />
+        </div>
       </div>
 
       <SalesKpiCards totals={totals} transactionCount={filteredSales.length} />
@@ -121,6 +134,13 @@ export default function SalesScreen({ orgSlug }) {
         onPrevPage={prevPage}
         onNextPage={nextPage}
       />
+
+      {showCashHistory && (
+        <CashClosingHistory
+          orgSlug={orgSlug}
+          onClose={() => setShowCashHistory(false)}
+        />
+      )}
     </div>
   );
 }

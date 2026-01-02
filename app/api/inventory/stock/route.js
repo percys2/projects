@@ -16,6 +16,11 @@ export async function GET(req) {
       .eq("slug", orgSlug)
       .single();
 
+    if (!org) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
+
+    // Get stock from current_stock view
     const { data: stock, error } = await supabase
       .from("current_stock")
       .select("*")
@@ -24,19 +29,37 @@ export async function GET(req) {
 
     if (error) throw error;
 
-    // Filter out inactive products (active = false)
-    // The current_stock view may include an 'active' column from products table
-    const filteredStock = (stock || []).filter(item => item.active !== false);
+    // Get products with subcategory
+    const { data: products } = await supabase
+      .from("products")
+      .select("id, subcategory")
+      .eq("org_id", org.id);
 
-    // get branches
+    // Create a map of product_id -> subcategory
+    const subcategoryMap = {};
+    if (products) {
+      products.forEach(p => {
+        subcategoryMap[p.id] = p.subcategory;
+      });
+    }
+
+    // Merge subcategory into stock items
+    const enrichedStock = (stock || [])
+      .filter(item => item.active !== false)
+      .map(item => ({
+        ...item,
+        subcategory: subcategoryMap[item.product_id] || null,
+      }));
+
+    // Get branches
     const { data: branches } = await supabase
       .from("branches")
       .select("*")
       .eq("org_id", org.id);
 
-    return NextResponse.json({ stock: filteredStock, branches });
+    return NextResponse.json({ stock: enrichedStock, branches });
 
   } catch (err) {
-    return NextResponse.json({ error: err.message });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

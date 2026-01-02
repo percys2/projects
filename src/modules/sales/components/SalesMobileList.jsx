@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { formatCurrency, formatDate } from "../utils/formatters";
+import { formatCurrency, formatDateTime } from "../utils/formatters";
 import { getClientName, getProductNames, getItemsCount } from "../utils/salePresenters";
 
 export default function SalesMobileList({ sales, loading, error, onPrint, onCancel, onDelete }) {
@@ -23,7 +23,7 @@ export default function SalesMobileList({ sales, loading, error, onPrint, onCanc
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm">{sale.factura || sale.id.slice(0, 8)}</p>
               <p className="text-xs text-slate-500 truncate">{getClientName(sale)}</p>
-              <p className="text-xs text-slate-400">{formatDate(sale.fecha)}</p>
+              <p className="text-xs text-slate-400">{formatDateTime(sale.fecha || sale.created_at)} {sale.user_name ? `- ${sale.user_name}` : ""}</p>
             </div>
             <div className="text-right">
               <p className="font-bold text-sm text-emerald-600">{formatCurrency(sale.total)}</p>

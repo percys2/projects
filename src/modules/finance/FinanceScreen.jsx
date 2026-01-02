@@ -316,7 +316,7 @@ export default function FinanceScreen({ orgSlug }) {
               {/* Cash Flow Chart */}
               <div className="bg-slate-50 rounded-lg p-4 border">
                 <h3 className="font-medium text-slate-700 mb-4">Flujo de Caja (Últimos 6 meses)</h3>
-                <CashFlowChart payments={finance.payments} expenses={finance.expenses} />
+               <CashFlowChart payments={finance.payments} />
               </div>
 
               <h3 className="font-medium text-slate-700">Movimientos Recientes</h3>

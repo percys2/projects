@@ -27,12 +27,12 @@ export const createSaleSchema = z.object({
   })).min(1, 'Debe incluir al menos un producto'),
 });
 
-// Product Schema
 export const productSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
   description: z.string().optional(),
   sku: z.string().optional(),
   category: z.string().optional(),
+  subcategory: z.string().optional().nullable(),
   price: z.number().positive('El precio debe ser mayor a 0'),
   cost: z.number().nonnegative('El costo no puede ser negativo').optional(),
 });
@@ -112,15 +112,14 @@ export const employeeSchema = z.object({
 export const employeeUpdateSchema = employeeSchema.extend({
   id: z.string().uuid('ID de empleado inválido'),
 });
-
 // Supplier Schema
 export const supplierSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
-  contact_name: z.string().optional(),
-  email: z.string().email('Email inválido').optional(),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  tax_id: z.string().optional(),
+  contact_name: optionalString,
+  email: optionalEmail,
+  phone: optionalString,
+  address: optionalString,
+  tax_id: optionalString,
 });
 
 // AP Bill Schema
@@ -133,14 +132,25 @@ export const apBillSchema = z.object({
   description: z.string().optional(),
 });
 
+// Helper para UUID opcional que acepta strings vacios
+const optionalUuid = z.preprocess(
+  (val) => (val === "" || val === undefined || val === null ? undefined : val),
+  z.string().uuid('ID inválido').optional().nullable()
+);
+
 // Payment Schema
 export const paymentSchema = z.object({
-  client_id: z.string().uuid('ID de cliente inválido').optional(),
-  supplier_id: z.string().uuid('ID de proveedor inválido').optional(),
-  amount: z.number().positive('El monto debe ser mayor a 0'),
-  payment_method: z.enum(['cash', 'card', 'transfer', 'check']).default('cash'),
-  reference: z.string().optional(),
-  notes: z.string().optional(),
+  date: optionalString,
+  client_id: optionalUuid,
+  supplier_id: optionalUuid,
+  sale_id: optionalUuid,
+  bill_id: optionalUuid,
+  amount: z.coerce.number().positive('El monto debe ser mayor a 0'),
+  method: optionalString,
+  direction: optionalString,
+  account_id: optionalUuid,
+  reference: optionalString,
+  notes: optionalString,
 });
 
 // Asset Schema

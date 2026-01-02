@@ -188,11 +188,14 @@ export default function InventoryScreen({ orgSlug }) {
             setSearch={inv.setSearch}
             category={inv.category}
             setCategory={inv.setCategory}
+            subcategory={inv.subcategory}
+            setSubcategory={inv.setSubcategory}
             branch={inv.branch}
             setBranch={inv.setBranch}
             lowStockOnly={inv.lowStockOnly}
             setLowStockOnly={inv.setLowStockOnly}
             categories={inv.categories}
+            subcategories={inv.subcategories}
             branches={inv.branches}
           />
         </div>

@@ -12,48 +12,83 @@ import {
   CartesianGrid,
 } from "recharts";
 
-export default function CashFlowChart({ payments, expenses }) {
+// Helper function to parse dates in various formats (dd/mm/yyyy, yyyy-mm-dd, etc.)
+function parseDateFlexible(value) {
+  if (!value) return null;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  
+  if (typeof value === "string") {
+    // Try ISO format first (yyyy-mm-dd)
+    const iso = new Date(value);
+    if (!Number.isNaN(iso.getTime())) return iso;
+    
+    // Try dd/mm/yyyy or dd-mm-yyyy format
+    const match = value.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+    if (match) {
+      const day = Number(match[1]);
+      const month = Number(match[2]);
+      const year = Number(match[3]);
+      return new Date(year, month - 1, day);
+    }
+  }
+  return null;
+}
+
+export default function CashFlowChart({ payments, sales = [] }) {
   const chartData = useMemo(() => {
     const monthlyData = {};
     
-    // Process payments (inflows/outflows)
+    // Process sales to calculate gross profit (ventas - costo de venta)
+    sales.forEach((s) => {
+      if (s.status === "canceled" || s.status === "refunded") return;
+      
+      const date = parseDateFlexible(s.fecha);
+      if (!date) return; // Skip if date cannot be parsed
+      
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = { month: monthKey, ingresos: 0, gastos: 0 };
+      }
+      
+      // Add sale total as income
+      const saleTotal = parseFloat(s.total) || 0;
+      monthlyData[monthKey].ingresos += saleTotal;
+      
+      // Subtract cost of goods sold (COGS)
+      if (s.sales_items && Array.isArray(s.sales_items)) {
+        s.sales_items.forEach((item) => {
+          const itemCost = (parseFloat(item.cost) || 0) * (parseInt(item.quantity) || 0);
+          monthlyData[monthKey].ingresos -= itemCost;
+        });
+      }
+    });
+
+    // Process payments for expenses (direction="out")
     payments.forEach((p) => {
-      const date = new Date(p.date);
+      if (p.direction !== "out") return;
+      
+      const date = parseDateFlexible(p.date);
+      if (!date) return; // Skip if date cannot be parsed
+      
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
       
       if (!monthlyData[monthKey]) {
         monthlyData[monthKey] = { month: monthKey, ingresos: 0, gastos: 0 };
       }
       
-      if (p.direction === "in") {
-        monthlyData[monthKey].ingresos += p.amount || 0;
-      } else {
-        monthlyData[monthKey].gastos += p.amount || 0;
-      }
+      monthlyData[monthKey].gastos += p.amount || 0;
     });
 
-    // Process expenses
-    expenses.forEach((e) => {
-      const date = new Date(e.date);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      
-      if (!monthlyData[monthKey]) {
-        monthlyData[monthKey] = { month: monthKey, ingresos: 0, gastos: 0 };
-      }
-      
-      monthlyData[monthKey].gastos += e.total || 0;
-    });
-
-    // Sort by month and get last 6 months
     return Object.values(monthlyData)
       .sort((a, b) => a.month.localeCompare(b.month))
       .slice(-6)
       .map((item) => ({
         ...item,
         monthLabel: formatMonth(item.month),
-        flujoNeto: item.ingresos - item.gastos,
+        utilidadNeta: item.ingresos - item.gastos,
       }));
-  }, [payments, expenses]);
+  }, [payments, sales]);
 
   function formatMonth(monthKey) {
     const [year, month] = monthKey.split("-");
@@ -84,7 +119,7 @@ export default function CashFlowChart({ payments, expenses }) {
             labelStyle={{ fontWeight: "bold" }}
           />
           <Legend />
-          <Bar dataKey="ingresos" name="Ingresos" fill="#10b981" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="ingresos" name="Ingresos (Utilidad Bruta)" fill="#10b981" radius={[4, 4, 0, 0]} />
           <Bar dataKey="gastos" name="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

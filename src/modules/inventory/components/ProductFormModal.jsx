@@ -2,6 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 
+const DEFAULT_SUBCATEGORIES = [
+  "BROILER",
+  "CABALLO",
+  "CRIOLLO",
+  "PERRO",
+  "PERRO DOGUI",
+  "PERRO DOGUI CACHO",
+  "PERRO GATO",
+  "PERRO PET",
+  "PONEDORAS",
+  "PORCICULTURA",
+  "FERRETERIA",
+  "VETERINARIA",
+  "PET ACCESORIES",
+];
+
 export default function ProductFormModal({
   isOpen,
   onClose,
@@ -16,6 +32,7 @@ export default function ProductFormModal({
     name: "",
     sku: "",
     category: "",
+    subcategory: "",
     branch: "",
     branchId: "",
     unitWeight: 0,
@@ -36,6 +53,7 @@ export default function ProductFormModal({
       name: product?.name ?? "",
       sku: product?.sku ?? "",
       category: product?.category ?? categories[0] ?? "",
+      subcategory: product?.subcategory ?? "",
       branch: product?.branch ?? defaultBranch?.name ?? "",
       branchId: product?.branchId ?? defaultBranch?.id ?? "",
       unitWeight: product?.unitWeight ?? 0,
@@ -68,8 +86,7 @@ export default function ProductFormModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-6">
-        {/* HEADER */}
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-slate-100 p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-base font-semibold text-slate-800">
             {product ? "Editar producto" : "Nuevo producto"}
@@ -82,7 +99,6 @@ export default function ProductFormModal({
           </button>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <Field label="Nombre">
             <input
@@ -114,7 +130,7 @@ export default function ProductFormModal({
             />
           </Field>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <Field label="Categoría">
               <select
                 name="category"
@@ -128,6 +144,22 @@ export default function ProductFormModal({
               </select>
             </Field>
 
+            <Field label="Tipo Animal">
+              <select
+                name="subcategory"
+                value={form.subcategory}
+                onChange={handleChange}
+                className="input-soft"
+              >
+                <option value="">Sin subcategoría</option>
+                {DEFAULT_SUBCATEGORIES.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
             <Field label="Bodega">
               <select
                 name="branch"
