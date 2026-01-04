@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { toast } from "@/src/lib/notifications/toast";
+import { useConfirm } from "@/src/hooks/useConfirm";
 
 export function useSales(orgSlug) {
   const [sales, setSales] = useState([]);
@@ -12,6 +14,7 @@ export function useSales(orgSlug) {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const [branches, setBranches] = useState([]);
   
@@ -66,11 +69,16 @@ export function useSales(orgSlug) {
   }, [orgSlug, filters.dateStart, filters.dateEnd, filters.selectedBranch, page, limit]);
 
   const cancelSale = useCallback(async (saleId, restoreInventory = false) => {
-    const message = restoreInventory 
-      ? "Estas seguro de ANULAR esta venta? El inventario sera restaurado."
-      : "Estas seguro de ELIMINAR esta venta permanentemente? Esta accion no se puede deshacer y NO restaurara el inventario.";
+    const confirmed = await confirm({
+      title: restoreInventory ? "Anular venta" : "Eliminar venta",
+      message: restoreInventory 
+        ? "¿Está seguro de ANULAR esta venta? El inventario será restaurado."
+        : "¿Está seguro de ELIMINAR esta venta permanentemente? Esta acción no se puede deshacer y NO restaurará el inventario.",
+      type: "danger",
+      confirmText: restoreInventory ? "Anular" : "Eliminar",
+    });
     
-    if (!confirm(message)) return false;
+    if (!confirmed) return false;
     
     try {
       const res = await fetch("/api/sales", {
@@ -81,19 +89,19 @@ export function useSales(orgSlug) {
       
       if (res.ok) {
         const data = await res.json();
-        alert(data.message || "Operacion exitosa");
+        toast.success(data.message || "Operación exitosa");
         loadSales();
         return true;
       } else {
         const data = await res.json();
-        alert("Error: " + (data.error || "No se pudo completar la operacion"));
+        toast.error(data.error || "No se pudo completar la operación");
         return false;
       }
     } catch (err) {
-      alert("Error: " + err.message);
+      toast.error(err.message || "Error al procesar la solicitud");
       return false;
     }
-  }, [orgSlug, loadSales]);
+  }, [orgSlug, loadSales, confirm]);
 
   const filteredSales = useMemo(() => {
     if (!filters.search) return sales;
@@ -157,5 +165,6 @@ export function useSales(orgSlug) {
     prevPage,
     cancelSale,
     reload: loadSales,
+    ConfirmDialog,
   };
 }

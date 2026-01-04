@@ -5,7 +5,6 @@ import { TrendingUp, TrendingDown, DollarSign, AlertTriangle, Wallet, Receipt } 
 
 export default function FinanceKpiHeader({ stats, receivables, payables, cashAccounts }) {
   const kpis = useMemo(() => {
-    // Calculate overdue amounts
     const today = new Date();
     
     const overdueReceivables = receivables
@@ -16,10 +15,12 @@ export default function FinanceKpiHeader({ stats, receivables, payables, cashAcc
       .filter((p) => p.due_date && new Date(p.due_date) < today && p.status !== "paid")
       .reduce((sum, p) => sum + ((p.total || 0) - (p.amount_paid || 0)), 0);
 
-    // Cash balance from cash accounts (if available)
     const cashBalance = cashAccounts?.reduce((sum, a) => sum + (a.balance || 0), 0) || 0;
 
     return {
+      monthlyIncome: stats.monthlyIncome || 0,
+      monthlyGrossProfit: stats.monthlyGrossProfit || 0,
+      monthlyCOGS: stats.monthlyCOGS || 0,
       cashIn: stats.cashIn || 0,
       cashOut: stats.cashOut || 0,
       netCashFlow: stats.netCashFlow || 0,
@@ -35,7 +36,7 @@ export default function FinanceKpiHeader({ stats, receivables, payables, cashAcc
   const cards = [
     {
       title: "Ingresos del Mes",
-      value: kpis.cashIn,
+      value: kpis.monthlyIncome,
       icon: TrendingUp,
       color: "text-emerald-600",
       bg: "bg-emerald-50",

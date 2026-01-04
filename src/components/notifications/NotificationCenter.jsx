@@ -3,19 +3,53 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Bell, X, AlertTriangle, Package, Clock, DollarSign, CheckCircle } from "lucide-react";
 
+const STORAGE_KEY = "notifications_read_state";
+
+const getReadState = () => {
+  if (typeof window === "undefined") return {};
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return {};
+    const parsed = JSON.parse(stored);
+    const now = Date.now();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    const filtered = {};
+    Object.entries(parsed).forEach(([key, timestamp]) => {
+      if (now - timestamp < oneDayMs) {
+        filtered[key] = timestamp;
+      }
+    });
+    return filtered;
+  } catch {
+    return {};
+  }
+};
+
+const saveReadState = (state) => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {}
+};
+
 export default function NotificationCenter({ orgSlug }) {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [readState, setReadState] = useState({});
+
+  useEffect(() => {
+    setReadState(getReadState());
+  }, []);
 
   const loadNotifications = useCallback(async () => {
     if (!orgSlug) return;
     setLoading(true);
     try {
       const headers = { "x-org-slug": orgSlug };
+      const currentReadState = getReadState();
       
-      // Fetch dashboard data for alerts
       const [dashRes, receivablesRes, payablesRes] = await Promise.all([
         fetch(`/api/dashboard?range=30`, { headers }),
         fetch("/api/finance/reports/receivables", { headers }),
@@ -31,7 +65,6 @@ export default function NotificationCenter({ orgSlug }) {
       const newNotifications = [];
       const today = new Date();
 
-      // Low stock alerts
       const lowStock = dashData.lowStock || [];
       if (lowStock.length > 0) {
         newNotifications.push({
@@ -43,11 +76,10 @@ export default function NotificationCenter({ orgSlug }) {
           details: lowStock.slice(0, 5).map(item => item.products?.name || "Producto").join(", "),
           link: `/${orgSlug}/inventory`,
           timestamp: new Date(),
-          read: false,
+          read: !!currentReadState["low-stock"],
         });
       }
 
-      // Overdue receivables
       const overdueReceivables = (receivablesData.receivables || []).filter(r => {
         if (!r.due_date || r.status === "paid") return false;
         return new Date(r.due_date) < today;
@@ -66,11 +98,10 @@ export default function NotificationCenter({ orgSlug }) {
           details: `Total: C$ ${totalOverdue.toLocaleString("es-NI", { minimumFractionDigits: 2 })}`,
           link: `/${orgSlug}/finance`,
           timestamp: new Date(),
-          read: false,
+          read: !!currentReadState["overdue-receivables"],
         });
       }
 
-      // Overdue payables
       const overduePayables = (payablesData.payables || []).filter(p => {
         if (!p.due_date || p.status === "paid") return false;
         return new Date(p.due_date) < today;
@@ -89,11 +120,10 @@ export default function NotificationCenter({ orgSlug }) {
           details: `Total: C$ ${totalOverdue.toLocaleString("es-NI", { minimumFractionDigits: 2 })}`,
           link: `/${orgSlug}/finance`,
           timestamp: new Date(),
-          read: false,
+          read: !!currentReadState["overdue-payables"],
         });
       }
 
-      // Upcoming payables (next 7 days)
       const sevenDays = new Date(today);
       sevenDays.setDate(sevenDays.getDate() + 7);
       
@@ -116,12 +146,13 @@ export default function NotificationCenter({ orgSlug }) {
           details: `Total: C$ ${totalUpcoming.toLocaleString("es-NI", { minimumFractionDigits: 2 })}`,
           link: `/${orgSlug}/finance`,
           timestamp: new Date(),
-          read: false,
+          read: !!currentReadState["upcoming-payables"],
         });
       }
 
       setNotifications(newNotifications);
       setUnreadCount(newNotifications.filter(n => !n.read).length);
+      setReadState(currentReadState);
     } catch (err) {
       console.error("Error loading notifications:", err);
     } finally {
@@ -131,7 +162,6 @@ export default function NotificationCenter({ orgSlug }) {
 
   useEffect(() => {
     loadNotifications();
-    // Refresh notifications every 5 minutes
     const interval = setInterval(loadNotifications, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [loadNotifications]);
@@ -141,23 +171,30 @@ export default function NotificationCenter({ orgSlug }) {
       prev.map(n => n.id === id ? { ...n, read: true } : n)
     );
     setUnreadCount(prev => Math.max(0, prev - 1));
+    
+    const newReadState = { ...readState, [id]: Date.now() };
+    setReadState(newReadState);
+    saveReadState(newReadState);
   };
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     setUnreadCount(0);
+    
+    const newReadState = { ...readState };
+    notifications.forEach(n => {
+      newReadState[n.id] = Date.now();
+    });
+    setReadState(newReadState);
+    saveReadState(newReadState);
   };
 
   const getTypeStyles = (type) => {
     switch (type) {
-      case "error":
-        return "bg-red-50 border-red-200 text-red-700";
-      case "warning":
-        return "bg-yellow-50 border-yellow-200 text-yellow-700";
-      case "success":
-        return "bg-green-50 border-green-200 text-green-700";
-      default:
-        return "bg-blue-50 border-blue-200 text-blue-700";
+      case "error": return "bg-red-50 border-red-200 text-red-700";
+      case "warning": return "bg-yellow-50 border-yellow-200 text-yellow-700";
+      case "success": return "bg-green-50 border-green-200 text-green-700";
+      default: return "bg-blue-50 border-blue-200 text-blue-700";
     }
   };
 
@@ -172,7 +209,6 @@ export default function NotificationCenter({ orgSlug }) {
 
   return (
     <div className="relative">
-      {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors"
@@ -185,44 +221,27 @@ export default function NotificationCenter({ orgSlug }) {
         )}
       </button>
 
-      {/* Dropdown Panel */}
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 z-40" 
-            onClick={() => setIsOpen(false)}
-          />
-          
-          {/* Panel - Opens to the right on desktop (sidebar), to the left on mobile (header) */}
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className="absolute left-0 md:left-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border z-50 max-h-[80vh] overflow-hidden">
-            {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b bg-slate-50">
               <h3 className="font-semibold text-slate-800">Notificaciones</h3>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
-                  <button
-                    onClick={markAllAsRead}
-                    className="text-xs text-blue-600 hover:text-blue-800"
-                  >
+                  <button onClick={markAllAsRead} className="text-xs text-blue-600 hover:text-blue-800">
                     Marcar todas leidas
                   </button>
                 )}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1 hover:bg-slate-200 rounded"
-                >
+                <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-slate-200 rounded">
                   <X className="w-4 h-4 text-slate-500" />
                 </button>
               </div>
             </div>
 
-            {/* Content */}
             <div className="overflow-y-auto max-h-[60vh]">
               {loading ? (
-                <div className="p-8 text-center text-slate-500">
-                  Cargando notificaciones...
-                </div>
+                <div className="p-8 text-center text-slate-500">Cargando notificaciones...</div>
               ) : notifications.length === 0 ? (
                 <div className="p-8 text-center">
                   <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
@@ -238,9 +257,7 @@ export default function NotificationCenter({ orgSlug }) {
                         key={notification.id}
                         href={notification.link}
                         onClick={() => markAsRead(notification.id)}
-                        className={`block p-4 hover:bg-slate-50 transition-colors ${
-                          !notification.read ? "bg-blue-50/50" : ""
-                        }`}
+                        className={`block p-4 hover:bg-slate-50 transition-colors ${!notification.read ? "bg-blue-50/50" : ""}`}
                       >
                         <div className="flex gap-3">
                           <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getTypeStyles(notification.type)}`}>
@@ -248,21 +265,11 @@ export default function NotificationCenter({ orgSlug }) {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
-                              <p className="font-medium text-sm text-slate-800">
-                                {notification.title}
-                              </p>
-                              {!notification.read && (
-                                <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />
-                              )}
+                              <p className="font-medium text-sm text-slate-800">{notification.title}</p>
+                              {!notification.read && <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />}
                             </div>
-                            <p className="text-sm text-slate-600 mt-0.5">
-                              {notification.message}
-                            </p>
-                            {notification.details && (
-                              <p className="text-xs text-slate-400 mt-1 truncate">
-                                {notification.details}
-                              </p>
-                            )}
+                            <p className="text-sm text-slate-600 mt-0.5">{notification.message}</p>
+                            {notification.details && <p className="text-xs text-slate-400 mt-1 truncate">{notification.details}</p>}
                           </div>
                         </div>
                       </a>
@@ -272,12 +279,8 @@ export default function NotificationCenter({ orgSlug }) {
               )}
             </div>
 
-            {/* Footer */}
             <div className="px-4 py-3 border-t bg-slate-50">
-              <button
-                onClick={loadNotifications}
-                className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium"
-              >
+              <button onClick={loadNotifications} className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium">
                 Actualizar notificaciones
               </button>
             </div>

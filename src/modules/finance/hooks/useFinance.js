@@ -2,6 +2,44 @@
 
 import { useEffect, useState, useMemo } from "react";
 
+// Helper function to get month key (YYYY-MM) from various date formats
+function getMonthKey(dateValue) {
+  if (!dateValue) return null;
+  
+  // If it's already a string in YYYY-MM-DD format
+  if (typeof dateValue === "string") {
+    // Check for ISO format (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateValue)) {
+      return dateValue.slice(0, 7);
+    }
+    // Check for DD/MM/YYYY or DD-MM-YYYY format
+    const match = dateValue.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);
+    if (match) {
+      const month = match[2].padStart(2, "0");
+      const year = match[3];
+      return `${year}-${month}`;
+    }
+  }
+  
+  // Fallback: try to parse as Date
+  const date = new Date(dateValue);
+  if (!isNaN(date.getTime())) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  }
+  
+  return null;
+}
+
+// Helper to safely parse amount (handles strings with commas)
+function parseAmount(value) {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    // Remove commas and parse
+    return parseFloat(value.replace(/,/g, "")) || 0;
+  }
+  return 0;
+}
+
 export function useFinance(orgSlug) {
     const [accounts, setAccounts] = useState([]);
     const [expenses, setExpenses] = useState([]);
@@ -120,16 +158,14 @@ export function useFinance(orgSlug) {
       (sum, a) => sum + (a.acquisition_cost || 0),
       0
     );
+    
+    const now = new Date();
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    
+    // Use getMonthKey for robust date parsing (handles YYYY-MM-DD and DD/MM/YYYY formats)
     const monthlyExpenses = expenses
-      .filter((e) => {
-        const expDate = new Date(e.date);
-        const now = new Date();
-        return (
-          expDate.getMonth() === now.getMonth() &&
-          expDate.getFullYear() === now.getFullYear()
-        );
-      })
-      .reduce((sum, e) => sum + (e.total || 0), 0);
+      .filter((e) => getMonthKey(e.date) === currentMonthKey)
+      .reduce((sum, e) => sum + parseAmount(e.total), 0);
 
     const cashIn = payments
       .filter((p) => p.direction === "in")
@@ -138,16 +174,45 @@ export function useFinance(orgSlug) {
       .filter((p) => p.direction === "out")
       .reduce((sum, p) => sum + (p.amount || 0), 0);
 
+    const validSales = (sales || []).filter(
+      (s) => s.status !== "canceled" && s.status !== "refunded"
+    );
+    
+    // Use getMonthKey for robust date parsing of sales
+    const monthlySales = validSales.filter((s) => getMonthKey(s.fecha) === currentMonthKey);
+    
+    const monthlyIncome = monthlySales.reduce(
+      (sum, s) => sum + (parseFloat(s.total) || 0),
+      0
+    );
+    
+    let monthlyCOGS = 0;
+    monthlySales.forEach((s) => {
+      if (s.sales_items && Array.isArray(s.sales_items)) {
+        s.sales_items.forEach((item) => {
+          monthlyCOGS += (parseFloat(item.cost) || 0) * (parseInt(item.quantity) || 0);
+        });
+      }
+    });
+    
+    const monthlyGrossProfit = monthlyIncome - monthlyCOGS;
+    const monthlyNetProfit = monthlyGrossProfit - monthlyExpenses;
+    const netCashFlow = monthlyGrossProfit - monthlyExpenses;
+
     return {
       totalReceivables,
       totalPayables,
       totalAssets,
       monthlyExpenses,
+      monthlyIncome,
+      monthlyCOGS,
+      monthlyGrossProfit,
+      monthlyNetProfit,
       cashIn,
       cashOut,
-      netCashFlow: cashIn - cashOut,
+      netCashFlow,
     };
-  }, [receivables, payables, assets, expenses, payments]);
+  }, [receivables, payables, assets, expenses, payments, sales]);
 
   const recentPayments = useMemo(() => {
     return [...payments]

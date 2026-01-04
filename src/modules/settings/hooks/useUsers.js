@@ -37,7 +37,7 @@ export function useUsers(orgSlug) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al crear usuario");
       await loadUsers();
-      return { success: true };
+      return { success: true, message: data.message };
     } catch (err) {
       return { success: false, error: err.message };
     } finally {

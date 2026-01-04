@@ -179,13 +179,14 @@ export default function PosScreen({ orgSlug }) {
   // Handle sale
   const handleSale = async () => {
     try {
+      const { toast } = require("@/src/lib/notifications/toast");
       if (!isCashOpen) {
-        alert("Abra la caja antes de vender.");
+        toast.error("Abra la caja antes de vender.");
         return;
       }
 
       if (cart.length === 0) {
-        alert("El carrito esta vacio.");
+        toast.error("El carrito está vacío.");
         return;
       }
 
@@ -205,9 +206,10 @@ export default function PosScreen({ orgSlug }) {
       });
 
       clearCart();
-      alert(`Venta realizada. Factura: ${sale.invoice}`);
+      toast.success(`Venta realizada. Factura: ${sale.invoice}`);
     } catch (error) {
-      alert(error.message);
+      const { toast } = require("@/src/lib/notifications/toast");
+      toast.error(error.message || "Error al realizar la venta");
     }
   };
 

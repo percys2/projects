@@ -48,19 +48,26 @@ export async function logAuditEvent({
       console.log('[AUDIT]', JSON.stringify(auditEntry, null, 2));
     }
 
-    // TODO: Store in database
-    // Uncomment when audit_logs table is created
-    /*
-    await supabase.from('audit_logs').insert({
-      user_id: userId,
-      org_id: orgId,
-      action,
-      resource_type: resourceType,
-      resource_id: resourceId,
-      metadata,
-      ip_address: ipAddress,
-    });
-    */
+    // Store in database if audit_logs table exists
+    try {
+      const { error: dbError } = await supabase.from('audit_logs').insert({
+        user_id: userId,
+        org_id: orgId,
+        action,
+        resource_type: resourceType,
+        resource_id: resourceId,
+        metadata,
+        ip_address: ipAddress,
+      });
+
+      if (dbError) {
+        // Table might not exist yet, log to console as fallback
+        console.warn('[AUDIT] Database insert failed, using console fallback:', dbError.message);
+      }
+    } catch (dbError) {
+      // Table might not exist, continue with console logging
+      console.warn('[AUDIT] Database insert failed, using console fallback:', dbError.message);
+    }
 
     return { success: true };
   } catch (error) {

@@ -1,9 +1,10 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function PrintKardexPage() {
+function PrintKardexContent() {
   const searchParams = useSearchParams();
   const [printData, setPrintData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,10 +14,8 @@ export default function PrintKardexPage() {
   const consecutivo = searchParams.get("consecutivo");
   const orgSlug = searchParams.get("org");
 
-  // Also accept printData from localStorage (for immediate print after creation)
   useEffect(() => {
     async function loadData() {
-      // First check localStorage for immediate print data
       const storedData = localStorage.getItem("kardex_print_data");
       if (storedData) {
         try {
@@ -30,7 +29,6 @@ export default function PrintKardexPage() {
         }
       }
 
-      // Otherwise fetch from API
       if (!orgSlug || (!batchId && !consecutivo)) {
         setError("Faltan parametros (org, batchId o consecutivo)");
         setLoading(false);
@@ -59,7 +57,6 @@ export default function PrintKardexPage() {
     loadData();
   }, [batchId, consecutivo, orgSlug]);
 
-  // Auto print when data is loaded
   useEffect(() => {
     if (printData && !loading) {
       setTimeout(() => {
@@ -128,7 +125,6 @@ export default function PrintKardexPage() {
       `}</style>
 
       <div className="print-container max-w-[80mm] mx-auto bg-white p-2 font-mono text-[10px] leading-tight">
-        {/* Header */}
         <div className="text-center border-b border-dashed border-gray-400 pb-2 mb-2">
           <h1 className="font-bold text-sm uppercase">{printData.org?.name || "MI EMPRESA"}</h1>
           {printData.org?.ruc && <p>RUC: {printData.org.ruc}</p>}
@@ -136,13 +132,11 @@ export default function PrintKardexPage() {
           {printData.org?.phone && <p>Tel: {printData.org.phone}</p>}
         </div>
 
-        {/* Document Type & Number */}
         <div className="text-center border-b border-dashed border-gray-400 pb-2 mb-2">
           <h2 className="font-bold text-xs">{getTypeLabel(printData.type)}</h2>
           <p className="text-lg font-bold">{printData.consecutivo}</p>
         </div>
 
-        {/* Details */}
         <div className="border-b border-dashed border-gray-400 pb-2 mb-2 space-y-1">
           {printData.providerInvoice && (
             <div className="flex justify-between">
@@ -170,7 +164,6 @@ export default function PrintKardexPage() {
           )}
         </div>
 
-        {/* Items Header */}
         <div className="border-b border-gray-400 pb-1 mb-1">
           <div className="flex font-bold">
             <span className="w-12">CANT</span>
@@ -178,7 +171,6 @@ export default function PrintKardexPage() {
           </div>
         </div>
 
-        {/* Items */}
         <div className="border-b border-dashed border-gray-400 pb-2 mb-2">
           {printData.items?.map((item, index) => (
             <div key={item.id || index} className="mb-2">
@@ -191,20 +183,17 @@ export default function PrintKardexPage() {
           ))}
         </div>
 
-        {/* Notes */}
         {printData.notes && (
           <div className="border-b border-dashed border-gray-400 pb-2 mb-2">
             <p className="text-[9px]">Nota: {printData.notes}</p>
           </div>
         )}
 
-        {/* Footer */}
         <div className="text-center pt-2">
           <p>{printData.date} {printData.time}</p>
           <p className="mt-2 font-bold">Fin</p>
         </div>
 
-        {/* Print Button (hidden when printing) */}
         <div className="no-print mt-4 flex gap-2 justify-center">
           <button
             onClick={() => window.print()}
@@ -221,5 +210,13 @@ export default function PrintKardexPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function PrintKardexPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><p className="text-gray-500">Cargando...</p></div>}>
+      <PrintKardexContent />
+    </Suspense>
   );
 }

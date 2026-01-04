@@ -13,6 +13,11 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [compareWithPrevious, setCompareWithPrevious] = useState(false);
 
+  const safePercent = (value, total) => {
+    if (!total || total === 0) return 0;
+    return (value / total) * 100;
+  };
+
   const { currentData, previousData, periodLabel, calculateVariance } = useIncomeStatement({
     payments,
     expenses,
@@ -51,15 +56,15 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
           </div>
           <table>
             <tr class="section-header"><td colspan="3">INGRESOS</td></tr>
-            ${currentData.income.map((i) => `<tr><td>${i.name}</td><td class="right">${formatCurrency(i.amount)}</td><td class="right">${formatPercent((i.amount / currentData.totalIncome) * 100)}</td></tr>`).join("")}
+            ${currentData.income.map((i) => `<tr><td>${i.name}</td><td class="right">${formatCurrency(i.amount)}</td><td class="right">${formatPercent(safePercent(i.amount, currentData.totalIncome))}</td></tr>`).join("")}
             <tr class="total-row"><td>Total Ingresos</td><td class="right">${formatCurrency(currentData.totalIncome)}</td><td class="right">100%</td></tr>
             <tr class="section-header"><td colspan="3">COSTO DE VENTAS</td></tr>
-            <tr><td>Costo de productos vendidos</td><td class="right">${formatCurrency(currentData.cogs)}</td><td class="right">${formatPercent((currentData.cogs / currentData.totalIncome) * 100)}</td></tr>
-            <tr class="total-row"><td>UTILIDAD BRUTA</td><td class="right">${formatCurrency(currentData.grossProfit)}</td><td class="right">${formatPercent((currentData.grossProfit / currentData.totalIncome) * 100)}</td></tr>
+            <tr><td>Costo de productos vendidos</td><td class="right">${formatCurrency(currentData.cogs)}</td><td class="right">${formatPercent(safePercent(currentData.cogs, currentData.totalIncome))}</td></tr>
+            <tr class="total-row"><td>UTILIDAD BRUTA</td><td class="right">${formatCurrency(currentData.grossProfit)}</td><td class="right">${formatPercent(safePercent(currentData.grossProfit, currentData.totalIncome))}</td></tr>
             <tr class="section-header"><td colspan="3">GASTOS OPERATIVOS</td></tr>
-            ${currentData.expenses.map((e) => `<tr><td>${e.name}</td><td class="right">${formatCurrency(e.amount)}</td><td class="right">${formatPercent((e.amount / currentData.totalIncome) * 100)}</td></tr>`).join("")}
-            <tr class="total-row"><td>Total Gastos</td><td class="right">${formatCurrency(currentData.totalExpenses)}</td><td class="right">${formatPercent((currentData.totalExpenses / currentData.totalIncome) * 100)}</td></tr>
-            <tr class="grand-total"><td>UTILIDAD NETA</td><td class="right">${formatCurrency(currentData.netIncome)}</td><td class="right">${formatPercent((currentData.netIncome / currentData.totalIncome) * 100)}</td></tr>
+            ${currentData.expenses.map((e) => `<tr><td>${e.name}</td><td class="right">${formatCurrency(e.amount)}</td><td class="right">${formatPercent(safePercent(e.amount, currentData.totalIncome))}</td></tr>`).join("")}
+            <tr class="total-row"><td>Total Gastos</td><td class="right">${formatCurrency(currentData.totalExpenses)}</td><td class="right">${formatPercent(safePercent(currentData.totalExpenses, currentData.totalIncome))}</td></tr>
+            <tr class="grand-total"><td>UTILIDAD NETA</td><td class="right">${formatCurrency(currentData.netIncome)}</td><td class="right">${formatPercent(safePercent(currentData.netIncome, currentData.totalIncome))}</td></tr>
           </table>
         </body>
       </html>
@@ -75,17 +80,17 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
       [""],
       ["Concepto", "Monto", "% del Total"],
       ["INGRESOS", "", ""],
-      ...currentData.income.map((i) => [i.name, i.amount.toFixed(2), formatPercent((i.amount / currentData.totalIncome) * 100)]),
+      ...currentData.income.map((i) => [i.name, i.amount.toFixed(2), formatPercent(safePercent(i.amount, currentData.totalIncome))]),
       ["Total Ingresos", currentData.totalIncome.toFixed(2), "100%"],
       [""],
-      ["COSTO DE VENTAS", currentData.cogs.toFixed(2), formatPercent((currentData.cogs / currentData.totalIncome) * 100)],
-      ["UTILIDAD BRUTA", currentData.grossProfit.toFixed(2), formatPercent((currentData.grossProfit / currentData.totalIncome) * 100)],
+      ["COSTO DE VENTAS", currentData.cogs.toFixed(2), formatPercent(safePercent(currentData.cogs, currentData.totalIncome))],
+      ["UTILIDAD BRUTA", currentData.grossProfit.toFixed(2), formatPercent(safePercent(currentData.grossProfit, currentData.totalIncome))],
       [""],
       ["GASTOS OPERATIVOS", "", ""],
-      ...currentData.expenses.map((e) => [e.name, e.amount.toFixed(2), formatPercent((e.amount / currentData.totalIncome) * 100)]),
-      ["Total Gastos", currentData.totalExpenses.toFixed(2), formatPercent((currentData.totalExpenses / currentData.totalIncome) * 100)],
+      ...currentData.expenses.map((e) => [e.name, e.amount.toFixed(2), formatPercent(safePercent(e.amount, currentData.totalIncome))]),
+      ["Total Gastos", currentData.totalExpenses.toFixed(2), formatPercent(safePercent(currentData.totalExpenses, currentData.totalIncome))],
       [""],
-      ["UTILIDAD NETA", currentData.netIncome.toFixed(2), formatPercent((currentData.netIncome / currentData.totalIncome) * 100)],
+      ["UTILIDAD NETA", currentData.netIncome.toFixed(2), formatPercent(safePercent(currentData.netIncome, currentData.totalIncome))],
     ];
 
     const csvContent = rows.map((r) => r.join(",")).join("\n");
@@ -99,18 +104,17 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
   const incomeColumns = [
     { header: "Categoria", key: "name" },
     { header: "Monto", key: "amount", align: "right", render: (row) => formatCurrency(row.amount) },
-    { header: "% de Ingresos", align: "right", render: (row) => formatPercent((row.amount / currentData.totalIncome) * 100) },
+    { header: "% de Ingresos", align: "right", render: (row) => formatPercent(safePercent(row.amount, currentData.totalIncome)) },
   ];
 
   const expenseColumns = [
     { header: "Categoria", key: "name" },
     { header: "Monto", key: "amount", align: "right", render: (row) => formatCurrency(row.amount) },
-    { header: "% de Ingresos", align: "right", render: (row) => formatPercent((row.amount / currentData.totalIncome) * 100) },
+    { header: "% de Ingresos", align: "right", render: (row) => formatPercent(safePercent(row.amount, currentData.totalIncome)) },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h3 className="text-sm font-semibold text-slate-700">Estado de Resultados (P&L)</h3>
@@ -138,26 +142,22 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
         </div>
       </div>
 
-      {/* Compare Toggle */}
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={compareWithPrevious} onChange={(e) => setCompareWithPrevious(e.target.checked)} className="rounded" />
         Comparar con periodo anterior
       </label>
 
-      {/* Summary KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Ingresos Totales" value={formatCurrency(currentData.totalIncome)} variant="success" trend={previousData ? calculateVariance(currentData.totalIncome, previousData.totalIncome) : undefined} trendLabel="vs anterior" />
         <KpiCard title="Costo de Ventas" value={formatCurrency(currentData.cogs)} variant="warning" />
         <KpiCard title="Gastos Operativos" value={formatCurrency(currentData.totalExpenses)} variant="danger" trend={previousData ? calculateVariance(currentData.totalExpenses, previousData.totalExpenses) : undefined} trendLabel="vs anterior" />
-        <KpiCard title="Utilidad Neta" value={formatCurrency(currentData.netIncome)} variant={currentData.netIncome >= 0 ? "primary" : "danger"} subtitle={`Margen: ${formatPercent((currentData.netIncome / currentData.totalIncome) * 100)}`} />
+        <KpiCard title="Utilidad Neta" value={formatCurrency(currentData.netIncome)} variant={currentData.netIncome >= 0 ? "primary" : "danger"} subtitle={`Margen: ${formatPercent(safePercent(currentData.netIncome, currentData.totalIncome))}`} />
       </div>
 
-      {/* Income Section */}
       <SectionCard title="INGRESOS" variant="success">
         <ReportTable columns={incomeColumns} data={currentData.income} emptyMessage="No hay ingresos en este periodo" footer={[{ value: "Total Ingresos", colSpan: 1 }, { value: formatCurrency(currentData.totalIncome), align: "right" }, { value: "100%", align: "right" }]} />
       </SectionCard>
 
-      {/* COGS Section */}
       <SectionCard title="COSTO DE VENTAS" variant="warning">
         <div className="p-4">
           <div className="flex justify-between items-center">
@@ -174,7 +174,6 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
         </div>
       </SectionCard>
 
-      {/* Gross Profit */}
       <div className="border rounded-lg p-4 bg-slate-50">
         <div className="flex justify-between items-center">
           <div>
@@ -183,17 +182,15 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
           </div>
           <div className="text-right">
             <p className="text-xl font-bold text-slate-700">{formatCurrency(currentData.grossProfit)}</p>
-            <p className="text-xs text-slate-500">Margen Bruto: {formatPercent((currentData.grossProfit / currentData.totalIncome) * 100)}</p>
+            <p className="text-xs text-slate-500">Margen Bruto: {formatPercent(safePercent(currentData.grossProfit, currentData.totalIncome))}</p>
           </div>
         </div>
       </div>
 
-      {/* Expenses Section */}
       <SectionCard title="GASTOS OPERATIVOS" variant="danger">
-        <ReportTable columns={expenseColumns} data={currentData.expenses} emptyMessage="No hay gastos en este periodo" footer={[{ value: "Total Gastos", colSpan: 1 }, { value: formatCurrency(currentData.totalExpenses), align: "right" }, { value: formatPercent((currentData.totalExpenses / currentData.totalIncome) * 100), align: "right" }]} />
+        <ReportTable columns={expenseColumns} data={currentData.expenses} emptyMessage="No hay gastos en este periodo" footer={[{ value: "Total Gastos", colSpan: 1 }, { value: formatCurrency(currentData.totalExpenses), align: "right" }, { value: formatPercent(safePercent(currentData.totalExpenses, currentData.totalIncome)), align: "right" }]} />
       </SectionCard>
 
-      {/* Net Income */}
       <div className={`border rounded-lg p-4 ${currentData.netIncome >= 0 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"}`}>
         <div className="flex justify-between items-center">
           <div>
@@ -202,7 +199,7 @@ export default function IncomeStatement({ payments, expenses, sales = [], orgNam
           </div>
           <div className="text-right">
             <p className={`text-2xl font-bold ${currentData.netIncome >= 0 ? "text-blue-600" : "text-orange-600"}`}>{formatCurrency(currentData.netIncome)}</p>
-            <p className="text-sm text-slate-500">Margen: {formatPercent((currentData.netIncome / currentData.totalIncome) * 100)}</p>
+            <p className="text-sm text-slate-500">Margen: {formatPercent(safePercent(currentData.netIncome, currentData.totalIncome))}</p>
           </div>
         </div>
       </div>

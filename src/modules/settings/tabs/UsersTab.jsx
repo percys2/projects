@@ -19,7 +19,8 @@ export default function UsersTab({ orgSlug }) {
   
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [form, setForm] = useState({ email: "", name: "", role: "cashier", is_active: true });
+  const [form, setForm] = useState({ email: "", full_name: "", password: "", role: "cashier", is_active: true });
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -27,14 +28,29 @@ export default function UsersTab({ orgSlug }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.email.trim() || !form.name.trim()) {
+    if (!form.email.trim() || !form.full_name.trim()) {
       alert("El nombre y correo son requeridos");
+      return;
+    }
+    
+    if (!editingUser && !form.password) {
+      alert("La contraseña es requerida para nuevos usuarios");
+      return;
+    }
+    
+    if (!editingUser && form.password.length < 6) {
+      alert("La contraseña debe tener al menos 6 caracteres");
       return;
     }
 
     let result;
     if (editingUser) {
-      result = await updateUser(editingUser.id, form);
+      result = await updateUser(editingUser.id, { 
+        email: form.email, 
+        full_name: form.full_name, 
+        role: form.role, 
+        is_active: form.is_active 
+      });
     } else {
       result = await createUser(form);
     }
@@ -42,7 +58,10 @@ export default function UsersTab({ orgSlug }) {
     if (result.success) {
       setShowForm(false);
       setEditingUser(null);
-      setForm({ email: "", name: "", role: "cashier", is_active: true });
+      setForm({ email: "", full_name: "", password: "", role: "cashier", is_active: true });
+      if (result.message) {
+        alert(result.message);
+      }
     } else {
       alert(result.error);
     }
@@ -52,7 +71,8 @@ export default function UsersTab({ orgSlug }) {
     setEditingUser(user);
     setForm({
       email: user.email || "",
-      name: user.name || "",
+      full_name: user.full_name || "",
+      password: "",
       role: user.role || "cashier",
       is_active: user.is_active !== false,
     });
@@ -60,7 +80,7 @@ export default function UsersTab({ orgSlug }) {
   };
 
   const handleDelete = async (user) => {
-    if (!confirm(`Estas seguro de eliminar al usuario "${user.name}"?`)) return;
+    if (!confirm(`Estas seguro de eliminar al usuario "${user.full_name}"?`)) return;
     const result = await deleteUser(user.id);
     if (!result.success) {
       alert(result.error);
@@ -70,7 +90,8 @@ export default function UsersTab({ orgSlug }) {
   const handleCancel = () => {
     setShowForm(false);
     setEditingUser(null);
-    setForm({ email: "", name: "", role: "cashier", is_active: true });
+    setForm({ email: "", full_name: "", password: "", role: "cashier", is_active: true });
+    setShowPassword(false);
   };
 
   const getRoleLabel = (role) => {
@@ -95,13 +116,36 @@ export default function UsersTab({ orgSlug }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col space-y-2">
                 <Label>Nombre completo *</Label>
-                <Input placeholder="Ej: Juan Perez" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                <Input placeholder="Ej: Juan Perez" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required />
               </div>
               <div className="flex flex-col space-y-2">
                 <Label>Correo electronico *</Label>
                 <Input type="email" placeholder="Ej: juan@empresa.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
               </div>
             </div>
+
+            {!editingUser && (
+              <div className="flex flex-col space-y-2">
+                <Label>Contraseña *</Label>
+                <div className="relative">
+                  <Input 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="Minimo 6 caracteres" 
+                    value={form.password} 
+                    onChange={(e) => setForm({ ...form, password: e.target.value })} 
+                    required 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)} 
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 text-sm"
+                  >
+                    {showPassword ? "Ocultar" : "Mostrar"}
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500">El usuario usara esta contraseña para iniciar sesion</p>
+              </div>
+            )}
 
             <div className="flex flex-col space-y-2">
               <Label>Rol</Label>
@@ -138,7 +182,7 @@ export default function UsersTab({ orgSlug }) {
                   <div key={user.id} className="border rounded-lg p-4 bg-white">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-medium text-slate-800">{user.name}</p>
+                        <p className="font-medium text-slate-800">{user.full_name}</p>
                         <p className="text-sm text-slate-500">{user.email}</p>
                         <p className="text-xs text-slate-400 mt-1">{getRoleLabel(user.role)}</p>
                       </div>
@@ -169,7 +213,7 @@ export default function UsersTab({ orgSlug }) {
                   <tbody>
                     {users.map((user) => (
                       <tr key={user.id} className="border-b hover:bg-slate-50">
-                        <td className="p-3 font-medium">{user.name}</td>
+                        <td className="p-3 font-medium">{user.full_name}</td>
                         <td className="p-3 text-slate-600">{user.email}</td>
                         <td className="p-3 text-slate-600">{getRoleLabel(user.role)}</td>
                         <td className="p-3 text-center">

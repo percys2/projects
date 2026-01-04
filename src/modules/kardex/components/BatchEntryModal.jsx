@@ -19,6 +19,10 @@ export default function BatchEntryModal({
   const [loading, setLoading] = useState(false);
   const [searchTerms, setSearchTerms] = useState({});
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [showPasteMode, setShowPasteMode] = useState(false);
+  const [pasteText, setPasteText] = useState("");
+  const [pastePreview, setPastePreview] = useState([]);
+  const [pasteErrors, setPasteErrors] = useState([]);
 
   useEffect(() => {
     if (isOpen) {
@@ -29,6 +33,10 @@ export default function BatchEntryModal({
       setNotes("");
       setSearchTerms({});
       setActiveDropdown(null);
+      setShowPasteMode(false);
+      setPasteText("");
+      setPastePreview([]);
+      setPasteErrors([]);
     }
   }, [isOpen]);
 
@@ -123,6 +131,122 @@ export default function BatchEntryModal({
     );
   };
 
+  const findProductByNameOrSku = (searchText) => {
+    if (!searchText) return null;
+    const term = searchText.toString().toLowerCase().trim();
+  
+    let found = products.find((p) => p.sku?.toLowerCase() === term);
+    if (found) return found;
+  
+    found = products.find((p) => p.name?.toLowerCase() === term);
+    if (found) return found;
+  
+    found = products.find((p) => p.name?.toLowerCase().includes(term));
+    if (found) return found;
+  
+    const cleanTerm = term.replace(/\s+(pl|cr|kg|lbrs|100l|25kg|und|unidad)$/i, "").trim();
+    found = products.find((p) => p.name?.toLowerCase().includes(cleanTerm));
+  
+    return found;
+  };
+
+  const parsePastedData = (text) => {
+    const lines = text.trim().split("\n").filter(line => line.trim());
+    const parsed = [];
+    const errors = [];
+  
+    lines.forEach((line, idx) => {
+      const parts = line.split(/\t|,|(?:\s{2,})/).map(p => p.trim()).filter(p => p);
+    
+      if (parts.length < 2) {
+        errors.push(`Linea ${idx + 1}: Formato invalido (necesita al menos nombre y cantidad)`);
+        return;
+      }
+    
+      let productSearch = "";
+      let qty = 0;
+      let cost = null;
+    
+      const firstIsNumber = !isNaN(parseFloat(parts[0])) && parts[0].match(/^\d+(\.\d+)?$/);
+    
+      if (parts.length === 2) {
+        if (firstIsNumber && !isNaN(parseFloat(parts[1]))) {
+          productSearch = parts[0];
+          qty = parseFloat(parts[1]);
+        } else if (firstIsNumber) {
+          qty = parseFloat(parts[0]);
+          productSearch = parts[1];
+        } else {
+          productSearch = parts[0];
+          qty = parseFloat(parts[1]) || 0;
+        }
+      } else if (parts.length === 3) {
+        productSearch = parts[0];
+        qty = parseFloat(parts[1]) || 0;
+        cost = parseFloat(parts[2]) || null;
+      } else if (parts.length >= 4) {
+        productSearch = parts[1] || parts[0];
+        qty = parseFloat(parts[2]) || 0;
+        cost = parseFloat(parts[3]) || null;
+      }
+    
+      const product = findProductByNameOrSku(productSearch);
+    
+      if (!product) {
+        errors.push(`Linea ${idx + 1}: No se encontro "${productSearch}"`);
+        parsed.push({
+          lineNum: idx + 1,
+          original: line,
+          productSearch,
+          qty,
+          cost,
+          product: null,
+          matched: false,
+        });
+      } else {
+        parsed.push({
+          lineNum: idx + 1,
+          original: line,
+          productSearch,
+          qty,
+          cost,
+          product,
+          matched: true,
+        });
+      }
+    });
+  
+    return { parsed, errors };
+  };
+
+  const handlePasteAnalyze = () => {
+    const { parsed, errors } = parsePastedData(pasteText);
+    setPastePreview(parsed);
+    setPasteErrors(errors);
+  };
+
+  const handleApplyPaste = () => {
+    const matchedItems = pastePreview.filter(p => p.matched);
+    if (matchedItems.length === 0) {
+      alert("No hay productos validos para importar");
+      return;
+    }
+  
+    const newItems = matchedItems.map(p => ({
+      productId: p.product.id,
+      productName: p.product.name,
+      qty: p.qty.toString(),
+      cost: p.cost?.toString() || "",
+      unit: p.product.unit || "UND",
+    }));
+  
+    setItems(newItems);
+    setShowPasteMode(false);
+    setPasteText("");
+    setPastePreview([]);
+    setPasteErrors([]);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -196,112 +320,217 @@ export default function BatchEntryModal({
             />
           </div>
 
-          <div className="border rounded-lg overflow-visible">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-100">
-                <tr>
-                  <th className="text-left p-2 font-semibold text-slate-600">Producto</th>
-                  <th className="text-center p-2 font-semibold text-slate-600 w-24">Cantidad</th>
-                  {type === "entrada" && (
-                    <th className="text-center p-2 font-semibold text-slate-600 w-28">Costo</th>
-                  )}
-                  <th className="text-center p-2 font-semibold text-slate-600 w-20">UM</th>
-                  <th className="w-12"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="p-2">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Buscar producto..."
-                          value={activeDropdown === index ? (searchTerms[index] || "") : (item.productName || "")}
-                          onChange={(e) => {
-                            setSearchTerms({ ...searchTerms, [index]: e.target.value });
-                            setActiveDropdown(index);
-                          }}
-                          onFocus={() => {
-                            setActiveDropdown(index);
-                            if (item.productName) {
-                              setSearchTerms({ ...searchTerms, [index]: item.productName });
-                            }
-                          }}
-                          onBlur={() => {
-                            setTimeout(() => setActiveDropdown(null), 200);
-                          }}
-                          className="w-full p-2 text-sm border rounded-lg"
-                        />
-                        {activeDropdown === index && searchTerms[index] && (
-                          <div className="absolute top-full left-0 right-0 bg-white border rounded-b-lg shadow-xl z-[100] max-h-40 overflow-y-auto">
-                            {getFilteredProducts(index).slice(0, 10).map((p) => (
-                              <div
-                                key={p.id}
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  updateItem(index, "productId", p.id, p.name);
-                                  setSearchTerms({ ...searchTerms, [index]: "" });
-                                  setActiveDropdown(null);
-                                }}
-                                className="p-2 hover:bg-blue-50 cursor-pointer text-xs"
-                              >
-                                <span className="font-medium">{p.name}</span>
-                                {p.sku && <span className="text-slate-400 ml-2">({p.sku})</span>}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-2">
-                      <input
-                        type="number"
-                        value={item.qty}
-                        onChange={(e) => updateItem(index, "qty", e.target.value)}
-                        placeholder="0"
-                        min="1"
-                        className="w-full p-2 text-sm border rounded-lg text-center"
-                      />
-                    </td>
-                    {type === "entrada" && (
-                      <td className="p-2">
-                        <input
-                          type="number"
-                          value={item.cost}
-                          onChange={(e) => updateItem(index, "cost", e.target.value)}
-                          placeholder="0.00"
-                          step="0.01"
-                          className="w-full p-2 text-sm border rounded-lg text-center"
-                        />
-                      </td>
-                    )}
-                    <td className="p-2 text-center text-slate-500">
-                      {item.unit || "UND"}
-                    </td>
-                    <td className="p-2">
-                      <button
-                        onClick={() => removeItem(index)}
-                        disabled={items.length === 1}
-                        className="text-red-500 hover:text-red-700 disabled:text-slate-300 p-1"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex gap-2 mb-2">
+            <button
+              onClick={() => setShowPasteMode(false)}
+              className={`px-3 py-1.5 text-xs rounded-lg ${!showPasteMode ? "bg-slate-700 text-white" : "bg-slate-200 text-slate-600"}`}
+            >
+              Agregar Manual
+            </button>
+            <button
+              onClick={() => setShowPasteMode(true)}
+              className={`px-3 py-1.5 text-xs rounded-lg ${showPasteMode ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}
+            >
+              Pegar desde Excel
+            </button>
           </div>
 
-          <button
-            onClick={addItem}
-            className="w-full py-2 border-2 border-dashed border-slate-300 rounded-lg text-slate-500 hover:border-slate-400 hover:text-slate-600 text-sm"
-          >
-            + Agregar otro producto
-          </button>
+          {showPasteMode ? (
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-slate-600 block mb-1">
+                  Pega aqui los datos de Excel (Nombre, Cantidad, Costo)
+                </label>
+                <textarea
+                  value={pasteText}
+                  onChange={(e) => setPasteText(e.target.value)}
+                  placeholder={"Ejemplo:\nENGORDINA PL\t51\t1184\nINICIARINA CR\t12\t1213\nNOVA GALLOS PLUS\t6\t1204"}
+                  rows={8}
+                  className="w-full p-2 text-xs border rounded-lg font-mono"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  Formato: Nombre TAB Cantidad TAB Costo (o separado por comas)
+                </p>
+              </div>
+    
+              <button
+                onClick={handlePasteAnalyze}
+                disabled={!pasteText.trim()}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
+              >
+                Analizar Datos
+              </button>
+
+              {pastePreview.length > 0 && (
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="bg-slate-100 p-2 text-xs font-semibold flex justify-between">
+                    <span>Vista Previa ({pastePreview.filter(p => p.matched).length} encontrados, {pastePreview.filter(p => !p.matched).length} no encontrados)</span>
+                  </div>
+                  <div className="max-h-48 overflow-y-auto">
+                    <table className="w-full text-xs">
+                      <thead className="bg-slate-50 sticky top-0">
+                        <tr>
+                          <th className="text-left p-2">Estado</th>
+                          <th className="text-left p-2">Buscado</th>
+                          <th className="text-left p-2">Producto Encontrado</th>
+                          <th className="text-center p-2">Cant</th>
+                          <th className="text-center p-2">Costo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pastePreview.map((item, idx) => (
+                          <tr key={idx} className={item.matched ? "bg-green-50" : "bg-red-50"}>
+                            <td className="p-2">
+                              {item.matched ? (
+                                <span className="text-green-600 font-bold">OK</span>
+                              ) : (
+                                <span className="text-red-600 font-bold">X</span>
+                              )}
+                            </td>
+                            <td className="p-2 text-slate-600">{item.productSearch}</td>
+                            <td className="p-2 font-medium">{item.product?.name || "-"}</td>
+                            <td className="p-2 text-center">{item.qty}</td>
+                            <td className="p-2 text-center">{item.cost || "-"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+        
+                  {pasteErrors.length > 0 && (
+                    <div className="bg-red-50 p-2 text-xs text-red-700 border-t">
+                      <strong>Errores:</strong>
+                      <ul className="list-disc ml-4">
+                        {pasteErrors.slice(0, 5).map((err, idx) => (
+                          <li key={idx}>{err}</li>
+                        ))}
+                        {pasteErrors.length > 5 && <li>...y {pasteErrors.length - 5} mas</li>}
+                      </ul>
+                    </div>
+                  )}
+        
+                  <div className="p-2 bg-slate-50 border-t">
+                    <button
+                      onClick={handleApplyPaste}
+                      disabled={pastePreview.filter(p => p.matched).length === 0}
+                      className="w-full py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 disabled:opacity-50"
+                    >
+                      Aplicar {pastePreview.filter(p => p.matched).length} productos encontrados
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="border rounded-lg overflow-visible">
+                <table className="w-full text-sm">
+                  <thead className="bg-slate-100">
+                    <tr>
+                      <th className="text-left p-2 font-semibold text-slate-600">Producto</th>
+                      <th className="text-center p-2 font-semibold text-slate-600 w-24">Cantidad</th>
+                      {type === "entrada" && (
+                        <th className="text-center p-2 font-semibold text-slate-600 w-28">Costo</th>
+                      )}
+                      <th className="text-center p-2 font-semibold text-slate-600 w-20">UM</th>
+                      <th className="w-12"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((item, index) => (
+                      <tr key={index} className="border-t">
+                        <td className="p-2">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Buscar producto..."
+                              value={activeDropdown === index ? (searchTerms[index] || "") : (item.productName || "")}
+                              onChange={(e) => {
+                                setSearchTerms({ ...searchTerms, [index]: e.target.value });
+                                setActiveDropdown(index);
+                              }}
+                              onFocus={() => {
+                                setActiveDropdown(index);
+                                if (item.productName) {
+                                  setSearchTerms({ ...searchTerms, [index]: item.productName });
+                                }
+                              }}
+                              onBlur={() => {
+                                setTimeout(() => setActiveDropdown(null), 200);
+                              }}
+                              className="w-full p-2 text-sm border rounded-lg"
+                            />
+                            {activeDropdown === index && searchTerms[index] && (
+                              <div className="absolute top-full left-0 right-0 bg-white border rounded-b-lg shadow-xl z-[100] max-h-40 overflow-y-auto">
+                                {getFilteredProducts(index).slice(0, 10).map((p) => (
+                                  <div
+                                    key={p.id}
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      updateItem(index, "productId", p.id, p.name);
+                                      setSearchTerms({ ...searchTerms, [index]: "" });
+                                      setActiveDropdown(null);
+                                    }}
+                                    className="p-2 hover:bg-blue-50 cursor-pointer text-xs"
+                                  >
+                                    <span className="font-medium">{p.name}</span>
+                                    {p.sku && <span className="text-slate-400 ml-2">({p.sku})</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-2">
+                          <input
+                            type="number"
+                            value={item.qty}
+                            onChange={(e) => updateItem(index, "qty", e.target.value)}
+                            placeholder="0"
+                            min="1"
+                            className="w-full p-2 text-sm border rounded-lg text-center"
+                          />
+                        </td>
+                        {type === "entrada" && (
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              value={item.cost}
+                              onChange={(e) => updateItem(index, "cost", e.target.value)}
+                              placeholder="0.00"
+                              step="0.01"
+                              className="w-full p-2 text-sm border rounded-lg text-center"
+                            />
+                          </td>
+                        )}
+                        <td className="p-2 text-center text-slate-500">
+                          {item.unit || "UND"}
+                        </td>
+                        <td className="p-2">
+                          <button
+                            onClick={() => removeItem(index)}
+                            disabled={items.length === 1}
+                            className="text-red-500 hover:text-red-700 disabled:text-slate-300 p-1"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <button
+                onClick={addItem}
+                className="w-full py-2 border-2 border-dashed border-slate-300 rounded-lg text-slate-500 hover:border-slate-400 hover:text-slate-600 text-sm"
+              >
+                + Agregar otro producto
+              </button>
+            </>
+          )}
 
           <div className="bg-slate-50 rounded-lg p-3">
             <div className="flex justify-between text-sm">

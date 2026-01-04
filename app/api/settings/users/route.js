@@ -47,6 +47,10 @@ export async function POST(request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
+    if (!body.password || body.password.length < 6) {
+      return NextResponse.json({ error: "Password must be at least 6 characters" }, { status: 400 });
+    }
+
     const { data: org, error: orgError } = await supabase
       .from("organizations")
       .select("id,name")
@@ -59,29 +63,36 @@ export async function POST(request) {
     const { data: existingUsers } = await supabase.auth.admin.listUsers();
     const existingUser = existingUsers?.users?.find(u => u.email === body.email);
 
-    let inviteSent = false;
+    let authUserId = null;
 
-    // If user doesn't exist in auth, send invitation email
-    if (!existingUser) {
-      const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(body.email, {
-        data: {
+    if (existingUser) {
+      // User already exists in auth, just use their ID
+      authUserId = existingUser.id;
+    } else {
+      // Create user with password directly (no email required)
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email: body.email,
+        password: body.password,
+        email_confirm: true, // Auto-confirm email so they can login immediately
+        user_metadata: {
           full_name: body.full_name,
           org_id: org.id,
           org_name: org.name,
         },
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${orgSlug}/dashboard`,
       });
 
-      if (inviteError) {
-        console.error("Invite error:", inviteError);
-      } else {
-        inviteSent = true;
+      if (createError) {
+        console.error("Create user error:", createError);
+        return NextResponse.json({ error: createError.message }, { status: 400 });
       }
+      
+      authUserId = newUser?.user?.id;
     }
 
-    // Insert into org_users (only use columns that definitely exist)
+    // Insert into org_users
     const { error: insertError } = await supabase.from("org_users").insert({
       org_id: org.id,
+      user_id: authUserId,
       email: body.email,
       full_name: body.full_name || null,
       role: body.role || "user",
@@ -92,12 +103,9 @@ export async function POST(request) {
 
     return NextResponse.json({ 
       success: true, 
-      inviteSent,
-      message: inviteSent 
-        ? `Invitación enviada a ${body.email}` 
-        : existingUser 
-          ? `Usuario ${body.email} agregado (ya tiene cuenta)`
-          : `Usuario agregado (invitación no enviada - verificar configuración SMTP)`
+      message: existingUser 
+        ? `Usuario ${body.email} agregado a la organizacion`
+        : `Usuario ${body.full_name || body.email} creado. Ya puede iniciar sesion con su correo y contraseña.`
     });
   } catch (err) {
     console.error("POST user error:", err);

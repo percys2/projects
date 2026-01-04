@@ -79,8 +79,15 @@ export default function ProductFormModal({
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!form.name.trim()) return alert("El nombre es obligatorio");
-    if (!form.sku.trim()) return alert("El código es obligatorio");
+    const { toast } = require("@/src/lib/notifications/toast");
+    if (!form.name.trim()) {
+      toast.error("El nombre es obligatorio");
+      return;
+    }
+    if (!form.sku.trim()) {
+      toast.error("El código es obligatorio");
+      return;
+    }
     onSave(form);
   }
 

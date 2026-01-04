@@ -34,6 +34,7 @@ export default function SalesScreen({ orgSlug }) {
     nextPage,
     prevPage,
     cancelSale,
+    ConfirmDialog,
   } = useSales(orgSlug);
 
   const handleExportPdf = () => {
@@ -141,6 +142,8 @@ export default function SalesScreen({ orgSlug }) {
           onClose={() => setShowCashHistory(false)}
         />
       )}
+
+      {ConfirmDialog}
     </div>
   );
 }

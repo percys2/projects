@@ -28,29 +28,46 @@ export function useIncomeStatement({ payments, expenses, sales, period, month, y
     return { startDate, endDate };
   };
 
+  const parseDateSafe = (dateStr) => {
+    if (!dateStr) return null;
+    if (typeof dateStr === "string" && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateStr + "T00:00:00");
+    }
+    return new Date(dateStr);
+  };
+
   const calculatePeriodData = (periodType, monthStr, yearStr, offset = 0) => {
     const { startDate, endDate } = getDateRange(periodType, monthStr, yearStr, offset);
-    const useSalesData = sales && sales.length > 0;
+    const endOfDay = new Date(endDate);
+    endOfDay.setHours(23, 59, 59, 999);
     
-    const periodSales = useSalesData ? (sales || []).filter((s) => {
-      if (s.status === "canceled" || s.status === "refunded") return false;
-      const saleDate = new Date(s.fecha);
-      return saleDate >= startDate && saleDate <= endDate;
-    }) : [];
+    const validSales = (sales || []).filter(
+      (s) => s.status !== "canceled" && s.status !== "refunded"
+    );
+    
+    const periodSales = validSales.filter((s) => {
+      const saleDate = parseDateSafe(s.fecha);
+      if (!saleDate || isNaN(saleDate.getTime())) return false;
+      return saleDate >= startDate && saleDate <= endOfDay;
+    });
 
     const periodPayments = (payments || []).filter((p) => {
       if (p.direction !== "in") return false;
-      const paymentDate = new Date(p.date);
-      return paymentDate >= startDate && paymentDate <= endDate;
+      const paymentDate = parseDateSafe(p.date);
+      if (!paymentDate || isNaN(paymentDate.getTime())) return false;
+      return paymentDate >= startDate && paymentDate <= endOfDay;
     });
 
     const periodExpenses = (expenses || []).filter((e) => {
-      const expenseDate = new Date(e.date);
-      return expenseDate >= startDate && expenseDate <= endDate;
+      const expenseDate = parseDateSafe(e.date);
+      if (!expenseDate || isNaN(expenseDate.getTime())) return false;
+      return expenseDate >= startDate && expenseDate <= endOfDay;
     });
 
     const incomeByCategory = {};
     let totalCOGS = 0;
+    
+    const useSalesData = periodSales.length > 0;
     
     if (useSalesData) {
       let totalSalesRevenue = 0;
@@ -63,9 +80,9 @@ export function useIncomeStatement({ payments, expenses, sales, period, month, y
         }
       });
       incomeByCategory["Ventas"] = { name: "Ventas", amount: totalSalesRevenue, items: periodSales };
-    } else {
+    } else if (periodPayments.length > 0) {
       periodPayments.forEach((p) => {
-        const category = p.category || "Ventas";
+        const category = p.category || "Cobros";
         if (!incomeByCategory[category]) {
           incomeByCategory[category] = { name: category, amount: 0, items: [] };
         }
@@ -84,16 +101,16 @@ export function useIncomeStatement({ payments, expenses, sales, period, month, y
       expensesByCategory[category].items.push(e);
     });
 
-    const salesRevenue = incomeByCategory["Ventas"]?.amount || 0;
+    const totalIncome = Object.values(incomeByCategory).reduce((sum, c) => sum + c.amount, 0);
     const cogs = totalCOGS;
-    const grossProfit = salesRevenue - cogs;
+    const grossProfit = totalIncome - cogs;
     const totalExpenses = Object.values(expensesByCategory).reduce((sum, c) => sum + c.amount, 0);
     const netIncome = grossProfit - totalExpenses;
 
     return {
       income: Object.values(incomeByCategory).sort((a, b) => b.amount - a.amount),
       expenses: Object.values(expensesByCategory).sort((a, b) => b.amount - a.amount),
-      totalIncome: salesRevenue,
+      totalIncome,
       cogs,
       grossProfit,
       totalExpenses,
