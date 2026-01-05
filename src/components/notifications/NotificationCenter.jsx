@@ -39,9 +39,7 @@ export default function NotificationCenter({ orgSlug }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [readState, setReadState] = useState({});
 
-  useEffect(() => {
-    setReadState(getReadState());
-  }, []);
+  useEffect(() => { setReadState(getReadState()); }, []);
 
   const loadNotifications = useCallback(async () => {
     if (!orgSlug) return;
@@ -57,9 +55,7 @@ export default function NotificationCenter({ orgSlug }) {
       ]);
 
       const [dashData, receivablesData, payablesData] = await Promise.all([
-        dashRes.json(),
-        receivablesRes.json(),
-        payablesRes.json(),
+        dashRes.json(), receivablesRes.json(), payablesRes.json(),
       ]);
 
       const newNotifications = [];
@@ -68,15 +64,10 @@ export default function NotificationCenter({ orgSlug }) {
       const lowStock = dashData.lowStock || [];
       if (lowStock.length > 0) {
         newNotifications.push({
-          id: "low-stock",
-          type: "warning",
-          icon: Package,
-          title: "Stock Bajo",
+          id: "low-stock", type: "warning", icon: Package, title: "Stock Bajo",
           message: `${lowStock.length} producto(s) con stock bajo`,
           details: lowStock.slice(0, 5).map(item => item.products?.name || "Producto").join(", "),
-          link: `/${orgSlug}/inventory`,
-          timestamp: new Date(),
-          read: !!currentReadState["low-stock"],
+          link: `/${orgSlug}/inventory`, timestamp: new Date(), read: !!currentReadState["low-stock"],
         });
       }
 
@@ -86,19 +77,12 @@ export default function NotificationCenter({ orgSlug }) {
       });
       
       if (overdueReceivables.length > 0) {
-        const totalOverdue = overdueReceivables.reduce((sum, r) => 
-          sum + ((r.total || 0) - (r.amount_paid || 0)), 0
-        );
+        const totalOverdue = overdueReceivables.reduce((sum, r) => sum + ((r.total || 0) - (r.amount_paid || 0)), 0);
         newNotifications.push({
-          id: "overdue-receivables",
-          type: "error",
-          icon: DollarSign,
-          title: "Cuentas por Cobrar Vencidas",
+          id: "overdue-receivables", type: "error", icon: DollarSign, title: "Cuentas por Cobrar Vencidas",
           message: `${overdueReceivables.length} cuenta(s) vencida(s)`,
           details: `Total: C$ ${totalOverdue.toLocaleString("es-NI", { minimumFractionDigits: 2 })}`,
-          link: `/${orgSlug}/finance`,
-          timestamp: new Date(),
-          read: !!currentReadState["overdue-receivables"],
+          link: `/${orgSlug}/finance`, timestamp: new Date(), read: !!currentReadState["overdue-receivables"],
         });
       }
 
@@ -108,19 +92,12 @@ export default function NotificationCenter({ orgSlug }) {
       });
       
       if (overduePayables.length > 0) {
-        const totalOverdue = overduePayables.reduce((sum, p) => 
-          sum + ((p.total || 0) - (p.amount_paid || 0)), 0
-        );
+        const totalOverdue = overduePayables.reduce((sum, p) => sum + ((p.total || 0) - (p.amount_paid || 0)), 0);
         newNotifications.push({
-          id: "overdue-payables",
-          type: "error",
-          icon: Clock,
-          title: "Cuentas por Pagar Vencidas",
+          id: "overdue-payables", type: "error", icon: Clock, title: "Cuentas por Pagar Vencidas",
           message: `${overduePayables.length} cuenta(s) vencida(s)`,
           details: `Total: C$ ${totalOverdue.toLocaleString("es-NI", { minimumFractionDigits: 2 })}`,
-          link: `/${orgSlug}/finance`,
-          timestamp: new Date(),
-          read: !!currentReadState["overdue-payables"],
+          link: `/${orgSlug}/finance`, timestamp: new Date(), read: !!currentReadState["overdue-payables"],
         });
       }
 
@@ -134,19 +111,12 @@ export default function NotificationCenter({ orgSlug }) {
       });
       
       if (upcomingPayables.length > 0) {
-        const totalUpcoming = upcomingPayables.reduce((sum, p) => 
-          sum + ((p.total || 0) - (p.amount_paid || 0)), 0
-        );
+        const totalUpcoming = upcomingPayables.reduce((sum, p) => sum + ((p.total || 0) - (p.amount_paid || 0)), 0);
         newNotifications.push({
-          id: "upcoming-payables",
-          type: "info",
-          icon: AlertTriangle,
-          title: "Pagos Proximos",
+          id: "upcoming-payables", type: "info", icon: AlertTriangle, title: "Pagos Proximos",
           message: `${upcomingPayables.length} pago(s) en los proximos 7 dias`,
           details: `Total: C$ ${totalUpcoming.toLocaleString("es-NI", { minimumFractionDigits: 2 })}`,
-          link: `/${orgSlug}/finance`,
-          timestamp: new Date(),
-          read: !!currentReadState["upcoming-payables"],
+          link: `/${orgSlug}/finance`, timestamp: new Date(), read: !!currentReadState["upcoming-payables"],
         });
       }
 
@@ -167,11 +137,8 @@ export default function NotificationCenter({ orgSlug }) {
   }, [loadNotifications]);
 
   const markAsRead = (id) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
     setUnreadCount(prev => Math.max(0, prev - 1));
-    
     const newReadState = { ...readState, [id]: Date.now() };
     setReadState(newReadState);
     saveReadState(newReadState);
@@ -180,11 +147,8 @@ export default function NotificationCenter({ orgSlug }) {
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     setUnreadCount(0);
-    
     const newReadState = { ...readState };
-    notifications.forEach(n => {
-      newReadState[n.id] = Date.now();
-    });
+    notifications.forEach(n => { newReadState[n.id] = Date.now(); });
     setReadState(newReadState);
     saveReadState(newReadState);
   };
@@ -209,37 +173,24 @@ export default function NotificationCenter({ orgSlug }) {
 
   return (
     <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors"
-      >
+      <button onClick={() => setIsOpen(!isOpen)} className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors">
         <Bell className="w-5 h-5 text-slate-600" />
-        {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </span>
-        )}
+        {unreadCount > 0 && (<span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">{unreadCount > 9 ? "9+" : unreadCount}</span>)}
       </button>
 
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute left-0 md:left-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border z-50 max-h-[80vh] overflow-hidden">
+          <div className="fixed inset-4 sm:inset-auto sm:absolute sm:left-0 sm:top-full sm:mt-2 w-auto sm:w-96 bg-white rounded-xl shadow-2xl border z-50 max-h-[90vh] sm:max-h-[80vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b bg-slate-50">
               <h3 className="font-semibold text-slate-800">Notificaciones</h3>
               <div className="flex items-center gap-2">
-                {unreadCount > 0 && (
-                  <button onClick={markAllAsRead} className="text-xs text-blue-600 hover:text-blue-800">
-                    Marcar todas leidas
-                  </button>
-                )}
-                <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-slate-200 rounded">
-                  <X className="w-4 h-4 text-slate-500" />
-                </button>
+                {unreadCount > 0 && (<button onClick={markAllAsRead} className="text-xs text-blue-600 hover:text-blue-800">Marcar todas leidas</button>)}
+                <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-slate-200 rounded"><X className="w-4 h-4 text-slate-500" /></button>
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[60vh]">
+            <div className="overflow-y-auto flex-1">
               {loading ? (
                 <div className="p-8 text-center text-slate-500">Cargando notificaciones...</div>
               ) : notifications.length === 0 ? (
@@ -253,12 +204,7 @@ export default function NotificationCenter({ orgSlug }) {
                   {notifications.map((notification) => {
                     const Icon = notification.icon;
                     return (
-                      <a
-                        key={notification.id}
-                        href={notification.link}
-                        onClick={() => markAsRead(notification.id)}
-                        className={`block p-4 hover:bg-slate-50 transition-colors ${!notification.read ? "bg-blue-50/50" : ""}`}
-                      >
+                      <a key={notification.id} href={notification.link} onClick={() => markAsRead(notification.id)} className={`block p-4 hover:bg-slate-50 transition-colors ${!notification.read ? "bg-blue-50/50" : ""}`}>
                         <div className="flex gap-3">
                           <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getTypeStyles(notification.type)}`}>
                             <Icon className={`w-5 h-5 ${getIconColor(notification.type)}`} />
@@ -280,9 +226,7 @@ export default function NotificationCenter({ orgSlug }) {
             </div>
 
             <div className="px-4 py-3 border-t bg-slate-50">
-              <button onClick={loadNotifications} className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium">
-                Actualizar notificaciones
-              </button>
+              <button onClick={loadNotifications} className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium">Actualizar notificaciones</button>
             </div>
           </div>
         </>
