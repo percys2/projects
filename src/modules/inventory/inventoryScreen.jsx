@@ -9,7 +9,9 @@ import ProductFormModal from "./components/ProductFormModal";
 import InventoryEntryModal from "./components/InventoryEntryModal";
 import InventoryExitModal from "./components/InventoryExitModal";
 import InventoryTransferModal from "./components/InventoryTransferModal";
+import ResetInventoryModal from "./components/ResetInventoryModal";
 import KardexDrawer from "../kardex/KardexDrawer";
+import { exportInventoryToExcel, exportInventoryToPDF } from "./utils/exportToExcel";
 
 
 export default function InventoryScreen({ orgSlug }) {
@@ -36,10 +38,7 @@ export default function InventoryScreen({ orgSlug }) {
     try {
       const res = await fetch("/api/inventory/movements", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-org-slug": orgSlug,
-        },
+        headers: { "Content-Type": "application/json", "x-org-slug": orgSlug },
         body: JSON.stringify({
           productId: entryProduct.product_id ?? entryProduct.productId,
           branchId: entryProduct.branchId,
@@ -53,19 +52,11 @@ export default function InventoryScreen({ orgSlug }) {
           invoiceNumber: data.invoiceNumber || null,
         }),
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        alert(err.error);
-        return;
-      }
-
+      if (!res.ok) { const err = await res.json(); alert(err.error); return; }
       await inv.loadInventory();
       setKardexRefreshKey((k) => k + 1);
       setEntryOpen(false);
-    } catch (err) {
-      alert("Error registrando entrada");
-    }
+    } catch (err) { alert("Error registrando entrada"); }
   };
 
   const [exitOpen, setExitOpen] = useState(false);
@@ -80,10 +71,7 @@ export default function InventoryScreen({ orgSlug }) {
     try {
       const res = await fetch("/api/inventory/movements", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-org-slug": orgSlug,
-        },
+        headers: { "Content-Type": "application/json", "x-org-slug": orgSlug },
         body: JSON.stringify({
           productId: exitProduct.product_id ?? exitProduct.productId,
           branchId: exitProduct.branchId,
@@ -93,43 +81,27 @@ export default function InventoryScreen({ orgSlug }) {
           invoiceNumber: data.invoiceNumber || null,
         }),
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        alert(err.error);
-        return;
-      }
-
+      if (!res.ok) { const err = await res.json(); alert(err.error); return; }
       await inv.loadInventory();
       setKardexRefreshKey((k) => k + 1);
       setExitOpen(false);
-    } catch (err) {
-      alert("Error registrando salida");
-    }
+    } catch (err) { alert("Error registrando salida"); }
   };
 
   const [transferOpen, setTransferOpen] = useState(false);
   const [transferProduct, setTransferProduct] = useState(null);
+  const [resetOpen, setResetOpen] = useState(false);
 
   const openTransfer = (product) => {
     setTransferProduct(product);
     setTransferOpen(true);
   };
 
-  const handleTransferSubmit = async ({
-    productId,
-    qty,
-    fromBranchId,
-    toBranchId,
-    invoiceNumber,
-  }) => {
+  const handleTransferSubmit = async ({ productId, qty, fromBranchId, toBranchId, invoiceNumber }) => {
     try {
       const res = await fetch("/api/inventory/movements", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-org-slug": orgSlug,
-        },
+        headers: { "Content-Type": "application/json", "x-org-slug": orgSlug },
         body: JSON.stringify({
           productId,
           type: "transferencia",
@@ -140,120 +112,83 @@ export default function InventoryScreen({ orgSlug }) {
           invoiceNumber: invoiceNumber || null,
         }),
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        alert(err.error);
-        return;
-      }
-
+      if (!res.ok) { const err = await res.json(); alert(err.error); return; }
       await inv.loadInventory();
       setKardexRefreshKey((k) => k + 1);
       setTransferOpen(false);
-    } catch (err) {
-      alert("Error registrando traslado");
-    }
+    } catch (err) { alert("Error registrando traslado"); }
   };
 
   return (
     <div className="space-y-4 sm:space-y-5 max-w-full mx-auto px-2 sm:px-4">
-
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h1 className="text-lg font-semibold">Inventario</h1>
-          <p className="text-xs text-slate-500">
-            Control por producto, movimientos y sucursales.
-          </p>
+          <p className="text-xs text-slate-500">Control por producto, movimientos y sucursales.</p>
         </div>
 
-        <button
-          onClick={inv.openNewProduct}
-          className="w-full sm:w-auto px-3 py-2 bg-slate-900 text-white rounded-lg text-xs min-h-[44px]"
-        >
-          + Agregar producto
-        </button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button
+            onClick={() => exportInventoryToExcel(inv.filteredProducts, inv.branch || "Todas")}
+            className="w-full sm:w-auto px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs min-h-[44px] hover:bg-emerald-700 flex items-center justify-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Excel
+          </button>
+          <button
+            onClick={() => exportInventoryToPDF(inv.filteredProducts, inv.branch || "Todas")}
+            className="w-full sm:w-auto px-3 py-2 bg-blue-600 text-white rounded-lg text-xs min-h-[44px] hover:bg-blue-700 flex items-center justify-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            PDF
+          </button>
+          <button onClick={() => setResetOpen(true)} className="w-full sm:w-auto px-3 py-2 bg-red-600 text-white rounded-lg text-xs min-h-[44px] hover:bg-red-700">
+            Resetear inventario a 0
+          </button>
+          <button onClick={inv.openNewProduct} className="w-full sm:w-auto px-3 py-2 bg-slate-900 text-white rounded-lg text-xs min-h-[44px]">
+            + Agregar producto
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
         <div className="px-3 sm:px-4 py-3 border-b">
           <h2 className="font-semibold text-sm">Detalle de inventario</h2>
-          <p className="text-[11px] text-slate-500">
-            Total filtrados: {inv.filteredProducts.length}
-          </p>
+          <p className="text-[11px] text-slate-500">Total filtrados: {inv.filteredProducts.length}</p>
         </div>
 
         <div className="px-3 sm:px-4 py-3 border-b">
           <InventoryFilters
-            search={inv.search}
-            setSearch={inv.setSearch}
-            category={inv.category}
-            setCategory={inv.setCategory}
-            subcategory={inv.subcategory}
-            setSubcategory={inv.setSubcategory}
-            branch={inv.branch}
-            setBranch={inv.setBranch}
-            lowStockOnly={inv.lowStockOnly}
-            setLowStockOnly={inv.setLowStockOnly}
-            categories={inv.categories}
-            subcategories={inv.subcategories}
-            branches={inv.branches}
+            search={inv.search} setSearch={inv.setSearch}
+            category={inv.category} setCategory={inv.setCategory}
+            subcategory={inv.subcategory} setSubcategory={inv.setSubcategory}
+            branch={inv.branch} setBranch={inv.setBranch}
+            lowStockOnly={inv.lowStockOnly} setLowStockOnly={inv.setLowStockOnly}
+            categories={inv.categories} subcategories={inv.subcategories} branches={inv.branches}
           />
         </div>
 
         <div className="px-2 sm:px-4 py-3">
           <InventoryGrid
-            products={inv.filteredProducts}
-            stats={inv.stats}
-            onEdit={inv.openEditProduct}
-            onDelete={inv.deleteProduct}
+            products={inv.filteredProducts} stats={inv.stats}
+            onEdit={inv.openEditProduct} onDelete={inv.deleteProduct}
             onToggleActive={inv.toggleProductActive}
-            onEntry={openEntry}
-            onExit={openExit}
-            onTransfer={openTransfer}
-            onKardex={openKardex}
+            onEntry={openEntry} onExit={openExit} onTransfer={openTransfer} onKardex={openKardex}
             orgSlug={orgSlug}
           />
         </div>
       </div>
 
-      <KardexDrawer
-        open={kardexOpen}
-        onClose={() => setKardexOpen(false)}
-        product={kardexProduct}
-        orgSlug={orgSlug}
-        refreshKey={kardexRefreshKey}
-      />
-
-      <ProductFormModal
-        isOpen={inv.isModalOpen}
-        onClose={inv.closeModal}
-        onSave={inv.saveProduct}
-        product={inv.editingProduct}
-        categories={inv.categories}
-        branches={inv.branches}
-      />
-
-      <InventoryEntryModal
-        isOpen={entryOpen}
-        onClose={() => setEntryOpen(false)}
-        product={entryProduct}
-        onSubmit={handleEntrySubmit}
-      />
-
-      <InventoryExitModal
-        isOpen={exitOpen}
-        onClose={() => setExitOpen(false)}
-        product={exitProduct}
-        onSubmit={handleExitSubmit}
-      />
-
-      <InventoryTransferModal
-        isOpen={transferOpen}
-        onClose={() => setTransferOpen(false)}
-        product={transferProduct}
-        onSubmit={handleTransferSubmit}
-        branches={inv.branches}
-      />
+      <KardexDrawer open={kardexOpen} onClose={() => setKardexOpen(false)} product={kardexProduct} orgSlug={orgSlug} refreshKey={kardexRefreshKey} />
+      <ProductFormModal isOpen={inv.isModalOpen} onClose={inv.closeModal} onSave={inv.saveProduct} product={inv.editingProduct} categories={inv.categories} branches={inv.branches} />
+      <InventoryEntryModal isOpen={entryOpen} onClose={() => setEntryOpen(false)} product={entryProduct} onSubmit={handleEntrySubmit} />
+      <InventoryExitModal isOpen={exitOpen} onClose={() => setExitOpen(false)} product={exitProduct} onSubmit={handleExitSubmit} />
+      <InventoryTransferModal isOpen={transferOpen} onClose={() => setTransferOpen(false)} product={transferProduct} onSubmit={handleTransferSubmit} branches={inv.branches} />
+      <ResetInventoryModal isOpen={resetOpen} onClose={() => setResetOpen(false)} orgSlug={orgSlug} onSuccess={() => { inv.loadInventory(); setKardexRefreshKey((k) => k + 1); }} />
     </div>
   );
 }
