@@ -136,7 +136,7 @@ export default function PosScreen({ orgSlug }) {
       toast.error(error.message || "Error al realizar la venta");
     }
   };
-    return (
+  return (
     <div className="flex flex-col h-full bg-slate-100">
       <div className="bg-blue-600 text-white p-3">
         <div className="flex items-center gap-2 lg:gap-4">
@@ -170,14 +170,25 @@ export default function PosScreen({ orgSlug }) {
         </div>
       </div>
 
+      {/* BANNER DE ADVERTENCIA CON BOTON CERRAR CAJA */}
       {dayChangedWhileOpen && (
         <div className="bg-red-50 border-b border-red-200 p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              <div><p className="text-red-800 font-medium text-sm">Cierre de caja pendiente del dia anterior</p><p className="text-red-600 text-xs">La caja quedo abierta. Realice el cierre antes de continuar.</p></div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <svg className="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div className="min-w-0">
+                <p className="text-red-800 font-medium text-sm">Cierre de caja pendiente</p>
+                <p className="text-red-600 text-xs hidden sm:block">La caja quedo abierta. Realice el cierre antes de continuar.</p>
+              </div>
             </div>
-            <button onClick={clearDayChangedWarning} className="text-red-400 hover:text-red-600 p-1"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <CloseCashButton />
+              <button onClick={clearDayChangedWarning} className="text-red-400 hover:text-red-600 p-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -245,7 +256,7 @@ export default function PosScreen({ orgSlug }) {
             <button onClick={clearCart} disabled={cart.length === 0} className="px-4 lg:px-6 bg-red-500 hover:bg-red-600 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium min-h-[48px]">Vaciar</button>
           </div>
         </div>
-         <div className="hidden lg:flex w-80 bg-slate-100 p-3 flex-col gap-3 overflow-y-auto">
+                <div className="hidden lg:flex w-80 bg-slate-100 p-3 flex-col gap-3 overflow-y-auto">
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <label className="text-xs font-medium text-slate-600">Sucursal</label>
             <select className="w-full mt-1 text-sm border rounded px-2 py-1.5" value={branch || ""} onChange={(e) => setBranch(e.target.value)}>
