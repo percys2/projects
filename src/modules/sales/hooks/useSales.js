@@ -18,9 +18,21 @@ export function useSales(orgSlug) {
 
   const [branches, setBranches] = useState([]);
   
+  const getMonthRange = () => {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return {
+      start: firstDay.toISOString().split('T')[0],
+      end: lastDay.toISOString().split('T')[0],
+    };
+  };
+
+  const monthRange = getMonthRange();
+
   const [filters, setFilters] = useState({
-    dateStart: "",
-    dateEnd: "",
+    dateStart: monthRange.start,
+    dateEnd: monthRange.end,
     search: "",
     selectedBranch: "",
   });
@@ -72,8 +84,8 @@ export function useSales(orgSlug) {
     const confirmed = await confirm({
       title: restoreInventory ? "Anular venta" : "Eliminar venta",
       message: restoreInventory 
-        ? "¿Está seguro de ANULAR esta venta? El inventario será restaurado."
-        : "¿Está seguro de ELIMINAR esta venta permanentemente? Esta acción no se puede deshacer y NO restaurará el inventario.",
+        ? "Esta seguro de ANULAR esta venta? El inventario sera restaurado."
+        : "Esta seguro de ELIMINAR esta venta permanentemente? Esta accion no se puede deshacer y NO restaurara el inventario.",
       type: "danger",
       confirmText: restoreInventory ? "Anular" : "Eliminar",
     });
@@ -89,12 +101,12 @@ export function useSales(orgSlug) {
       
       if (res.ok) {
         const data = await res.json();
-        toast.success(data.message || "Operación exitosa");
+        toast.success(data.message || "Operacion exitosa");
         loadSales();
         return true;
       } else {
         const data = await res.json();
-        toast.error(data.error || "No se pudo completar la operación");
+        toast.error(data.error || "No se pudo completar la operacion");
         return false;
       }
     } catch (err) {
@@ -121,9 +133,10 @@ export function useSales(orgSlug) {
   }, []);
 
   const clearFilters = useCallback(() => {
+    const range = getMonthRange();
     setFilters({
-      dateStart: "",
-      dateEnd: "",
+      dateStart: range.start,
+      dateEnd: range.end,
       search: "",
       selectedBranch: "",
     });

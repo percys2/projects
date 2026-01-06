@@ -27,10 +27,10 @@ export async function GET(req) {
       .range(offset, offset + limit - 1);
 
     if (date) {
-      query = query.eq("fecha", date);
+      query = query.gte("created_at", `${date}T00:00:00`).lte("created_at", `${date}T23:59:59`);
     } else {
-      if (startDate) query = query.gte("fecha", startDate);
-      if (endDate) query = query.lte("fecha", endDate);
+      if (startDate) query = query.gte("created_at", `${startDate}T00:00:00`);
+      if (endDate) query = query.lte("created_at", `${endDate}T23:59:59`);
     }
     if (branchId) query = query.eq("branch_id", branchId);
 
@@ -39,11 +39,12 @@ export async function GET(req) {
 
     const totals = (sales || []).reduce((acc, sale) => {
       acc.totalRevenue += Number(sale.total) || 0;
-      acc.totalMargin += Number(sale.margen) || 0;
       acc.totalItems += (sale.sales_items || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
       acc.totalCost += (sale.sales_items || []).reduce((sum, item) => sum + (Number(item.cost || 0) * Number(item.quantity || 0)), 0);
       return acc;
     }, { totalRevenue: 0, totalItems: 0, totalMargin: 0, totalCost: 0 });
+    
+    totals.totalMargin = totals.totalRevenue - totals.totalCost;
 
     return NextResponse.json({ success: true, sales: sales || [], count: sales?.length || 0, totals });
   } catch (error) {

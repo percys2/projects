@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import { useCashRegisterStore } from "../store/useCashRegisterStore";
+import { useBranchStore } from "../store/useBranchStore";
 
-export default function CloseCashButton() {
+export default function CloseCashButton({ orgSlug }) {
   const isOpen = useCashRegisterStore((s) => s.isOpen);
   const getTotals = useCashRegisterStore((s) => s.getTotals);
   const closeCashRegister = useCashRegisterStore((s) => s.closeCashRegister);
   const openingTime = useCashRegisterStore((s) => s.openingTime);
+  const openingAmount = useCashRegisterStore((s) => s.openingAmount);
   const movements = useCashRegisterStore((s) => s.movements);
+  const branch = useBranchStore((s) => s.activeBranch);
 
   const [showModal, setShowModal] = useState(false);
   const [countedAmount, setCountedAmount] = useState("");
   const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -20,25 +24,65 @@ export default function CloseCashButton() {
   const counted = parseFloat(countedAmount) || 0;
   const difference = counted - totals.expectedTotal;
 
-  const handleClose = () => {
+  const handleClose = async () => {
     if (!countedAmount) {
       alert("Debe ingresar el monto contado fisicamente");
       return;
     }
 
-    closeCashRegister({ countedAmount: counted, notes });
-
-    const diffText = difference === 0 
-      ? "Sin diferencia" 
-      : difference > 0 
-        ? `Sobrante: C$ ${difference.toFixed(2)}`
-        : `Faltante: C$ ${Math.abs(difference).toFixed(2)}`;
-
-    alert(`Caja cerrada exitosamente.\n\nEsperado: C$ ${totals.expectedTotal.toFixed(2)}\nContado: C$ ${counted.toFixed(2)}\n${diffText}`);
+    setIsSubmitting(true);
     
-    setShowModal(false);
-    setCountedAmount("");
-    setNotes("");
+    try {
+      const closingData = {
+        branch_id: branch || null,
+        opening_time: openingTime,
+        closing_time: new Date().toISOString(),
+        opening_amount: openingAmount,
+        total_entries: totals.totalEntradas,
+        total_exits: totals.totalSalidas,
+        expected_total: totals.expectedTotal,
+        counted_amount: counted,
+        difference: difference,
+        sales_count: totals.salesCount,
+        movements_count: totals.movementsCount,
+        notes: notes || "",
+        movements: movements,
+      };
+
+      const res = await fetch("/api/pos/cash-closings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-slug": orgSlug,
+        },
+        body: JSON.stringify(closingData),
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Error al guardar el cierre");
+      }
+
+      closeCashRegister({ countedAmount: counted, notes });
+
+      const diffText = difference === 0 
+        ? "Sin diferencia" 
+        : difference > 0 
+          ? `Sobrante: C$ ${difference.toFixed(2)}`
+          : `Faltante: C$ ${Math.abs(difference).toFixed(2)}`;
+
+      alert(`Caja cerrada exitosamente.\n\nEsperado: C$ ${totals.expectedTotal.toFixed(2)}\nContado: C$ ${counted.toFixed(2)}\n${diffText}`);
+      
+      setShowModal(false);
+      setCountedAmount("");
+      setNotes("");
+    } catch (error) {
+      console.error("Error closing cash register:", error);
+      alert(`Error al cerrar la caja: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const formatTime = (isoString) => {
@@ -142,10 +186,17 @@ export default function CloseCashButton() {
                 </button>
                 <button
                   onClick={handleClose}
-                  disabled={!countedAmount}
-                  className="flex-1 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg font-medium"
+                  disabled={!countedAmount || isSubmitting}
+                  className="flex-1 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg font-medium flex items-center justify-center gap-2"
                 >
-                  Confirmar Cierre
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Guardando...
+                    </>
+                  ) : (
+                    "Confirmar Cierre"
+                  )}
                 </button>
               </div>
             </div>

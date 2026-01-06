@@ -55,7 +55,8 @@ const ROLE_MODULES = {
   admin: ["dashboard", "inventory", "kardex", "pos", "sales", "crm", "finance", "hr", "settings"],
   manager: ["dashboard", "inventory", "kardex", "pos", "sales", "crm", "finance", "hr", "settings"],
   accountant: ["dashboard", "inventory", "finance", "hr", "settings"],
-  cashier: ["dashboard", "pos", "sales"],
+  cajero: ["inventory", "crm", "pos"],
+  cashier: ["inventory", "crm", "pos"],
   warehouse: ["dashboard", "inventory", "kardex"],
   viewer: ["dashboard", "inventory", "sales"],
 };
@@ -208,7 +209,7 @@ export default function AppLayout({ children, orgSlug }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] text-gray-500 uppercase tracking-wider">
-                {userRole === "cashier" ? "Cajero" : userRole === "admin" ? "Admin" : userRole}
+                {userRole === "cashier" || userRole === "cajero" ? "Cajero" : userRole === "admin" ? "Admin" : userRole}
               </p>
               <p className="text-sm font-medium text-gray-200 truncate">{userName || orgSlug}</p>
             </div>

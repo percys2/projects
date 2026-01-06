@@ -234,4 +234,3 @@ export default function NotificationCenter({ orgSlug }) {
     </div>
   );
 }
-c
