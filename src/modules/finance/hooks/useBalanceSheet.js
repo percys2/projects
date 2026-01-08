@@ -36,7 +36,7 @@ export function useBalanceSheet({ sales, expenses, accounts, inventory, assets, 
 
     // Inventory value
     const inventoryValue = (inventory || []).reduce(
-      (sum, i) => sum + ((i.quantity || 0) * (i.products?.cost || 0)),
+      (sum, i) => sum + ((i.quantity || 0) * (i.cost || i.products?.cost || 0)),
       0
     );
 

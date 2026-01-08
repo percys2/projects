@@ -1,10 +1,11 @@
+
 "use client";
 
 import React, { useState } from "react";
 import { formatCurrency, formatDateTime } from "../utils/formatters";
 import { getClientName, getProductNames, getItemsCount } from "../utils/salePresenters";
 
-export default function SalesMobileList({ sales, loading, error, onPrint, onCancel, onDelete }) {
+export default function SalesMobileList({ sales, branches, loading, error, onPrint, onCancel, onDelete, onViewDetail }) {
   const [expandedSaleId, setExpandedSaleId] = useState(null);
 
   const toggleExpand = (saleId) => {
@@ -39,6 +40,7 @@ export default function SalesMobileList({ sales, loading, error, onPrint, onCanc
                 <div>Margen: <strong>{formatCurrency(sale.margen)}</strong></div>
               </div>
               <div className="flex gap-2 pt-2">
+                <button onClick={(e) => { e.stopPropagation(); onViewDetail(sale); }} className="flex-1 px-2 py-2 text-xs bg-slate-600 text-white rounded">Ver Detalle</button>
                 <button onClick={(e) => { e.stopPropagation(); onPrint(sale); }} className="flex-1 px-2 py-2 text-xs bg-blue-600 text-white rounded">Imprimir</button>
                 <button onClick={(e) => { e.stopPropagation(); onCancel(sale.id); }} className="flex-1 px-2 py-2 text-xs bg-orange-600 text-white rounded">Anular</button>
                 <button onClick={(e) => { e.stopPropagation(); onDelete(sale.id); }} className="flex-1 px-2 py-2 text-xs bg-red-600 text-white rounded">Eliminar</button>

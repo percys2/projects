@@ -18,15 +18,13 @@ export async function GET(req) {
     const branchId = searchParams.get("branchId");
     const limit = Number(searchParams.get("limit") || 100);
     const offset = Number(searchParams.get("offset") || 0);
-
-    let query = supabase
+   let query = supabase
       .from("sales")
-      .select(`*, clients(*), sales_items(*, products:product_id(id, name, sku, category))`)
+      .select(`*, clients(*), sales_items(*, products:product_id(id, name, sku, category)), branches:branch_id(id, name)`)
       .eq("org_id", org.id)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
-
-    if (date) {
+   if (date) {
       query = query.gte("created_at", `${date}T00:00:00`).lte("created_at", `${date}T23:59:59`);
     } else {
       if (startDate) query = query.gte("created_at", `${startDate}T00:00:00`);

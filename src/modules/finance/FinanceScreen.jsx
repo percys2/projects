@@ -194,10 +194,10 @@ export default function FinanceScreen({ orgSlug }) {
           {activeTab === "assets" && <AssetsList assets={finance.assets} onEdit={finance.openEditAsset} onDelete={finance.deleteAsset} />}
           {activeTab === "suppliers" && <SuppliersList suppliers={finance.suppliers} onEdit={finance.openEditSupplier} onDelete={finance.deleteSupplier} />}
           {activeTab === "budgets" && <BudgetsPanel accounts={finance.accounts} expenses={finance.expenses} orgSlug={orgSlug} />}
-          {activeTab === "income_statement" && <IncomeStatement payments={finance.payments} expenses={finance.expenses} sales={finance.sales} orgName="Mi Empresa" />}
-          {activeTab === "balance_sheet" && <BalanceSheet accounts={finance.accounts} assets={finance.assets} receivables={finance.receivables} payables={finance.payables} sales={finance.sales} expenses={finance.expenses} orgName="Mi Empresa" />}
-          {activeTab === "ledger" && <GeneralLedger payments={finance.payments} expenses={finance.expenses} accounts={finance.accounts} orgName="Mi Empresa" />}
-          {activeTab === "taxes" && <TaxReports payments={finance.payments} expenses={finance.expenses} sales={finance.sales} orgName="Mi Empresa" />}
+          {activeTab === "income_statement" && <IncomeStatement payments={finance.payments} expenses={finance.expenses} sales={finance.sales} orgName="Agrocentro" />}
+          {activeTab === "balance_sheet" && <BalanceSheet accounts={finance.accounts} assets={finance.assets} receivables={finance.receivables} payables={finance.payables} sales={finance.sales} expenses={finance.expenses} inventory={finance.inventory} orgName="Agrocentro" />}
+          {activeTab === "ledger" && <GeneralLedger payments={finance.payments} expenses={finance.expenses} accounts={finance.accounts} orgName="Agrocentro" />}
+          {activeTab === "taxes" && <TaxReports payments={finance.payments} expenses={finance.expenses} sales={finance.sales} orgName="Agrocentro" />}
           {activeTab === "reports" && <ReportsPanel orgSlug={orgSlug} accounts={finance.accounts} />}
         </div>
       </div>

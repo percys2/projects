@@ -46,7 +46,7 @@ export function useIncomeStatement({ payments, expenses, sales, period, month, y
     );
     
     const periodSales = validSales.filter((s) => {
-      const saleDate = parseDateSafe(s.fecha);
+      const saleDate = parseDateSafe(s.created_at || s.fecha);
       if (!saleDate || isNaN(saleDate.getTime())) return false;
       return saleDate >= startDate && saleDate <= endOfDay;
     });

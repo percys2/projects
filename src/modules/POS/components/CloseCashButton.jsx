@@ -104,7 +104,7 @@ export default function CloseCashButton({ orgSlug }) {
       </button>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[200] p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="bg-slate-800 text-white p-4 rounded-t-xl">
               <h2 className="text-lg font-bold">Cierre de Caja</h2>
@@ -124,8 +124,12 @@ export default function CloseCashButton({ orgSlug }) {
                   <span className="text-sm font-medium">{formatCurrency(totals.openingAmount)}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-sm text-green-600">+ Entradas (ventas)</span>
-                  <span className="text-sm font-medium text-green-600">{formatCurrency(totals.totalEntradas)}</span>
+                  <span className="text-sm text-green-600">+ Ventas</span>
+                  <span className="text-sm font-medium text-green-600">{formatCurrency(movements.filter(m => m.type === 'entrada' && m.subtype !== 'menudeo').reduce((acc, m) => acc + m.amount, 0))}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-sm text-purple-600">+ Menudeo</span>
+                  <span className="text-sm font-medium text-purple-600">{formatCurrency(movements.filter(m => m.subtype === 'menudeo').reduce((acc, m) => acc + m.amount, 0))}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-sm text-red-600">- Salidas (retiros)</span>

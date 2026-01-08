@@ -4,7 +4,7 @@ import React from "react";
 import { formatCurrency, formatDate, formatDateTime } from "../utils/formatters";
 import { getClientName, getBranchName, getProductNames } from "../utils/salePresenters";
 
-export default function SalesTable({ sales, branches, loading, error, onPrint, onCancel, onDelete }) {
+export default function SalesTable({ sales, branches, loading, error, onPrint, onCancel, onDelete, onViewDetail }) {
   return (
     <div className="hidden lg:block bg-white rounded-xl border overflow-hidden">
       <div className="overflow-x-auto">
@@ -40,6 +40,7 @@ export default function SalesTable({ sales, branches, loading, error, onPrint, o
                   <td className="px-4 py-3 text-right font-semibold">{formatCurrency(sale.total)}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-1">
+                      <button onClick={() => onViewDetail(sale)} className="px-2 py-1 text-xs bg-slate-600 text-white rounded">Ver</button>
                       <button onClick={() => onPrint(sale)} className="px-2 py-1 text-xs bg-blue-600 text-white rounded">Imprimir</button>
                       <button onClick={() => onCancel(sale.id)} className="px-2 py-1 text-xs bg-orange-600 text-white rounded">Anular</button>
                       <button onClick={() => onDelete(sale.id)} className="px-2 py-1 text-xs bg-red-600 text-white rounded">Eliminar</button>

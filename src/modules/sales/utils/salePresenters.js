@@ -8,6 +8,9 @@ export const getClientName = (sale) => {
 };
 
 export const getBranchName = (sale, branches = []) => {
+  // First try to get branch name from the joined branch data
+  if (sale?.branches?.name) return sale.branches.name;
+  // Fallback to finding in branches array
   if (!sale?.branch_id) return "-";
   const branch = branches.find(b => b.id === sale.branch_id);
   return branch?.name || "-";

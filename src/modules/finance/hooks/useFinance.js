@@ -50,6 +50,7 @@ export function useFinance(orgSlug) {
     const [receivables, setReceivables] = useState([]);
     const [payables, setPayables] = useState([]);
     const [sales, setSales] = useState([]);
+    const [inventory, setInventory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -90,6 +91,7 @@ export function useFinance(orgSlug) {
               receivablesRes,
               payablesRes,
               salesRes,
+              inventoryRes,
             ] = await Promise.all([
               fetch("/api/finance/accounts", { headers }),
               fetch("/api/finance/ap-bills", { headers }),
@@ -100,6 +102,7 @@ export function useFinance(orgSlug) {
               fetch("/api/finance/receivables", { headers }),
               fetch("/api/finance/reports/payables", { headers }),
               fetch("/api/sales?limit=1000", { headers }),
+              fetch("/api/inventory", { headers }),
             ]);
 
             const [
@@ -112,6 +115,7 @@ export function useFinance(orgSlug) {
               receivablesData,
               payablesData,
               salesData,
+              inventoryData,
             ] = await Promise.all([
               accountsRes.json(),
               expensesRes.json(),
@@ -122,6 +126,7 @@ export function useFinance(orgSlug) {
               receivablesRes.json(),
               payablesRes.json(),
               salesRes.json(),
+              inventoryRes.json(),
             ]);
 
             setAccounts(accountsData.accounts || []);
@@ -133,6 +138,7 @@ export function useFinance(orgSlug) {
             setReceivables(receivablesData.receivables || []);
             setPayables(payablesData.payables || []);
             setSales(salesData.sales || []);
+            setInventory(Array.isArray(inventoryData) ? inventoryData : (inventoryData.products || inventoryData.inventory || []));
     } catch (err) {
       console.error("Finance fetch error:", err);
       setError(err.message);
@@ -179,7 +185,7 @@ export function useFinance(orgSlug) {
     );
     
     // Use getMonthKey for robust date parsing of sales
-    const monthlySales = validSales.filter((s) => getMonthKey(s.fecha) === currentMonthKey);
+    const monthlySales = validSales.filter((s) => getMonthKey(s.created_at || s.fecha) === currentMonthKey);
     
     const monthlyIncome = monthlySales.reduce(
       (sum, s) => sum + (parseFloat(s.total) || 0),
@@ -701,6 +707,7 @@ export function useFinance(orgSlug) {
       receivables,
       payables,
       sales,
+      inventory,
       loading,
       error,
       stats,

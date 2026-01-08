@@ -9,6 +9,7 @@ import {
   SalesMobileList,
   SalesPagination,
   SalesExportButtons,
+  SaleDetailModal,
 } from "./components";
 import {
   exportSalesToPdf,
@@ -20,6 +21,7 @@ import CashClosingHistory from "../POS/components/CashClosingHistory";
 
 export default function SalesScreen({ orgSlug }) {
   const [showCashHistory, setShowCashHistory] = useState(false);
+  const [selectedSale, setSelectedSale] = useState(null);
   const {
     filteredSales,
     totals,
@@ -74,6 +76,10 @@ export default function SalesScreen({ orgSlug }) {
     cancelSale(saleId, false);
   };
 
+  const handleViewDetail = (sale) => {
+    setSelectedSale(sale);
+  };
+
   const hasMorePages = filteredSales.length >= limit;
 
   return (
@@ -112,11 +118,13 @@ export default function SalesScreen({ orgSlug }) {
 
       <SalesMobileList
         sales={filteredSales}
+        branches={branches}
         loading={loading}
         error={error}
         onPrint={handlePrintInvoice}
         onCancel={handleCancelSale}
         onDelete={handleDeleteSale}
+        onViewDetail={handleViewDetail}
       />
 
       <SalesTable
@@ -127,6 +135,7 @@ export default function SalesScreen({ orgSlug }) {
         onPrint={handlePrintInvoice}
         onCancel={handleCancelSale}
         onDelete={handleDeleteSale}
+        onViewDetail={handleViewDetail}
       />
 
       <SalesPagination
@@ -140,6 +149,17 @@ export default function SalesScreen({ orgSlug }) {
         <CashClosingHistory
           orgSlug={orgSlug}
           onClose={() => setShowCashHistory(false)}
+        />
+      )}
+
+      {selectedSale && (
+        <SaleDetailModal
+          sale={selectedSale}
+          branches={branches}
+          onClose={() => setSelectedSale(null)}
+          onPrint={handlePrintInvoice}
+          onCancel={handleCancelSale}
+          onDelete={handleDeleteSale}
         />
       )}
 
