@@ -4,29 +4,56 @@ import { useState } from "react";
 import { useCashRegisterStore } from "../store/useCashRegisterStore";
 import { useBranchStore } from "../store/useBranchStore";
 
-export default function CloseCashButton({ orgSlug }) {
-  const isOpen = useCashRegisterStore((s) => s.isOpen);
-  const getTotals = useCashRegisterStore((s) => s.getTotals);
-  const closeCashRegister = useCashRegisterStore((s) => s.closeCashRegister);
-  const openingTime = useCashRegisterStore((s) => s.openingTime);
-  const openingAmount = useCashRegisterStore((s) => s.openingAmount);
-  const movements = useCashRegisterStore((s) => s.movements);
+const DENOMINATIONS = [1000, 500, 200, 100, 50, 20, 10, 5, 1];
+
+export default function CloseCashButton({ orgSlug, daySalesTotal = 0 }) {
   const branch = useBranchStore((s) => s.activeBranch);
+  const getBranchState = useCashRegisterStore((s) => s.getBranchState);
+  const closeCashRegisterStore = useCashRegisterStore((s) => s.closeCashRegister);
+  
+  const branchState = getBranchState(branch);
+  const isOpen = branchState.isOpen;
+  const openingTime = branchState.openingTime;
+  const openingAmount = branchState.openingAmount;
+  const movements = branchState.movements;
+  
+  const closeCashRegister = (params) => closeCashRegisterStore({ ...params, branchId: branch });
 
   const [showModal, setShowModal] = useState(false);
-  const [countedAmount, setCountedAmount] = useState("");
+  const [denomCounts, setDenomCounts] = useState({});
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
-  const totals = getTotals();
-  const counted = parseFloat(countedAmount) || 0;
-  const difference = counted - totals.expectedTotal;
+  const totalSalidas = movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0);
+  const totalVentas = daySalesTotal;
+  const totalMenudeo = movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0);
+  const expectedTotal = openingAmount + totalVentas + totalMenudeo - totalSalidas;
+  
+  const totals = {
+    openingAmount,
+    totalEntradas: totalVentas + totalMenudeo,
+    totalSalidas,
+    expectedTotal,
+    salesCount: movements.filter(m => m.type === 'entrada' && m.subtype !== 'menudeo').length,
+    movementsCount: movements.length,
+  };
+
+  const counted = DENOMINATIONS.reduce((sum, denom) => sum + (parseInt(denomCounts[denom]) || 0) * denom, 0);
+  const difference = counted - expectedTotal;
+
+  const handleDenomChange = (denom, value) => {
+    setDenomCounts(prev => ({ ...prev, [denom]: value }));
+  };
+
+  const clearDenominations = () => {
+    setDenomCounts({});
+  };
 
   const handleClose = async () => {
-    if (!countedAmount) {
-      alert("Debe ingresar el monto contado fisicamente");
+    if (counted === 0) {
+      alert("Debe ingresar el conteo de denominaciones");
       return;
     }
 
@@ -75,7 +102,7 @@ export default function CloseCashButton({ orgSlug }) {
       alert(`Caja cerrada exitosamente.\n\nEsperado: C$ ${totals.expectedTotal.toFixed(2)}\nContado: C$ ${counted.toFixed(2)}\n${diffText}`);
       
       setShowModal(false);
-      setCountedAmount("");
+      setDenomCounts({});
       setNotes("");
     } catch (error) {
       console.error("Error closing cash register:", error);
@@ -121,43 +148,60 @@ export default function CloseCashButton({ orgSlug }) {
                 <h3 className="font-semibold text-slate-700 text-sm">Resumen del Sistema</h3>
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-sm text-slate-600">Monto de apertura</span>
-                  <span className="text-sm font-medium">{formatCurrency(totals.openingAmount)}</span>
+                  <span className="text-sm font-medium">{formatCurrency(openingAmount)}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-sm text-green-600">+ Ventas</span>
-                  <span className="text-sm font-medium text-green-600">{formatCurrency(movements.filter(m => m.type === 'entrada' && m.subtype !== 'menudeo').reduce((acc, m) => acc + m.amount, 0))}</span>
+                  <span className="text-sm text-green-600">+ Ventas (BD)</span>
+                  <span className="text-sm font-medium text-green-600">{formatCurrency(totalVentas)}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-sm text-purple-600">+ Menudeo</span>
-                  <span className="text-sm font-medium text-purple-600">{formatCurrency(movements.filter(m => m.subtype === 'menudeo').reduce((acc, m) => acc + m.amount, 0))}</span>
+                  <span className="text-sm font-medium text-purple-600">{formatCurrency(totalMenudeo)}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-sm text-red-600">- Salidas (retiros)</span>
-                  <span className="text-sm font-medium text-red-600">{formatCurrency(totals.totalSalidas)}</span>
+                  <span className="text-sm font-medium text-red-600">{formatCurrency(totalSalidas)}</span>
                 </div>
                 <div className="flex justify-between py-3 bg-blue-50 rounded-lg px-3">
                   <span className="font-bold text-blue-800">Total Esperado</span>
-                  <span className="font-bold text-blue-800 text-lg">{formatCurrency(totals.expectedTotal)}</span>
+                  <span className="font-bold text-blue-800 text-lg">{formatCurrency(expectedTotal)}</span>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <h3 className="font-semibold text-slate-700 text-sm">Conteo Fisico</h3>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">C$</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={countedAmount}
-                    onChange={(e) => setCountedAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full pl-10 pr-4 py-3 border-2 border-slate-300 rounded-lg text-lg font-bold focus:border-blue-500 focus:outline-none"
-                    autoFocus
-                  />
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold text-slate-700 text-sm">Conteo por Denominacion</h3>
+                  <button onClick={clearDenominations} className="text-xs text-blue-600 hover:text-blue-800">Limpiar</button>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {DENOMINATIONS.map((denom) => (
+                    <div key={denom} className="bg-slate-50 rounded-lg p-2">
+                      <label className="text-xs text-slate-500 block mb-1">C$ {denom}</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={denomCounts[denom] || ""}
+                        onChange={(e) => handleDenomChange(denom, e.target.value)}
+                        placeholder="0"
+                        className="w-full px-2 py-1.5 border border-slate-300 rounded text-sm text-center focus:border-blue-500 focus:outline-none"
+                      />
+                      {(parseInt(denomCounts[denom]) || 0) > 0 && (
+                        <p className="text-xs text-green-600 text-center mt-1">
+                          = C$ {((parseInt(denomCounts[denom]) || 0) * denom).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-green-800">Total Contado:</span>
+                    <span className="text-xl font-bold text-green-800">C$ {counted.toLocaleString("es-NI", { minimumFractionDigits: 2 })}</span>
+                  </div>
                 </div>
               </div>
 
-              {countedAmount && (
+              {counted > 0 && (
                 <div className={`p-4 rounded-lg ${difference === 0 || difference > 0 ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
                   <div className="flex justify-between items-center">
                     <span className={`font-semibold ${difference >= 0 ? "text-green-700" : "text-red-700"}`}>
@@ -183,14 +227,14 @@ export default function CloseCashButton({ orgSlug }) {
 
               <div className="flex gap-3 pt-2">
                 <button
-                  onClick={() => { setShowModal(false); setCountedAmount(""); setNotes(""); }}
+                  onClick={() => { setShowModal(false); setDenomCounts({}); setNotes(""); }}
                   className="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-medium"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleClose}
-                  disabled={!countedAmount || isSubmitting}
+                  disabled={counted === 0 || isSubmitting}
                   className="flex-1 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-lg font-medium flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (

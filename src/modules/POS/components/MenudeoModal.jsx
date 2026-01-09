@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useCashRegisterStore } from "../store/useCashRegisterStore";
 
-export default function MenudeoModal({ orgSlug, onClose }) {
+export default function MenudeoModal({ orgSlug, branchId, onClose }) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const addMovement = useCashRegisterStore((s) => s.addMovement);
+  const addMovementStore = useCashRegisterStore((s) => s.addMovement);
+  
+  const addMovement = (movement) => addMovementStore(branchId, movement);
 
   const handleSubmit = async () => {
     const numAmount = parseFloat(amount);
@@ -40,6 +42,7 @@ export default function MenudeoModal({ orgSlug, onClose }) {
         subtype: "menudeo",
         amount: numAmount,
         description: description || "Venta de menudeo",
+        branchId: branchId,
       });
 
       alert(`Menudeo registrado: C$ ${numAmount.toFixed(2)}\nDeuda acumulada: C$ ${data.totalDebt?.toFixed(2) || numAmount.toFixed(2)}`);

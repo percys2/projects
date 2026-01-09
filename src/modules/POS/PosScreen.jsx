@@ -31,6 +31,7 @@ export default function PosScreen({ orgSlug }) {
   const [showMobileCart, setShowMobileCart] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+  // Cart store
   const cart = usePosStore((s) => s.cart);
   const addToCart = usePosStore((s) => s.addToCart);
   const removeFromCart = usePosStore((s) => s.removeFromCart);
@@ -41,6 +42,7 @@ export default function PosScreen({ orgSlug }) {
   const selectedClient = usePosStore((s) => s.selectedClient);
   const customerForm = usePosStore((s) => s.customerForm);
 
+  // Cash register store
   const isCashOpen = useCashRegisterStore((s) => s.isOpen);
   const addMovement = useCashRegisterStore((s) => s.addMovement);
   const movements = useCashRegisterStore((s) => s.movements);
@@ -50,39 +52,42 @@ export default function PosScreen({ orgSlug }) {
   const dayChangedWhileOpen = useCashRegisterStore((s) => s.dayChangedWhileOpen);
   const clearDayChangedWarning = useCashRegisterStore((s) => s.clearDayChangedWarning);
 
-  const [showDayDetail, setShowDayDetail] = useState(false);
-  const [daySales, setDaySales] = useState([]);
-  const [daySalesTotal, setDaySalesTotal] = useState(0);
-  const [loadingDaySales, setLoadingDaySales] = useState(false);
-  const [showCashHistory, setShowCashHistory] = useState(false);
-  const [isPastClosingTime, setIsPastClosingTime] = useState(false);
-  const [showMenudeoModal, setShowMenudeoModal] = useState(false);
+    const [showDayDetail, setShowDayDetail] = useState(false);
+    const [daySales, setDaySales] = useState([]);
+    const [daySalesTotal, setDaySalesTotal] = useState(0);
+    const [loadingDaySales, setLoadingDaySales] = useState(false);
+        const [showCashHistory, setShowCashHistory] = useState(false);
+      const [isPastClosingTime, setIsPastClosingTime] = useState(false);
+      const [showMenudeoModal, setShowMenudeoModal] = useState(false);
 
-  const CLOSING_HOUR = 19;
+    const CLOSING_HOUR = 19; // 7:00 PM
 
-  const getTodayManagua = () => {
-    return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Managua" }).format(new Date());
-  };
-
-  const getCurrentHourManagua = () => {
-    const now = new Date();
-    const managua = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Managua",
-      hour: "numeric",
-      hour12: false,
-    }).format(now);
-    return parseInt(managua, 10);
-  };
-
-  useEffect(() => {
-    const checkClosingTime = () => {
-      const currentHour = getCurrentHourManagua();
-      setIsPastClosingTime(currentHour >= CLOSING_HOUR);
+    const getTodayManagua = () => {
+      return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Managua" }).format(new Date());
     };
-    checkClosingTime();
-    const interval = setInterval(checkClosingTime, 60000);
-    return () => clearInterval(interval);
-  }, []);
+
+    const getCurrentHourManagua = () => {
+      const now = new Date();
+      const managua = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Managua",
+        hour: "numeric",
+        hour12: false,
+      }).format(now);
+      return parseInt(managua, 10);
+    };
+
+    // Check if it's past closing time every minute
+    useEffect(() => {
+      const checkClosingTime = () => {
+        const currentHour = getCurrentHourManagua();
+        setIsPastClosingTime(currentHour >= CLOSING_HOUR);
+      };
+    
+      checkClosingTime();
+      const interval = setInterval(checkClosingTime, 60000); // Check every minute
+    
+      return () => clearInterval(interval);
+    }, []);
 
   const loadDaySales = async () => {
     if (!orgSlug) return;
@@ -96,7 +101,8 @@ export default function PosScreen({ orgSlug }) {
       const data = await res.json();
       const sales = data.sales || [];
       setDaySales(sales);
-      setDaySalesTotal(sales.reduce((acc, s) => acc + (Number(s.total) || 0), 0));
+      const validSales = sales.filter(s => s.status !== 'canceled' && s.status !== 'refunded');
+      setDaySalesTotal(validSales.reduce((acc, s) => acc + (Number(s.total) || 0), 0));
     } catch (err) {
       console.error("Error loading day sales:", err);
       setDaySales([]);
@@ -163,6 +169,7 @@ export default function PosScreen({ orgSlug }) {
       setShowResults(false);
       return;
     }
+
     const term = searchTerm.toLowerCase();
     const results = products.filter(
       (p) =>
@@ -199,10 +206,12 @@ export default function PosScreen({ orgSlug }) {
         toast.error("Abra la caja antes de vender.");
         return;
       }
+
       if (cart.length === 0) {
-        toast.error("El carrito esta vacio.");
+        toast.error("El carrito está vacío.");
         return;
       }
+
       const sale = await salesService.makeSale({
         orgSlug,
         client: selectedClient || customerForm,
@@ -210,12 +219,14 @@ export default function PosScreen({ orgSlug }) {
         paymentType: "efectivo",
         branchId: branch,
       });
+
       addMovement({
         type: "entrada",
         amount: sale.total,
         description: `Venta ${sale.invoice}`,
         time: new Date(),
       });
+
       clearCart();
       toast.success(`Venta realizada. Factura: ${sale.invoice}`);
     } catch (error) {
@@ -223,49 +234,73 @@ export default function PosScreen({ orgSlug }) {
       toast.error(error.message || "Error al realizar la venta");
     }
   };
-
+  // Block POS if it's past closing time and cash register is still open
   const shouldBlockPOS = isPastClosingTime && isCashOpen;
-return (
-    <div className="flex flex-col h-full bg-slate-100 relative">
-      {shouldBlockPOS && (
-        <div className="absolute inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-bold text-slate-800 mb-2">Hora de Cierre</h2>
-            <p className="text-slate-600 mb-4">Son las 7:00 PM o mas tarde. Debe cerrar la caja antes de continuar. Por favor realice el cotejo de dinero y cierre la caja.</p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-yellow-800"><strong>Importante:</strong> No podra realizar mas ventas hasta cerrar la caja del dia.</p>
-            </div>
-            <CloseCashButton orgSlug={orgSlug} />
-            <div className="mt-4 pt-4 border-t border-slate-200">
-              <p className="text-xs text-slate-500 mb-2">Puede acceder a otros modulos:</p>
-              <div className="flex gap-2 justify-center">
-                <a href={`/${orgSlug}/inventory`} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">Inventario</a>
-                <a href={`/${orgSlug}/sales`} className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium">Ventas</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
+  return (
+    <div className="flex flex-col h-full bg-slate-100 relative">
+      {/* Blocking overlay when past closing time */}
+            {shouldBlockPOS && (
+              <div className="absolute inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+                <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-bold text-slate-800 mb-2">Hora de Cierre</h2>
+                  <p className="text-slate-600 mb-4">
+                    Son las 7:00 PM o mas tarde. Debe cerrar la caja antes de continuar.
+                    Por favor realice el cotejo de dinero y cierre la caja.
+                  </p>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Importante:</strong> No podra realizar mas ventas hasta cerrar la caja del dia.
+                    </p>
+                  </div>
+                  <CloseCashButton orgSlug={orgSlug} daySalesTotal={daySalesTotal} />
+                  <div className="mt-4 pt-4 border-t border-slate-200">
+                    <p className="text-xs text-slate-500 mb-2">Puede acceder a otros modulos:</p>
+                    <div className="flex gap-2 justify-center">
+                      <a href={`/${orgSlug}/inventory`} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">Inventario</a>
+                      <a href={`/${orgSlug}/sales`} className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium">Ventas</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+      {/* Header with search */}
       <div className="bg-blue-600 text-white p-3">
         <div className="flex items-center gap-2 lg:gap-4">
-          <button onClick={() => setShowMobileMenu(true)} className="lg:hidden p-2 hover:bg-blue-500 rounded-lg">
+          <button
+            onClick={() => setShowMobileMenu(true)}
+            className="lg:hidden p-2 hover:bg-blue-500 rounded-lg"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <h1 className="text-lg font-bold hidden lg:block">POS</h1>
           <div className="flex-1 relative">
-            <input ref={searchInputRef} type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyDown={handleSearchKeyDown} placeholder="Buscar producto..." className="w-full px-4 py-2 rounded text-slate-800 text-sm" autoFocus />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Buscar producto..."
+              className="w-full px-4 py-2 rounded text-slate-800 text-sm"
+              autoFocus
+            />
             {showResults && searchResults.length > 0 && (
               <div className="absolute top-full left-0 right-0 bg-white border border-slate-300 rounded-b shadow-lg z-50 max-h-64 overflow-y-auto">
                 {searchResults.map((product, index) => (
-                  <div key={product.id || product.product_id || index} onClick={() => handleSelectProduct(product)} className="px-4 py-3 lg:py-2 hover:bg-blue-50 cursor-pointer border-b border-slate-100 last:border-b-0">
+                  <div
+                    key={product.id || product.product_id || index}
+                    onClick={() => handleSelectProduct(product)}
+                    className="px-4 py-3 lg:py-2 hover:bg-blue-50 cursor-pointer border-b border-slate-100 last:border-b-0"
+                  >
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="text-sm font-medium text-slate-800">{product.name}</p>
@@ -278,7 +313,10 @@ return (
               </div>
             )}
           </div>
-          <button onClick={() => setShowMobileCart(true)} className="lg:hidden p-2 hover:bg-blue-500 rounded-lg relative">
+          <button
+            onClick={() => setShowMobileCart(true)}
+            className="lg:hidden p-2 hover:bg-blue-500 rounded-lg relative"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
@@ -304,8 +342,11 @@ return (
               </div>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <CloseCashButton orgSlug={orgSlug} />
-              <button onClick={clearDayChangedWarning} className="text-red-400 hover:text-red-600 p-1">
+              <CloseCashButton orgSlug={orgSlug} daySalesTotal={daySalesTotal} />
+              <button
+                onClick={clearDayChangedWarning}
+                className="text-red-400 hover:text-red-600 p-1"
+              >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -348,7 +389,10 @@ return (
                           <p className="text-sm font-semibold truncate">{item.name}</p>
                           <p className="text-xs text-slate-500">{item.sku || item.code || ""} - {formatCurrency(item.price)} c/u</p>
                         </div>
-                        <button onClick={() => removeFromCart(item.id)} className="text-red-500 hover:text-red-700 p-2 ml-2">
+                        <button
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-red-500 hover:text-red-700 p-2 ml-2"
+                        >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -356,16 +400,31 @@ return (
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                          <button onClick={() => decreaseQty(item.id)} className="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg text-lg font-bold flex items-center justify-center">-</button>
+                          <button
+                            onClick={() => decreaseQty(item.id)}
+                            className="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg text-lg font-bold flex items-center justify-center"
+                          >
+                            -
+                          </button>
                           <span className="w-12 text-center text-base font-medium">{item.qty}</span>
-                          <button onClick={() => increaseQty(item.id)} className="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg text-lg font-bold flex items-center justify-center">+</button>
+                          <button
+                            onClick={() => increaseQty(item.id)}
+                            className="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg text-lg font-bold flex items-center justify-center"
+                          >
+                            +
+                          </button>
                         </div>
                         <p className="text-base font-bold text-slate-800">{formatCurrency(item.qty * item.price)}</p>
                       </div>
                     </div>
+                    
                     <div className="hidden lg:grid grid-cols-12 gap-2 px-4 py-3 border-b border-slate-100 hover:bg-slate-50 items-center">
                       <div className="col-span-1">
-                        <button onClick={() => removeFromCart(item.id)} className="text-red-500 hover:text-red-700 p-1" title="Eliminar">
+                        <button
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                          title="Eliminar"
+                        >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -379,9 +438,25 @@ return (
                         <p className="text-sm text-slate-800">{formatCurrency(item.price)}</p>
                       </div>
                       <div className="col-span-2 flex items-center justify-center gap-1">
-                        <button onClick={() => decreaseQty(item.id)} className="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded text-sm font-bold flex items-center justify-center">-</button>
-                        <input type="number" value={item.qty} onChange={(e) => updateCartQty(item.id, parseInt(e.target.value) || 1)} className="w-12 text-center border rounded py-1 text-sm" min="1" />
-                        <button onClick={() => increaseQty(item.id)} className="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded text-sm font-bold flex items-center justify-center">+</button>
+                        <button
+                          onClick={() => decreaseQty(item.id)}
+                          className="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded text-sm font-bold flex items-center justify-center"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          value={item.qty}
+                          onChange={(e) => updateCartQty(item.id, parseInt(e.target.value) || 1)}
+                          className="w-12 text-center border rounded py-1 text-sm"
+                          min="1"
+                        />
+                        <button
+                          onClick={() => increaseQty(item.id)}
+                          className="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded text-sm font-bold flex items-center justify-center"
+                        >
+                          +
+                        </button>
                       </div>
                       <div className="col-span-2 text-right">
                         <p className="text-sm font-bold text-slate-800">{formatCurrency(item.qty * item.price)}</p>
@@ -392,7 +467,8 @@ return (
               )}
             </div>
           </div>
-           <div className="mt-2 lg:mt-4 bg-white rounded-lg shadow p-3 lg:p-4">
+
+          <div className="mt-2 lg:mt-4 bg-white rounded-lg shadow p-3 lg:p-4">
             <div className="flex justify-between items-center">
               <div className="text-sm text-slate-600">
                 <span>Articulos: </span>
@@ -412,49 +488,92 @@ return (
           </div>
 
           <div className="mt-2 lg:mt-4 flex gap-2 lg:gap-4" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
-            <button onClick={handleSale} disabled={cart.length === 0 || !isCashOpen} className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 lg:py-3 rounded-lg font-bold text-base lg:text-lg min-h-[48px]">Finalizar Venta</button>
-            <button onClick={clearCart} disabled={cart.length === 0} className="px-4 lg:px-6 bg-red-500 hover:bg-red-600 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium min-h-[48px]">Vaciar</button>
+            <button
+              onClick={handleSale}
+              disabled={cart.length === 0 || !isCashOpen}
+              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 lg:py-3 rounded-lg font-bold text-base lg:text-lg min-h-[48px]"
+            >
+              Finalizar Venta
+            </button>
+            <button
+              onClick={clearCart}
+              disabled={cart.length === 0}
+              className="px-4 lg:px-6 bg-red-500 hover:bg-red-600 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium min-h-[48px]"
+            >
+              Vaciar
+            </button>
           </div>
         </div>
         <div className="hidden lg:flex w-80 bg-slate-100 p-3 flex-col gap-3 overflow-y-auto">
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <label className="text-xs font-medium text-slate-600">Sucursal</label>
-            <select className="w-full mt-1 text-sm border rounded px-2 py-1.5" value={branch || ""} onChange={(e) => setBranch(e.target.value)}>
-              {branches.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
+            <select
+              className="w-full mt-1 text-sm border rounded px-2 py-1.5"
+              value={branch || ""}
+              onChange={(e) => setBranch(e.target.value)}
+            >
+              {branches.map((b) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
             </select>
           </div>
 
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-slate-600">Estado de Caja</span>
-              <span className={`text-xs px-2 py-0.5 rounded ${isCashOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{isCashOpen ? 'Abierta' : 'Cerrada'}</span>
+              <span className={`text-xs px-2 py-0.5 rounded ${isCashOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                {isCashOpen ? 'Abierta' : 'Cerrada'}
+              </span>
             </div>
             {isCashOpen && (
               <div className="space-y-2">
                 <div className="flex justify-between text-xs">
                   <span className="text-slate-500">Total en caja:</span>
-                  <span className="font-bold">{formatCurrency(getTotal())}</span>
+                  <span className="font-bold">
+                    {formatCurrency(openingAmount + daySalesTotal + movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
+                  </span>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => setShowDayDetail(true)} className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-1.5 rounded text-xs">Detalle del Dia</button>
-                  <CloseCashButton orgSlug={orgSlug} />
+                  <button
+                    onClick={() => setShowDayDetail(true)}
+                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-1.5 rounded text-xs"
+                  >
+                    Detalle del Dia
+                  </button>
+                  <CloseCashButton orgSlug={orgSlug} daySalesTotal={daySalesTotal} />
                 </div>
               </div>
             )}
-            <button onClick={() => setShowCashHistory(true)} className="w-full bg-slate-600 hover:bg-slate-700 text-white py-1.5 rounded text-xs mt-2">Historial de Cierres</button>
-            {isCashOpen && (<button onClick={() => setShowMenudeoModal(true)} className="w-full bg-purple-600 hover:bg-purple-700 text-white py-1.5 rounded text-xs mt-2">Registrar Menudeo</button>)}
-          </div>
+                      <button
+                        onClick={() => setShowCashHistory(true)}
+                        className="w-full bg-slate-600 hover:bg-slate-700 text-white py-1.5 rounded text-xs mt-2"
+                      >
+                        Historial de Cierres
+                      </button>
+                      {isCashOpen && (
+                        <button
+                          onClick={() => setShowMenudeoModal(true)}
+                          className="w-full bg-purple-600 hover:bg-purple-700 text-white py-1.5 rounded text-xs mt-2"
+                        >
+                          Registrar Menudeo
+                        </button>
+                      )}
+                    </div>
 
-          <div className="bg-white rounded-lg p-3 shadow-sm space-y-2">
-            <p className="text-xs font-medium text-slate-600">Cliente</p>
+                    <div className="bg-white rounded-lg p-3 shadow-sm space-y-2">
+                      <p className="text-xs font-medium text-slate-600">Cliente</p>
             <CustomerHeader />
             <CustomerSelector />
             <CustomerForm />
           </div>
 
           <div className="mt-auto space-y-2">
-            <a href={`/${orgSlug}/inventory`} className="block bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">Inventario</a>
-            <a href={`/${orgSlug}/sales`} className="block bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">Ventas</a>
+            <a href={`/${orgSlug}/inventory`} className="block bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">
+              Inventario
+            </a>
+            <a href={`/${orgSlug}/sales`} className="block bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">
+              Ventas
+            </a>
           </div>
         </div>
       </div>
@@ -469,21 +588,53 @@ return (
               <p className="text-sm text-slate-300">Resumen de ventas - {getTodayManagua()}</p>
             </div>
             <div className="p-4 space-y-4">
-              {loadingDaySales ? (<div className="text-center py-8"><p className="text-slate-500 text-sm">Cargando ventas...</p></div>) : (
+              {loadingDaySales ? (
+                <div className="text-center py-8"><p className="text-slate-500 text-sm">Cargando ventas...</p></div>
+              ) : (
                 <>
                   <div className="bg-slate-50 rounded-lg p-3">
-                    <div className="flex justify-between text-sm mb-2"><span className="text-slate-600">Monto de apertura:</span><span className="font-bold">{formatCurrency(openingAmount)}</span></div>
-                    <div className="flex justify-between text-sm mb-2"><span className="text-slate-600">Total entradas:</span><span className="font-bold text-green-600">{formatCurrency(movements.filter(m => m.type === 'entrada').reduce((acc, m) => acc + m.amount, 0))}</span></div>
-                    <div className="flex justify-between text-sm mb-2"><span className="text-slate-600">Retiros de caja:</span><span className="font-bold text-red-600">{formatCurrency(movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}</span></div>
-                    <div className="flex justify-between text-sm pt-2 border-t"><span className="font-bold">Total en caja:</span><span className="font-bold text-blue-600">{formatCurrency(getTotal())}</span></div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-slate-600">Monto de apertura:</span>
+                      <span className="font-bold">{formatCurrency(openingAmount)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-slate-600">Total de ventas (BD):</span>
+                      <span className="font-bold text-green-600">{formatCurrency(daySalesTotal)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-slate-600 text-purple-600">+ Menudeo:</span>
+                      <span className="font-bold text-purple-600">
+                        {formatCurrency(movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0))}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-slate-600">Retiros de caja:</span>
+                      <span className="font-bold text-red-600">
+                        {formatCurrency(movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm pt-2 border-t">
+                      <span className="font-bold">Total en caja:</span>
+                      <span className="font-bold text-blue-600">
+                        {formatCurrency(openingAmount + daySalesTotal + movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
+                      </span>
+                    </div>
                   </div>
                   <div>
-                    <div className="flex justify-between items-center mb-2"><h3 className="text-sm font-semibold">Ventas del dia ({daySales.length})</h3><button onClick={loadDaySales} className="text-xs text-blue-600 hover:text-blue-800">Actualizar</button></div>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-sm font-semibold">Ventas del dia ({daySales.length})</h3>
+                      <button onClick={loadDaySales} className="text-xs text-blue-600 hover:text-blue-800">Actualizar</button>
+                    </div>
                     <div className="max-h-48 overflow-y-auto space-y-2">
-                      {daySales.length === 0 ? (<p className="text-xs text-slate-400 text-center py-4">No hay ventas hoy</p>) : (
+                      {daySales.length === 0 ? (
+                        <p className="text-xs text-slate-400 text-center py-4">No hay ventas hoy</p>
+                      ) : (
                         daySales.map((sale, i) => (
                           <div key={sale.id || i} className="flex justify-between items-center text-xs bg-slate-50 p-2 rounded">
-                            <div><p className="font-medium">Factura #{sale.factura || sale.id?.slice(0, 8)}</p><p className="text-slate-400">{sale.client_name || sale.clients?.name || 'Sin cliente'} - {new Date(sale.created_at).toLocaleTimeString('es-NI')}</p></div>
+                            <div>
+                              <p className="font-medium">Factura #{sale.factura || sale.id?.slice(0, 8)}</p>
+                              <p className="text-slate-400">{sale.client_name || sale.clients?.name || 'Sin cliente'} - {new Date(sale.created_at).toLocaleTimeString('es-NI')}</p>
+                            </div>
                             <span className="text-green-600 font-bold">+{formatCurrency(sale.total)}</span>
                           </div>
                         ))
@@ -505,27 +656,60 @@ return (
             <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
               <h2 className="font-bold text-lg">Menu</h2>
               <button onClick={() => setShowMobileMenu(false)} className="p-2 hover:bg-blue-500 rounded-lg">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
             <div className="p-4 space-y-4">
               <div className="bg-slate-50 rounded-lg p-3">
                 <label className="text-xs font-medium text-slate-600">Sucursal</label>
-                <select className="w-full mt-1 text-sm border rounded px-3 py-2" value={branch || ""} onChange={(e) => setBranch(e.target.value)}>{branches.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}</select>
+                <select className="w-full mt-1 text-sm border rounded px-3 py-2" value={branch || ""} onChange={(e) => setBranch(e.target.value)}>
+                  {branches.map((b) => (<option key={b.id} value={b.id}>{b.name}</option>))}
+                </select>
               </div>
+
               <div className="bg-slate-50 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2"><span className="text-xs font-medium text-slate-600">Estado de Caja</span><span className={`text-xs px-2 py-0.5 rounded ${isCashOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{isCashOpen ? 'Abierta' : 'Cerrada'}</span></div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-slate-600">Estado de Caja</span>
+                  <span className={`text-xs px-2 py-0.5 rounded ${isCashOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {isCashOpen ? 'Abierta' : 'Cerrada'}
+                  </span>
+                </div>
                 {isCashOpen && (
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs"><span className="text-slate-500">Total en caja:</span><span className="font-bold">{formatCurrency(getTotal())}</span></div>
-                    <div className="flex gap-2"><button onClick={() => { setShowDayDetail(true); setShowMobileMenu(false); }} className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-xs">Detalle del Dia</button><CloseCashButton orgSlug={orgSlug} /></div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-500">Total en caja:</span>
+                      <span className="font-bold">
+                        {formatCurrency(openingAmount + daySalesTotal + movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => { setShowDayDetail(true); setShowMobileMenu(false); }} className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-xs">
+                        Detalle del Dia
+                      </button>
+                      <CloseCashButton orgSlug={orgSlug} daySalesTotal={daySalesTotal} />
+                    </div>
                   </div>
                 )}
-                <button onClick={() => { setShowCashHistory(true); setShowMobileMenu(false); }} className="w-full bg-slate-600 hover:bg-slate-700 text-white py-2 rounded text-xs mt-2">Historial de Cierres</button>
-                {isCashOpen && (<button onClick={() => { setShowMenudeoModal(true); setShowMobileMenu(false); }} className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded text-xs mt-2">Registrar Menudeo</button>)}
-              </div>
-              <div className="bg-slate-50 rounded-lg p-3 space-y-2"><p className="text-xs font-medium text-slate-600">Cliente</p><CustomerHeader /><CustomerSelector /><CustomerForm /></div>
-              <div className="space-y-2 pt-4 border-t">
+                              <button onClick={() => { setShowCashHistory(true); setShowMobileMenu(false); }} className="w-full bg-slate-600 hover:bg-slate-700 text-white py-2 rounded text-xs mt-2">
+                                Historial de Cierres
+                              </button>
+                              {isCashOpen && (
+                                <button onClick={() => { setShowMenudeoModal(true); setShowMobileMenu(false); }} className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded text-xs mt-2">
+                                  Registrar Menudeo
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="bg-slate-50 rounded-lg p-3 space-y-2">
+                              <p className="text-xs font-medium text-slate-600">Cliente</p>
+                              <CustomerHeader />
+                              <CustomerSelector />
+                              <CustomerForm />
+                            </div>
+
+                            <div className="space-y-2 pt-4 border-t">
                 <a href={`/${orgSlug}/inventory`} className="block bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">Inventario</a>
                 <a href={`/${orgSlug}/sales`} className="block bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">Ventas</a>
               </div>
@@ -537,12 +721,19 @@ return (
       {showMobileCart && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="fixed inset-0 bg-black/50" onClick={() => setShowMobileCart(false)} />
-          <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl"><CartSidebar orgSlug={orgSlug} onClose={() => { setShowMobileCart(false); searchInputRef.current?.focus(); }} /></div>
+          <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl">
+            <CartSidebar orgSlug={orgSlug} onClose={() => { setShowMobileCart(false); searchInputRef.current?.focus(); }} />
+          </div>
         </div>
       )}
 
-      {showCashHistory && (<CashClosingHistory orgSlug={orgSlug} onClose={() => setShowCashHistory(false)} />)}
-      {showMenudeoModal && (<MenudeoModal orgSlug={orgSlug} onClose={() => setShowMenudeoModal(false)} />)}
+      {showCashHistory && (
+        <CashClosingHistory orgSlug={orgSlug} onClose={() => setShowCashHistory(false)} />
+      )}
+
+      {showMenudeoModal && (
+        <MenudeoModal orgSlug={orgSlug} branchId={branch} onClose={() => setShowMenudeoModal(false)} />
+      )}
     </div>
   );
 }

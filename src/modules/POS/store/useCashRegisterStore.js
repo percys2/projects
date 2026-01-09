@@ -7,70 +7,117 @@ const getTodayManagua = () => {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Managua" }).format(new Date());
 };
 
+const getDefaultBranchState = () => ({
+  isOpen: false,
+  openingAmount: 0,
+  openingTime: null,
+  closingTime: null,
+  user: null,
+  movements: [],
+  businessDate: null,
+  dayChangedWhileOpen: false,
+});
+
 export const useCashRegisterStore = create(
   persist(
     (set, get) => ({
-      isOpen: false,
-      openingAmount: 0,
-      openingTime: null,
-      closingTime: null,
-      branch: null,
-      user: null,
-      movements: [],
-      businessDate: null,
-      dayChangedWhileOpen: false,
+      branches: {},
       closingHistory: [],
 
-      checkAndResetForNewDay: () => {
-        const state = get();
+      getBranchState: (branchId) => {
+        const { branches } = get();
+        return branches[branchId] || getDefaultBranchState();
+      },
+
+      checkAndResetForNewDay: (branchId) => {
+        const { branches } = get();
+        const branchState = branches[branchId] || getDefaultBranchState();
         const today = getTodayManagua();
         
-        if (state.businessDate && state.businessDate !== today) {
-          if (state.isOpen) {
-            set({ dayChangedWhileOpen: true });
-            return { needsClosing: true, previousDate: state.businessDate };
+        if (branchState.businessDate && branchState.businessDate !== today) {
+          if (branchState.isOpen) {
+            set((state) => ({
+              branches: {
+                ...state.branches,
+                [branchId]: { ...branchState, dayChangedWhileOpen: true },
+              },
+            }));
+            return { needsClosing: true, previousDate: branchState.businessDate };
           } else {
-            set({
-              openingAmount: 0,
-              openingTime: null,
-              closingTime: null,
-              movements: [],
-              businessDate: today,
-              dayChangedWhileOpen: false,
-            });
-            return { wasReset: true, previousDate: state.businessDate };
+            set((state) => ({
+              branches: {
+                ...state.branches,
+                [branchId]: {
+                  ...getDefaultBranchState(),
+                  businessDate: today,
+                },
+              },
+            }));
+            return { wasReset: true, previousDate: branchState.businessDate };
           }
         }
         
-        if (!state.businessDate) {
-          set({ businessDate: today });
+        if (!branchState.businessDate) {
+          set((state) => ({
+            branches: {
+              ...state.branches,
+              [branchId]: { ...branchState, businessDate: today },
+            },
+          }));
         }
         
         return { noChange: true };
       },
 
-      clearDayChangedWarning: () => set({ dayChangedWhileOpen: false }),
+      clearDayChangedWarning: (branchId) => {
+        set((state) => {
+          const branchState = state.branches[branchId] || getDefaultBranchState();
+          return {
+            branches: {
+              ...state.branches,
+              [branchId]: { ...branchState, dayChangedWhileOpen: false },
+            },
+          };
+        });
+      },
 
-      openCashRegister: ({ amount, user, branch }) =>
-        set({
-          isOpen: true,
-          openingAmount: amount,
-          branch,
-          user,
-          openingTime: new Date().toISOString(),
-          movements: [],
-          closingTime: null,
-          businessDate: getTodayManagua(),
-          dayChangedWhileOpen: false,
-        }),
-
-      addMovement: (movement) =>
+      openCashRegister: ({ amount, user, branchId }) => {
         set((state) => ({
-          movements: [...state.movements, { ...movement, timestamp: new Date().toISOString() }],
-        })),
+          branches: {
+            ...state.branches,
+            [branchId]: {
+              isOpen: true,
+              openingAmount: amount,
+              user,
+              openingTime: new Date().toISOString(),
+              movements: [],
+              closingTime: null,
+              businessDate: getTodayManagua(),
+              dayChangedWhileOpen: false,
+            },
+          },
+        }));
+      },
 
-      getTotals: () => {
-        const { openingAmount, movements } = get();
+      addMovement: (branchId, movement) => {
+        set((state) => {
+          const branchState = state.branches[branchId] || getDefaultBranchState();
+          return {
+            branches: {
+              ...state.branches,
+              [branchId]: {
+                ...branchState,
+                movements: [...branchState.movements, { ...movement, timestamp: new Date().toISOString(), branchId }],
+              },
+            },
+          };
+        });
+      },
+
+      getTotals: (branchId) => {
+        const { branches } = get();
+        const branchState = branches[branchId] || getDefaultBranchState();
+        const { openingAmount, movements } = branchState;
         let totalEntradas = 0;
         let totalSalidas = 0;
         let salesCount = 0;
@@ -95,8 +142,10 @@ export const useCashRegisterStore = create(
         };
       },
 
-      getTotal: () => {
-        const { openingAmount, movements } = get();
+      getTotal: (branchId) => {
+        const { branches } = get();
+        const branchState = branches[branchId] || getDefaultBranchState();
+        const { openingAmount, movements } = branchState;
         let income = 0;
         let expense = 0;
         for (const m of movements) {
@@ -106,19 +155,20 @@ export const useCashRegisterStore = create(
         return openingAmount + income - expense;
       },
 
-      closeCashRegister: ({ countedAmount, notes } = {}) => {
-        const state = get();
-        const totals = state.getTotals();
+      closeCashRegister: ({ branchId, countedAmount, notes } = {}) => {
+        const { branches, getTotals } = get();
+        const branchState = branches[branchId] || getDefaultBranchState();
+        const totals = getTotals(branchId);
         const counted = countedAmount || totals.expectedTotal;
         const difference = counted - totals.expectedTotal;
         
         const closingRecord = {
           id: Date.now(),
-          openingTime: state.openingTime,
+          openingTime: branchState.openingTime,
           closingTime: new Date().toISOString(),
-          branch: state.branch,
-          user: state.user,
-          openingAmount: state.openingAmount,
+          branchId: branchId,
+          user: branchState.user,
+          openingAmount: branchState.openingAmount,
           totalEntradas: totals.totalEntradas,
           totalSalidas: totals.totalSalidas,
           expectedTotal: totals.expectedTotal,
@@ -126,12 +176,17 @@ export const useCashRegisterStore = create(
           difference,
           notes: notes || "",
           salesCount: totals.salesCount,
-          movements: [...state.movements],
+          movements: [...branchState.movements],
         };
         
         set((state) => ({
-          isOpen: false,
-          closingTime: new Date().toISOString(),
+          branches: {
+            ...state.branches,
+            [branchId]: {
+              ...getDefaultBranchState(),
+              closingTime: new Date().toISOString(),
+            },
+          },
           closingHistory: [...state.closingHistory, closingRecord],
         }));
         
@@ -140,19 +195,17 @@ export const useCashRegisterStore = create(
 
       getClosingHistory: () => get().closingHistory,
 
-      resetCashRegister: () =>
-        set({
-          isOpen: false,
-          openingAmount: 0,
-          openingTime: null,
-          closingTime: null,
-          branch: null,
-          user: null,
-          movements: [],
-        }),
+      resetCashRegister: (branchId) => {
+        set((state) => ({
+          branches: {
+            ...state.branches,
+            [branchId]: getDefaultBranchState(),
+          },
+        }));
+      },
     }),
     {
-      name: "cash-register-storage",
+      name: "cash-register-storage-v2",
       storage: createJSONStorage(() => 
         typeof window !== "undefined" ? localStorage : undefined
       ),

@@ -6,8 +6,11 @@ import { useBranchStore } from "../store/useBranchStore";
 
 export default function OpenCashModal({ orgSlug }) {
   const { activeBranch } = useBranchStore();
-  const openCash = useCashRegisterStore((s) => s.openCashRegister);
-  const isOpen = useCashRegisterStore((s) => s.isOpen);
+  const openCashStore = useCashRegisterStore((s) => s.openCashRegister);
+  const getBranchState = useCashRegisterStore((s) => s.getBranchState);
+  
+  const branchState = getBranchState(activeBranch);
+  const isOpen = branchState.isOpen;
 
   const [amount, setAmount] = useState("");
 
@@ -16,10 +19,10 @@ export default function OpenCashModal({ orgSlug }) {
   const handleOpen = () => {
     if (!amount) return alert("Ingrese un monto inicial");
 
-    openCash({
+    openCashStore({
       amount: Number(amount),
       user: "Cajero Principal",
-      branch: activeBranch,
+      branchId: activeBranch,
     });
   };
 

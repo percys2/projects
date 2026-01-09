@@ -6,11 +6,36 @@ import { es } from "date-fns/locale";
 
 export default function CashClosingHistory({ orgSlug, onClose }) {
   const [closings, setClosings] = useState([]);
+  const [branches, setBranches] = useState({});
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState("calendar");
   const [expandedClosing, setExpandedClosing] = useState(null);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      if (!orgSlug) return;
+      try {
+        const res = await fetch("/api/branches", {
+          headers: { "x-org-slug": orgSlug },
+        });
+        const data = await res.json();
+        const branchMap = {};
+        (data.branches || []).forEach(b => {
+          branchMap[b.id] = b.name;
+        });
+        setBranches(branchMap);
+      } catch (err) {
+        console.error("Error fetching branches:", err);
+      }
+    };
+    fetchBranches();
+  }, [orgSlug]);
+
+  const getBranchName = (branchId) => {
+    return branches[branchId] || branchId?.slice(0, 8) || "N/A";
+  };
 
   const fetchClosings = async (date) => {
     if (!orgSlug) return;
@@ -237,7 +262,7 @@ export default function CashClosingHistory({ orgSlug, onClose }) {
                         <div className="flex items-center gap-4">
                           <div className="text-left">
                             <p className="font-medium text-slate-800">
-                              Cierre #{closing.id?.slice(0, 8)}
+                              {getBranchName(closing.branch_id)}
                             </p>
                             <p className="text-sm text-slate-500">
                               {formatTime(closing.opening_time)} - {formatTime(closing.closing_time)}
@@ -270,6 +295,10 @@ export default function CashClosingHistory({ orgSlug, onClose }) {
                       {expandedClosing === closing.id && (
                         <div className="border-t bg-slate-50 p-4 space-y-3">
                           <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <p className="text-slate-500">Sucursal</p>
+                              <p className="font-medium">{getBranchName(closing.branch_id)}</p>
+                            </div>
                             <div>
                               <p className="text-slate-500">Cajero</p>
                               <p className="font-medium">{closing.user_name || "N/A"}</p>
