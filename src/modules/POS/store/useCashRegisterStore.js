@@ -59,7 +59,6 @@ export const useCashRegisterStore = create((set, get) => ({
     if (!branchData) return 0;
 
     const { openingAmount = 0, movements = [] } = branchData;
-
     let income = 0;
     let expense = 0;
 
@@ -92,7 +91,7 @@ export const useCashRegisterStore = create((set, get) => ({
     }
   },
 
-  closeCashRegister: (branchId) =>
+  clearDayChangedWarning: (branchId) =>
     set((state) => {
       const currentBranch = state.branches[branchId] || {};
       return {
@@ -100,10 +99,25 @@ export const useCashRegisterStore = create((set, get) => ({
           ...state.branches,
           [branchId]: {
             ...currentBranch,
-            isOpen: false,
-            closingTime: new Date(),
+            dayChangedWhileOpen: false,
           },
         },
       };
     }),
+
+  closeCashRegister: (branchId) =>
+    set((state) => ({
+      branches: {
+        ...state.branches,
+        [branchId]: {
+          isOpen: false,
+          openingAmount: 0,
+          openingTime: null,
+          closingTime: new Date(),
+          user: null,
+          movements: [],
+          dayChangedWhileOpen: false,
+        },
+      },
+    })),
 }));

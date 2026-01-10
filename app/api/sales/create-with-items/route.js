@@ -1,150 +1,222 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin, createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+import { createSaleSchema, validateRequest } from "@/src/lib/validation/schemas";
+import { rateLimit } from "@/src/lib/middleware/rateLimit";
+import { logAuditEvent, AuditActions } from "@/src/lib/audit/auditLog";
+import { postSaleToGL } from "@/src/lib/services/journalService";
+import * as Sentry from "@sentry/nextjs";
 
 export async function POST(req) {
   try {
-    const supabase = supabaseAdmin;
-    const orgSlug = req.headers.get("x-org-slug");
-    const branchId = req.headers.get("x-branch-id");
+    const orgId = req.headers.get("x-org-id");
+    const userId = req.headers.get("x-user-id");
+    const branchId = req.headers.get("x-branch-id"); // POS SELECTS THIS
 
-    if (!orgSlug) {
-      return NextResponse.json({ error: "Missing org slug" }, { status: 400 });
+    if (!orgId || !branchId) {
+      return NextResponse.json(
+        { error: "Missing org ID or branch ID" },
+        { status: 400 }
+      );
+    }
+
+    // Rate limit
+    const rateLimitResult = rateLimit(`sales:${orgId}`, 50, 60000);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: "Demasiadas solicitudes. Por favor intente más tarde.",
+          retryAfter: new Date(rateLimitResult.resetTime).toISOString(),
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": Math.ceil(
+              (rateLimitResult.resetTime - Date.now()) / 1000
+            ).toString(),
+          },
+        }
+      );
     }
 
     const body = await req.json();
-    const { client_id, client_name, factura, payment_method, notes, total, items, user_name } = body;
+    const validation = validateRequest(createSaleSchema, body);
 
-    if (!items || items.length === 0) {
-      return NextResponse.json({ error: "No items provided" }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Datos inválidos", details: validation.errors },
+        { status: 400 }
+      );
     }
 
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .select("id")
-      .eq("slug", orgSlug)
-      .single();
+    const { client_id, total, payment_method, items, notes } = validation.data;
 
-    if (orgError || !org) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-    }
+    // Supabase client
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
 
-    let userId = null;
-    let userName = user_name || null;
-    try {
-      const authClient = await createServerSupabaseClient();
-      const { data: { user } } = await authClient.auth.getUser();
-      if (user) {
-        userId = user.id;
-        if (!userName) {
-          userName = user.user_metadata?.full_name || user.email?.split('@')[0] || null;
-        }
-      }
-    } catch (authErr) {
-      console.log("Could not get authenticated user:", authErr.message);
-    }
-
-    const baseSaleData = {
-      org_id: org.id,
-      branch_id: branchId || null,
-      client_id: client_id || null,
-      client_name: client_name || null,
-      factura: factura,
-      payment_method: payment_method || "cash",
-      notes: notes || null,
-      total: Number(total),
-    };
-
-    let sale = null;
-    let saleError = null;
-
-    const { data: saleWithUser, error: errorWithUser } = await supabase
+    // 1. Crear venta
+    const { data: sale, error: saleError } = await supabase
       .from("sales")
-      .insert({ ...baseSaleData, user_id: userId, user_name: userName })
+      .insert({
+        org_id: orgId,
+        branch_id: branchId,
+        client_id,
+        total,
+        payment_method: payment_method || "cash",
+        notes: notes || null,
+        user_id: userId || null,
+      })
       .select()
       .single();
 
-    if (errorWithUser && errorWithUser.code === "PGRST204") {
-      console.log("user_id/user_name columns not found, retrying without them");
-      const { data: saleBasic, error: errorBasic } = await supabase
-        .from("sales")
-        .insert(baseSaleData)
-        .select()
-        .single();
-      sale = saleBasic;
-      saleError = errorBasic;
-    } else {
-      sale = saleWithUser;
-      saleError = errorWithUser;
-    }
-
     if (saleError) {
-      console.error("Sale insert error:", saleError);
-      throw saleError;
+      return NextResponse.json(
+        { error: "Failed to create sale: " + saleError.message },
+        { status: 500 }
+      );
     }
 
-    const saleItems = items.map((item) => ({
+    // 2. Guardar items de venta
+    const salesItems = items.map((item) => ({
       sale_id: sale.id,
+      org_id: orgId,
       product_id: item.product_id,
       quantity: Number(item.quantity),
       price: Number(item.price),
-      cost: Number(item.cost || 0),
+      cost: Number(item.cost) || 0,
       subtotal: Number(item.quantity) * Number(item.price),
+      margin:
+        (Number(item.price) - Number(item.cost || 0)) *
+        Number(item.quantity),
     }));
 
-    const { error: itemsError } = await supabase.from("sales_items").insert(saleItems);
+    const { data: createdItems, error: itemsError } = await supabase
+      .from("sales_items")
+      .insert(salesItems)
+      .select();
 
     if (itemsError) {
-      console.error("Sales items insert error:", itemsError);
       await supabase.from("sales").delete().eq("id", sale.id);
-      throw itemsError;
+      return NextResponse.json(
+        { error: "Failed to create sale items: " + itemsError.message },
+        { status: 500 }
+      );
     }
 
+    // 3. Actualizar inventario mediante RPC
     for (const item of items) {
-      const { error: movError } = await supabase.from("inventory_movements").insert({
-        org_id: org.id,
-        product_id: item.product_id,
-        type: "salida",
-        qty: Number(item.quantity),
-        from_branch: branchId || null,
-        to_branch: null,
-        cost: Number(item.cost || 0),
-        price: Number(item.price),
-        reference: `Venta Factura #${factura}`,
-        created_by: userId,
+      const { error } = await supabase.rpc("decrease_inventory", {
+        p_org_id: orgId,
+        p_product_id: item.product_id,
+        p_quantity: Number(item.quantity),
+        p_branch_id: branchId,
       });
 
-      if (movError) {
-        console.error("Inventory movement error:", movError);
-      }
+      if (error) {
+        // rollback
+        await supabase.from("sales_items").delete().eq("sale_id", sale.id);
+        await supabase.from("sales").delete().eq("id", sale.id);
 
-      const { error: kardexError } = await supabase.from("kardex").insert({
-        org_id: org.id,
-        product_id: item.product_id,
-        movement_type: "SALE",
-        quantity: -Number(item.quantity),
-        branch_id: branchId || null,
-        from_branch: branchId || null,
-        to_branch: null,
-        cost_unit: Number(item.cost || 0),
-        total: Number(item.cost || 0) * Number(item.quantity),
-        reference: `Venta Factura #${factura}`,
-        created_by: userId,
-      });
-
-      if (kardexError) {
-        console.error("Kardex insert error:", kardexError);
+        return NextResponse.json(
+          {
+            error: "Failed to update stock. Sale rolled back.",
+            details: error.message,
+          },
+          { status: 500 }
+        );
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      sale: {
-        ...sale,
-        invoice: factura,
+    // 4. Registrar movimiento en KARDEX
+    for (const item of items) {
+      await supabase.from("kardex").insert({
+        org_id: orgId,
+        product_id: item.product_id,
+
+        movement_type: "SALE",
+        quantity: Number(item.quantity) * -1,
+
+        branch_id: branchId,
+        from_branch: branchId,
+        to_branch: null,
+
+        cost_unit: Number(item.cost) || 0,
+        total: Number(item.cost) * Number(item.quantity),
+
+        reference: `Venta #${sale.id}`,
+        created_by: userId || null,
+      });
+    }
+
+    // 5. Registrar MOVIMIENTO en inventory_movements
+    for (const item of items) {
+      await supabase.from("inventory_movements").insert({
+        org_id: orgId,
+        product_id: item.product_id,
+        type: "SALE",
+        qty: Number(item.quantity),
+        from_branch: branchId,
+        to_branch: null,
+        cost: item.cost,
+        price: item.price,
+        reference: `Venta #${sale.id}`,
+        created_by: userId,
+      });
+    }
+
+    // 6. Si es venta a credito, registrar transaccion de credito
+    if (payment_method === "credit" && client_id) {
+      const { error: creditError } = await supabase.rpc("register_credit_purchase", {
+        p_org_id: orgId,
+        p_client_id: client_id,
+        p_branch_id: branchId,
+        p_sale_id: sale.id,
+        p_amount: total,
+        p_created_by: userId || null,
+      });
+
+      if (creditError) {
+        await supabase.from("sales_items").delete().eq("sale_id", sale.id);
+        await supabase.from("sales").delete().eq("id", sale.id);
+        return NextResponse.json(
+          { error: "Error al registrar credito: " + creditError.message },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 7. Contabilidad (no bloquea)
+    try {
+      await postSaleToGL(orgId, sale, createdItems);
+    } catch (err) {
+      console.error("GL posting error:", err);
+    }
+
+    // 8. Auditoria
+    await logAuditEvent({
+      userId,
+      orgId,
+      action: AuditActions.SALE_CREATE,
+      resourceType: "sale",
+      resourceId: sale.id,
+      metadata: {
+        total: sale.total,
+        items: createdItems.length,
       },
     });
+
+    return NextResponse.json(
+      { success: true, sale: { ...sale, items: createdItems } },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error("Create sale error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    Sentry.captureException(error);
+    return NextResponse.json(
+      { error: "Internal server error: " + error.message },
+      { status: 500 }
+    );
   }
 }

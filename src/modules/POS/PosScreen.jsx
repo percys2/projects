@@ -16,6 +16,12 @@ import CustomerSelector from "./components/CustomerSelector";
 import CustomerForm from "./components/CustomerForm";
 import CartSidebar from "./components/CartSidebar";
 import MenudeoModal from "./components/MenudeoModal";
+import CreditSettingsModal from "./components/CreditSettingsModal";
+import CreditHistoryModal from "./components/CreditHistoryModal";
+import CreditPaymentModal from "./components/CreditPaymentModal";
+
+const EMPTY_CART = [];
+const DEFAULT_BRANCH_STATE = { isOpen: false, openingAmount: 0, movements: [], dayChangedWhileOpen: false };
 
 export default function PosScreen({ orgSlug }) {
   const branches = useBranchStore((s) => s.branches);
@@ -28,35 +34,45 @@ export default function PosScreen({ orgSlug }) {
   const [showResults, setShowResults] = useState(false);
   const searchInputRef = useRef(null);
   
-  const [showMobileCart, setShowMobileCart] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [showMobileCart, setShowMobileCart] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [showCreditSettings, setShowCreditSettings] = useState(false);
+    const [showCreditHistory, setShowCreditHistory] = useState(false);
+    const [showCreditPayment, setShowCreditPayment] = useState(false);
+    const [creditClient, setCreditClient] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState("cash");
 
-  // Cart store
-  const cart = usePosStore((s) => s.carts[branch]) || [];
-  const addToCart = usePosStore((s) => s.addToCart);
-  const removeFromCart = usePosStore((s) => s.removeFromCart);
-  const decreaseQty = usePosStore((s) => s.decreaseQty);
-  const increaseQty = usePosStore((s) => s.increaseQty);
-  const updateCartQty = usePosStore((s) => s.updateCartQty);
-  const clearCart = usePosStore((s) => s.clearCart);
+  const cartData = usePosStore((s) => s.carts[branch]);
+  const cart = cartData ?? EMPTY_CART;
+  const addToCartStore = usePosStore((s) => s.addToCart);
+  const removeFromCartStore = usePosStore((s) => s.removeFromCart);
+  const decreaseQtyStore = usePosStore((s) => s.decreaseQty);
+  const increaseQtyStore = usePosStore((s) => s.increaseQty);
+  const updateCartQtyStore = usePosStore((s) => s.updateCartQty);
+  const clearCartStore = usePosStore((s) => s.clearCart);
   const selectedClient = usePosStore((s) => s.selectedClient);
   const customerForm = usePosStore((s) => s.customerForm);
 
-  // Cash register store - use branch-based state with direct subscription to branch data
-  const defaultBranchState = { isOpen: false, openingAmount: 0, movements: [], dayChangedWhileOpen: false };
-  const branchState = useCashRegisterStore((s) => s.branches[branch] || defaultBranchState);
+    const getItemId = (item) => item.id || item.product_id;
+    const addToCart = (product) => addToCartStore(branch, product);
+    const removeFromCart = (item) => removeFromCartStore(branch, getItemId(item));
+    const decreaseQty = (item) => decreaseQtyStore(branch, getItemId(item));
+    const increaseQty = (item) => increaseQtyStore(branch, getItemId(item));
+    const updateCartQty = (item, qty) => updateCartQtyStore(branch, getItemId(item), qty);
+    const clearCart = () => clearCartStore(branch);
+
+  const branchStateData = useCashRegisterStore((s) => s.branches[branch]);
+  const branchState = branchStateData ?? DEFAULT_BRANCH_STATE;
   const addMovementStore = useCashRegisterStore((s) => s.addMovement);
   const getTotalStore = useCashRegisterStore((s) => s.getTotal);
   const checkAndResetForNewDayStore = useCashRegisterStore((s) => s.checkAndResetForNewDay);
   const clearDayChangedWarningStore = useCashRegisterStore((s) => s.clearDayChangedWarning);
   
-  // Get branch-specific state from the subscribed branchState
   const isCashOpen = branchState.isOpen;
   const movements = branchState.movements || [];
   const openingAmount = branchState.openingAmount || 0;
   const dayChangedWhileOpen = branchState.dayChangedWhileOpen;
   
-  // Wrapper functions that pass branchId
   const addMovement = (movement) => addMovementStore(branch, movement);
   const getTotal = () => getTotalStore(branch);
   const checkAndResetForNewDay = () => checkAndResetForNewDayStore(branch);
@@ -209,44 +225,96 @@ export default function PosScreen({ orgSlug }) {
   const subtotal = cart.reduce((acc, item) => acc + item.qty * item.price, 0);
   const total = subtotal;
 
-  const handleSale = async () => {
-    try {
-      const { toast } = require("@/src/lib/notifications/toast");
-      if (!isCashOpen) {
-        toast.error("Abra la caja antes de vender.");
-        return;
-      }
+    const handleOpenCreditSettings = (client) => {
+      setCreditClient(client);
+      setShowCreditSettings(true);
+    };
 
-      if (cart.length === 0) {
-        toast.error("El carrito está vacío.");
-        return;
-      }
+    const handleOpenCreditHistory = (client) => {
+      setCreditClient(client);
+      setShowCreditHistory(true);
+    };
 
-      const sale = await salesService.makeSale({
-        orgSlug,
-        client: selectedClient || customerForm,
-        cart,
-        paymentType: "efectivo",
-        branchId: branch,
-      });
+    const handleOpenCreditPayment = (client) => {
+      setCreditClient(client);
+      setShowCreditPayment(true);
+    };
 
-      addMovement({
-        type: "entrada",
-        amount: sale.total,
-        description: `Venta ${sale.invoice}`,
-        time: new Date(),
-      });
+    const handleCreditSettingsSuccess = (updatedClient) => {
+      const setClient = usePosStore.getState().setClient;
+      setClient(updatedClient);
+    };
 
-      clearCart();
-      toast.success(`Venta realizada. Factura: ${sale.invoice}`);
+    const canSellOnCredit = () => {
+      if (!selectedClient?.is_credit_client) return false;
+      const available = (selectedClient.credit_limit || 0) - (selectedClient.credit_balance || 0);
+      return total <= available;
+    };
+
+    const handleSale = async (useCredit = false) => {
+      try {
+        const { toast } = require("@/src/lib/notifications/toast");
+        if (!isCashOpen) {
+          toast.error("Abra la caja antes de vender.");
+          return;
+        }
+
+        if (cart.length === 0) {
+          toast.error("El carrito esta vacio.");
+          return;
+        }
+
+        if (useCredit) {
+          if (!selectedClient?.is_credit_client) {
+            toast.error("Seleccione un cliente de credito.");
+            return;
+          }
+          const available = (selectedClient.credit_limit || 0) - (selectedClient.credit_balance || 0);
+          if (total > available) {
+            toast.error(`Credito insuficiente. Disponible: C$ ${available.toFixed(2)}`);
+            return;
+          }
+        }
+
+        const sale = await salesService.makeSale({
+          orgSlug,
+          client: selectedClient || customerForm,
+          cart,
+          paymentType: useCredit ? "credit" : "cash",
+          branchId: branch,
+        });
+
+        if (!useCredit) {
+          addMovement({
+            type: "entrada",
+            amount: sale.total,
+            description: `Venta ${sale.invoice}`,
+            time: new Date(),
+          });
+        }
+
+        clearCart();
+        setPaymentMethod("cash");
       
-      // Refresh sales total from database to update cash register display
-      loadDaySales();
-    } catch (error) {
-      const { toast } = require("@/src/lib/notifications/toast");
-      toast.error(error.message || "Error al realizar la venta");
-    }
-  };
+        if (useCredit) {
+          toast.success(`Venta a credito realizada. Factura: ${sale.invoice}`);
+          const setClient = usePosStore.getState().setClient;
+          if (selectedClient) {
+            setClient({
+              ...selectedClient,
+              credit_balance: (selectedClient.credit_balance || 0) + total
+            });
+          }
+        } else {
+          toast.success(`Venta realizada. Factura: ${sale.invoice}`);
+        }
+      
+        loadDaySales();
+      } catch (error) {
+        const { toast } = require("@/src/lib/notifications/toast");
+        toast.error(error.message || "Error al realizar la venta");
+      }
+    };
   // Block POS if it's past closing time and cash register is still open
   const shouldBlockPOS = isPastClosingTime && isCashOpen;
 
@@ -403,7 +471,7 @@ export default function PosScreen({ orgSlug }) {
                           <p className="text-xs text-slate-500">{item.sku || item.code || ""} - {formatCurrency(item.price)} c/u</p>
                         </div>
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item)}
                           className="text-red-500 hover:text-red-700 p-2 ml-2"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -414,14 +482,14 @@ export default function PosScreen({ orgSlug }) {
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => decreaseQty(item.id)}
+                            onClick={() => decreaseQty(item)}
                             className="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg text-lg font-bold flex items-center justify-center"
                           >
                             -
                           </button>
                           <span className="w-12 text-center text-base font-medium">{item.qty}</span>
                           <button
-                            onClick={() => increaseQty(item.id)}
+                            onClick={() => increaseQty(item)}
                             className="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg text-lg font-bold flex items-center justify-center"
                           >
                             +
@@ -434,7 +502,7 @@ export default function PosScreen({ orgSlug }) {
                     <div className="hidden lg:grid grid-cols-12 gap-2 px-4 py-3 border-b border-slate-100 hover:bg-slate-50 items-center">
                       <div className="col-span-1">
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item)}
                           className="text-red-500 hover:text-red-700 p-1"
                           title="Eliminar"
                         >
@@ -452,7 +520,7 @@ export default function PosScreen({ orgSlug }) {
                       </div>
                       <div className="col-span-2 flex items-center justify-center gap-1">
                         <button
-                          onClick={() => decreaseQty(item.id)}
+                          onClick={() => decreaseQty(item)}
                           className="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded text-sm font-bold flex items-center justify-center"
                         >
                           -
@@ -460,12 +528,12 @@ export default function PosScreen({ orgSlug }) {
                         <input
                           type="number"
                           value={item.qty}
-                          onChange={(e) => updateCartQty(item.id, parseInt(e.target.value) || 1)}
+                          onChange={(e) => updateCartQty(item, parseInt(e.target.value) || 1)}
                           className="w-12 text-center border rounded py-1 text-sm"
                           min="1"
                         />
                         <button
-                          onClick={() => increaseQty(item.id)}
+                          onClick={() => increaseQty(item)}
                           className="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded text-sm font-bold flex items-center justify-center"
                         >
                           +
@@ -500,22 +568,32 @@ export default function PosScreen({ orgSlug }) {
             </div>
           </div>
 
-          <div className="mt-2 lg:mt-4 flex gap-2 lg:gap-4" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
-            <button
-              onClick={handleSale}
-              disabled={cart.length === 0 || !isCashOpen}
-              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 lg:py-3 rounded-lg font-bold text-base lg:text-lg min-h-[48px]"
-            >
-              Finalizar Venta
-            </button>
-            <button
-              onClick={clearCart}
-              disabled={cart.length === 0}
-              className="px-4 lg:px-6 bg-red-500 hover:bg-red-600 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium min-h-[48px]"
-            >
-              Vaciar
-            </button>
-          </div>
+                    <div className="mt-2 lg:mt-4 flex gap-2 lg:gap-4" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
+                      <button
+                        onClick={() => handleSale(false)}
+                        disabled={cart.length === 0 || !isCashOpen}
+                        className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 lg:py-3 rounded-lg font-bold text-base lg:text-lg min-h-[48px]"
+                      >
+                        Efectivo
+                      </button>
+                      {selectedClient?.is_credit_client && (
+                        <button
+                          onClick={() => handleSale(true)}
+                          disabled={cart.length === 0 || !isCashOpen || !canSellOnCredit()}
+                          className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 lg:py-3 rounded-lg font-bold text-base lg:text-lg min-h-[48px]"
+                          title={!canSellOnCredit() ? "Credito insuficiente" : ""}
+                        >
+                          Credito
+                        </button>
+                      )}
+                      <button
+                        onClick={clearCart}
+                        disabled={cart.length === 0}
+                        className="px-4 lg:px-6 bg-red-500 hover:bg-red-600 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium min-h-[48px]"
+                      >
+                        Vaciar
+                      </button>
+                    </div>
         </div>
         <div className="hidden lg:flex w-80 bg-slate-100 p-3 flex-col gap-3 overflow-y-auto">
           <div className="bg-white rounded-lg p-3 shadow-sm">
@@ -541,9 +619,9 @@ export default function PosScreen({ orgSlug }) {
             {isCashOpen && (
               <div className="space-y-2">
                 <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Total en caja:</span>
-                  <span className="font-bold">
-                    {formatCurrency(openingAmount + daySalesTotal + movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
+                                    <span className="text-slate-500">Total en caja:</span>
+                                    <span className="font-bold">
+                                      {formatCurrency(openingAmount + movements.filter(m => m.type === 'entrada').reduce((acc, m) => acc + m.amount, 0) + movements.filter(m => m.subtype === 'menudeo').reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
                   </span>
                 </div>
                 <div className="flex gap-2">
@@ -575,9 +653,12 @@ export default function PosScreen({ orgSlug }) {
 
                     <div className="bg-white rounded-lg p-3 shadow-sm space-y-2">
                       <p className="text-xs font-medium text-slate-600">Cliente</p>
-            <CustomerHeader />
-            <CustomerSelector />
-            <CustomerForm />
+                        <CustomerHeader />
+                        <CustomerSelector 
+                          onCreditSettings={handleOpenCreditSettings}
+                          onCreditHistory={handleOpenCreditHistory}
+                        />
+                        <CustomerForm />
           </div>
 
           <div className="mt-auto space-y-2">
@@ -626,12 +707,12 @@ export default function PosScreen({ orgSlug }) {
                         {formatCurrency(movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm pt-2 border-t">
-                      <span className="font-bold">Total en caja:</span>
-                      <span className="font-bold text-blue-600">
-                        {formatCurrency(openingAmount + daySalesTotal + movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
-                      </span>
-                    </div>
+                                        <div className="flex justify-between text-sm pt-2 border-t">
+                                          <span className="font-bold">Total en caja:</span>
+                                          <span className="font-bold text-blue-600">
+                                            {formatCurrency(openingAmount + movements.filter(m => m.type === 'entrada').reduce((acc, m) => acc + m.amount, 0) + movements.filter(m => m.subtype === 'menudeo').reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
+                                          </span>
+                                        </div>
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-2">
@@ -691,14 +772,14 @@ export default function PosScreen({ orgSlug }) {
                 </div>
                 {isCashOpen && (
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Total en caja:</span>
-                      <span className="font-bold">
-                        {formatCurrency(openingAmount + daySalesTotal + movements.filter(m => m.subtype === 'menudeo' && m.branchId === branch).reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
-                      </span>
-                    </div>
-                    <div className="flex gap-2">
-                      <button onClick={() => { setShowDayDetail(true); setShowMobileMenu(false); }} className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-xs">
+                                        <div className="flex justify-between text-xs">
+                                          <span className="text-slate-500">Total en caja:</span>
+                                          <span className="font-bold">
+                                            {formatCurrency(openingAmount + movements.filter(m => m.type === 'entrada').reduce((acc, m) => acc + m.amount, 0) + movements.filter(m => m.subtype === 'menudeo').reduce((acc, m) => acc + m.amount, 0) - movements.filter(m => m.type === 'salida').reduce((acc, m) => acc + m.amount, 0))}
+                                          </span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                          <button onClick={() => { setShowDayDetail(true); setShowMobileMenu(false); }}className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-xs">
                         Detalle del Dia
                       </button>
                       <CloseCashButton orgSlug={orgSlug} daySalesTotal={daySalesTotal} />
@@ -715,14 +796,17 @@ export default function PosScreen({ orgSlug }) {
                               )}
                             </div>
 
-                            <div className="bg-slate-50 rounded-lg p-3 space-y-2">
-                              <p className="text-xs font-medium text-slate-600">Cliente</p>
-                              <CustomerHeader />
-                              <CustomerSelector />
-                              <CustomerForm />
-                            </div>
+                                                        <div className="bg-slate-50 rounded-lg p-3 space-y-2">
+                                                          <p className="text-xs font-medium text-slate-600">Cliente</p>
+                                                          <CustomerHeader />
+                                                          <CustomerSelector 
+                                                            onCreditSettings={(c) => { handleOpenCreditSettings(c); setShowMobileMenu(false); }}
+                                                            onCreditHistory={(c) => { handleOpenCreditHistory(c); setShowMobileMenu(false); }}
+                                                          />
+                                                          <CustomerForm />
+                                                        </div>
 
-                            <div className="space-y-2 pt-4 border-t">
+                                                        <div className="space-y-2 pt-4 border-t">
                 <a href={`/${orgSlug}/inventory`} className="block bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">Inventario</a>
                 <a href={`/${orgSlug}/sales`} className="block bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg text-center font-medium text-sm">Ventas</a>
               </div>
@@ -746,6 +830,37 @@ export default function PosScreen({ orgSlug }) {
 
       {showMenudeoModal && (
         <MenudeoModal orgSlug={orgSlug} branchId={branch} onClose={() => setShowMenudeoModal(false)} />
+      )}
+
+      {showCreditSettings && creditClient && (
+        <CreditSettingsModal
+          client={creditClient}
+          orgSlug={orgSlug}
+          onClose={() => { setShowCreditSettings(false); setCreditClient(null); }}
+          onSuccess={handleCreditSettingsSuccess}
+        />
+      )}
+
+      {showCreditHistory && creditClient && (
+        <CreditHistoryModal
+          client={creditClient}
+          orgSlug={orgSlug}
+          onClose={() => { setShowCreditHistory(false); setCreditClient(null); }}
+          onPayment={(c) => { setShowCreditHistory(false); handleOpenCreditPayment(c); }}
+        />
+      )}
+
+      {showCreditPayment && creditClient && (
+        <CreditPaymentModal
+          client={creditClient}
+          orgSlug={orgSlug}
+          branchId={branch}
+          onClose={() => { setShowCreditPayment(false); setCreditClient(null); }}
+          onSuccess={() => {
+            const { toast } = require("@/src/lib/notifications/toast");
+            toast.success("Pago registrado exitosamente");
+          }}
+        />
       )}
     </div>
   );

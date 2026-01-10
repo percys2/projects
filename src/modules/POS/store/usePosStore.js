@@ -3,6 +3,8 @@
 import { create } from "zustand";
 import { salesService } from "../services/salesService";
 
+const getProductId = (product) => product.id || product.product_id;
+
 export const usePosStore = create((set, get) => ({
   carts: {},
   selectedClient: null,
@@ -34,12 +36,13 @@ export const usePosStore = create((set, get) => ({
   addToCart: (branchId, product) =>
     set((state) => {
       const currentCart = state.carts[branchId] || [];
-      const exists = currentCart.find((c) => c.id === product.id);
+      const productId = getProductId(product);
+      const exists = currentCart.find((c) => getProductId(c) === productId);
 
       let newCart;
       if (exists) {
         newCart = currentCart.map((c) =>
-          c.id === product.id ? { ...c, qty: (c.qty || 1) + 1 } : c
+          getProductId(c) === productId ? { ...c, qty: (c.qty || 1) + 1 } : c
         );
       } else {
         newCart = [...currentCart, { ...product, qty: 1 }];
@@ -59,19 +62,45 @@ export const usePosStore = create((set, get) => ({
       return {
         carts: {
           ...state.carts,
-          [branchId]: currentCart.filter((c) => c.id !== productId),
+          [branchId]: currentCart.filter((c) => getProductId(c) !== productId),
         },
       };
     }),
 
-  updateQuantity: (branchId, productId, qty) =>
+  decreaseQty: (branchId, productId) =>
     set((state) => {
       const currentCart = state.carts[branchId] || [];
       return {
         carts: {
           ...state.carts,
           [branchId]: currentCart.map((c) =>
-            c.id === productId ? { ...c, qty } : c
+            getProductId(c) === productId ? { ...c, qty: Math.max(1, (c.qty || 1) - 1) } : c
+          ),
+        },
+      };
+    }),
+
+  increaseQty: (branchId, productId) =>
+    set((state) => {
+      const currentCart = state.carts[branchId] || [];
+      return {
+        carts: {
+          ...state.carts,
+          [branchId]: currentCart.map((c) =>
+            getProductId(c) === productId ? { ...c, qty: (c.qty || 1) + 1 } : c
+          ),
+        },
+      };
+    }),
+
+  updateCartQty: (branchId, productId, qty) =>
+    set((state) => {
+      const currentCart = state.carts[branchId] || [];
+      return {
+        carts: {
+          ...state.carts,
+          [branchId]: currentCart.map((c) =>
+            getProductId(c) === productId ? { ...c, qty: Math.max(1, qty) } : c
           ),
         },
       };
