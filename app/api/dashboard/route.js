@@ -14,13 +14,30 @@ export async function GET(req) {
     const { orgId } = context;
     const supabase = supabaseAdmin;
     const range = req.nextUrl?.searchParams?.get("range") || "30";
+    const month = req.nextUrl?.searchParams?.get("month"); // Format: YYYY-MM
     const now = new Date();
-    const periodStart = new Date(now);
-    periodStart.setDate(periodStart.getDate() - parseInt(range));
-    const periodStartISO = periodStart.toISOString();
+    
+    let periodStartISO, periodEndISO, periodDays;
+    
+    if (month) {
+      // Month-based filtering (e.g., "2026-01" for January 2026)
+      const [year, monthNum] = month.split("-").map(Number);
+      const startOfMonth = new Date(year, monthNum - 1, 1);
+      const endOfMonth = new Date(year, monthNum, 0, 23, 59, 59, 999);
+      periodStartISO = startOfMonth.toISOString();
+      periodEndISO = endOfMonth.toISOString();
+      periodDays = endOfMonth.getDate(); // Days in the month
+    } else {
+      // Range-based filtering (original behavior)
+      const periodStart = new Date(now);
+      periodStart.setDate(periodStart.getDate() - parseInt(range));
+      periodStartISO = periodStart.toISOString();
+      periodEndISO = now.toISOString();
+      periodDays = parseInt(range);
+    }
 
     // 1. SALES DATA with items - include product cost/price as fallback
-    const { data: salesData, error: salesError } = await supabase
+    let salesQuery = supabase
       .from("sales")
       .select(`
         id, total, client_id, created_at,
@@ -28,6 +45,13 @@ export async function GET(req) {
       `)
       .eq("org_id", orgId)
       .gte("created_at", periodStartISO);
+    
+    // Add upper bound for month filtering
+    if (month) {
+      salesQuery = salesQuery.lte("created_at", periodEndISO);
+    }
+    
+    const { data: salesData, error: salesError } = await salesQuery;
 
     if (salesError) {
       console.error("Sales query error:", salesError);
@@ -44,27 +68,27 @@ export async function GET(req) {
         
         const itemRevenue = Number(item.subtotal) || (qty * itemPrice);
         const itemCostTotal = itemCost * qty;
-        const itemMargin = Number(item.margin) || (itemRevenue - itemCostTotal);
+        // Always calculate margin as revenue - cost (don't use stored margin which may be incorrect)
+        const itemMargin = itemRevenue - itemCostTotal;
 
         revenue += itemRevenue;
         cogs += itemCostTotal;
-        grossProfit += itemMargin;
 
         if (sale.client_id) {
           if (!clientSales[sale.client_id]) {
-            clientSales[sale.client_id] = { totalSales: 0, totalMargin: 0, orderCount: 0 };
+            clientSales[sale.client_id] = { totalSales: 0, totalCost: 0, orderCount: 0 };
           }
           clientSales[sale.client_id].totalSales += itemRevenue;
-          clientSales[sale.client_id].totalMargin += itemMargin;
+          clientSales[sale.client_id].totalCost += itemCostTotal;
         }
 
         if (item.product_id) {
           if (!productSales[item.product_id]) {
-            productSales[item.product_id] = { quantitySold: 0, revenue: 0, grossProfit: 0 };
+            productSales[item.product_id] = { quantitySold: 0, revenue: 0, cost: 0 };
           }
           productSales[item.product_id].quantitySold += qty;
           productSales[item.product_id].revenue += itemRevenue;
-          productSales[item.product_id].grossProfit += itemMargin;
+          productSales[item.product_id].cost += itemCostTotal;
         }
       });
 
@@ -73,6 +97,8 @@ export async function GET(req) {
       }
     });
 
+    // Calculate gross profit correctly as revenue - cogs (not from stored margins which may be incorrect)
+    grossProfit = revenue - cogs;
     const grossMarginPct = revenue > 0 ? (grossProfit / revenue) * 100 : 0;
     const markupPct = cogs > 0 ? ((revenue - cogs) / cogs) * 100 : 0;
 
@@ -108,7 +134,6 @@ export async function GET(req) {
       categoryInventory[category].totalUnits += qty;
     });
 
-    const periodDays = parseInt(range);
     const effectiveCogs = cogs > 0 ? cogs : (potentialRevenue * 0.6);
     const inventoryTurnover = inventoryValue > 0 ? ((effectiveCogs / periodDays) * 365) / inventoryValue : 0;
     const daysInventoryOnHand = effectiveCogs > 0 ? (inventoryValue / effectiveCogs) * periodDays : (inventoryValue > 0 ? 999 : 0);
@@ -120,10 +145,14 @@ export async function GET(req) {
       const { data: clients } = await supabase.from("clients").select("id, name, phone").in("id", clientIds);
       topClients = clientIds.map((id) => {
         const client = clients?.find((c) => c.id === id);
+        const clientData = clientSales[id];
+        const clientMargin = clientData.totalSales - clientData.totalCost;
         return {
           id, name: client?.name || "Cliente desconocido", phone: client?.phone || "",
-          ...clientSales[id],
-          marginPct: clientSales[id].totalSales > 0 ? (clientSales[id].totalMargin / clientSales[id].totalSales) * 100 : 0,
+          totalSales: clientData.totalSales,
+          totalMargin: clientMargin,
+          orderCount: clientData.orderCount,
+          marginPct: clientData.totalSales > 0 ? (clientMargin / clientData.totalSales) * 100 : 0,
         };
       }).sort((a, b) => b.totalSales - a.totalSales).slice(0, 10);
     }
@@ -135,10 +164,14 @@ export async function GET(req) {
       const { data: products } = await supabase.from("products").select("id, name, category, sku").in("id", productIds);
       topProducts = productIds.map((id) => {
         const product = products?.find((p) => p.id === id);
+        const productData = productSales[id];
+        const productMargin = productData.revenue - productData.cost;
         return {
           id, name: product?.name || "Producto desconocido", category: product?.category || "", sku: product?.sku || "",
-          ...productSales[id],
-          marginPct: productSales[id].revenue > 0 ? (productSales[id].grossProfit / productSales[id].revenue) * 100 : 0,
+          quantitySold: productData.quantitySold,
+          revenue: productData.revenue,
+          grossProfit: productMargin,
+          marginPct: productData.revenue > 0 ? (productMargin / productData.revenue) * 100 : 0,
         };
       }).sort((a, b) => b.revenue - a.revenue).slice(0, 10);
     }

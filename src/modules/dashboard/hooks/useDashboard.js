@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 
-export function useDashboard({ orgSlug, period = "30" }) {
+export function useDashboard({ orgSlug, period = "30", month = null }) {
   const [data, setData] = useState(null);
   const [financeData, setFinanceData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,8 +13,15 @@ export function useDashboard({ orgSlug, period = "30" }) {
       setLoading(true);
       const headers = { "x-org-slug": orgSlug };
 
+      let dashUrl = "/api/dashboard";
+      if (month) {
+        dashUrl += `?month=${month}`;
+      } else {
+        dashUrl += `?range=${period}`;
+      }
+
       const [dashRes, receivablesRes, payablesRes] = await Promise.all([
-        fetch(`/api/dashboard?range=${period}`, { headers }),
+        fetch(dashUrl, { headers }),
         fetch("/api/finance/reports/receivables", { headers }),
         fetch("/api/finance/reports/payables", { headers }),
       ]);
@@ -39,7 +46,7 @@ export function useDashboard({ orgSlug, period = "30" }) {
     } finally {
       setLoading(false);
     }
-  }, [orgSlug, period]);
+  }, [orgSlug, period, month]);
 
   useEffect(() => {
     loadData();

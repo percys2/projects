@@ -8,14 +8,16 @@ const DENOMINATIONS = [1000, 500, 200, 100, 50, 20, 10, 5, 1];
 
 export default function CloseCashButton({ orgSlug, daySalesTotal = 0 }) {
   const branch = useBranchStore((s) => s.activeBranch);
-  const getBranchState = useCashRegisterStore((s) => s.getBranchState);
+  
+  // Use direct subscription to branch data for proper re-renders
+  const defaultBranchState = { isOpen: false, openingAmount: 0, movements: [], openingTime: null };
+  const branchState = useCashRegisterStore((s) => s.branches[branch] || defaultBranchState);
   const closeCashRegisterStore = useCashRegisterStore((s) => s.closeCashRegister);
   
-  const branchState = getBranchState(branch);
   const isOpen = branchState.isOpen;
   const openingTime = branchState.openingTime;
   const openingAmount = branchState.openingAmount;
-  const movements = branchState.movements;
+  const movements = branchState.movements || [];
   
   const closeCashRegister = (params) => closeCashRegisterStore({ ...params, branchId: branch });
 

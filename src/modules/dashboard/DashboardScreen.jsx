@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { TrendingUp, TrendingDown, DollarSign, Users } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
@@ -10,10 +10,38 @@ import KpiCard from "@/src/components/ui/KpiCard";
 import AlertsPanel from "./components/AlertsPanel";
 import QuickActions from "./components/QuickActions";
 
+// Helper to get current month in YYYY-MM format
+const getCurrentMonth = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+};
+
+// Helper to generate month options (last 12 months)
+const getMonthOptions = () => {
+  const options = [];
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const label = date.toLocaleDateString('es-NI', { month: 'long', year: 'numeric' });
+    options.push({ value, label: label.charAt(0).toUpperCase() + label.slice(1) });
+  }
+  return options;
+};
+
 export default function DashboardScreen({ orgSlug }) {
   const router = useRouter();
+  const [filterType, setFilterType] = useState("month");
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [period, setPeriod] = useState("30");
-  const { data, loading, error, overdueStats, chartData } = useDashboard({ orgSlug, period });
+  
+  const monthOptions = useMemo(() => getMonthOptions(), []);
+  
+  const { data, loading, error, overdueStats, chartData } = useDashboard({ 
+    orgSlug, 
+    period: filterType === "month" ? "month" : period,
+    month: filterType === "month" ? selectedMonth : null
+  });
 
   const handleNavigate = (module) => router.push(`/${orgSlug}/${module}`);
 
@@ -23,27 +51,48 @@ export default function DashboardScreen({ orgSlug }) {
 
   return (
     <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 max-w-7xl mx-auto">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Dashboard</h1>
           <p className="text-xs sm:text-sm text-slate-500">Resumen de tu negocio agropecuario</p>
         </div>
-        <select value={period} onChange={(e) => setPeriod(e.target.value)} className="px-3 py-2 border rounded-lg text-sm w-full sm:w-auto">
-          <option value="7">Ultimos 7 dias</option>
-          <option value="30">Ultimos 30 dias</option>
-          <option value="90">Ultimos 90 dias</option>
-          <option value="365">Ultimo ano</option>
-        </select>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <select 
+            value={filterType} 
+            onChange={(e) => setFilterType(e.target.value)} 
+            className="px-3 py-2 border rounded-lg text-sm"
+          >
+            <option value="month">Por Mes</option>
+            <option value="days">Por Dias</option>
+          </select>
+          {filterType === "month" ? (
+            <select 
+              value={selectedMonth} 
+              onChange={(e) => setSelectedMonth(e.target.value)} 
+              className="px-3 py-2 border rounded-lg text-sm"
+            >
+              {monthOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          ) : (
+            <select 
+              value={period} 
+              onChange={(e) => setPeriod(e.target.value)} 
+              className="px-3 py-2 border rounded-lg text-sm"
+            >
+              <option value="7">Ultimos 7 dias</option>
+              <option value="30">Ultimos 30 dias</option>
+              <option value="90">Ultimos 90 dias</option>
+              <option value="365">Ultimo ano</option>
+            </select>
+          )}
+        </div>
       </div>
 
-      {/* Alerts */}
       <AlertsPanel overdueStats={overdueStats} lowStock={data.lowStock} onNavigate={handleNavigate} />
-
-      {/* Quick Actions */}
       <QuickActions onNavigate={handleNavigate} />
 
-      {/* KPI Cards Row 1 - Financial */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         <KpiCard title="Ingresos" value={formatCurrency(data.kpis.revenue)} subtitle={`${data.kpis.salesCount} ventas`} icon={TrendingUp} variant="secondary" />
         <KpiCard title="Ganancia Bruta" value={formatCurrency(data.kpis.grossProfit)} subtitle={`Margen: ${formatPercent(data.kpis.grossMarginPct)}`} icon={DollarSign} variant="primary" />
@@ -51,7 +100,6 @@ export default function DashboardScreen({ orgSlug }) {
         <KpiCard title="Pipeline CRM" value={formatCurrency(data.kpis.pipelineValue)} subtitle="Oportunidades abiertas" icon={Users} variant="primary" />
       </div>
 
-      {/* Sales Chart */}
       <div className="bg-white rounded-xl border p-3 sm:p-4">
         <h2 className="text-sm font-semibold text-slate-700 mb-4">Ventas vs Costos</h2>
         <div className="h-48 sm:h-64">
@@ -69,7 +117,6 @@ export default function DashboardScreen({ orgSlug }) {
         </div>
       </div>
 
-      {/* KPI Cards Row 2 - Inventory */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         <KpiCard title="Valor Inventario" value={formatCurrency(data.kpis.inventoryValue)} subtitle="Capital invertido" variant="secondary" />
         <KpiCard title="Ganancia Potencial" value={formatCurrency(data.kpis.potentialGrossProfit)} subtitle="Si vendes todo" variant="primary" />
@@ -77,7 +124,6 @@ export default function DashboardScreen({ orgSlug }) {
         <KpiCard title="Dias de Stock" value={data.profitability.daysInventoryOnHand} subtitle="Dias disponibles" variant="primary" />
       </div>
 
-      {/* Counts Row */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4">
         <div className="bg-white rounded-xl border p-3 sm:p-4 text-center">
           <p className="text-xl sm:text-3xl font-bold text-slate-700">{data.kpis.clientsCount}</p>
@@ -93,7 +139,6 @@ export default function DashboardScreen({ orgSlug }) {
         </div>
       </div>
 
-      {/* Top Clients & Products */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="bg-white rounded-xl border p-3 sm:p-4">
           <h2 className="text-sm font-semibold mb-4">Top 10 Clientes</h2>
@@ -146,7 +191,6 @@ export default function DashboardScreen({ orgSlug }) {
         </div>
       </div>
 
-      {/* Inventory by Category */}
       <div className="bg-white rounded-xl border p-3 sm:p-4">
         <h2 className="text-sm font-semibold mb-4">Inventario por Categoria</h2>
         {data.inventoryByCategory?.length > 0 ? (
@@ -181,7 +225,6 @@ export default function DashboardScreen({ orgSlug }) {
         )}
       </div>
 
-      {/* Low Stock Alert */}
       {data.lowStock?.length > 0 && (
         <div className="bg-amber-50 rounded-xl border border-amber-200 p-3 sm:p-4">
           <h2 className="text-sm font-semibold text-amber-700 mb-4">Productos con Bajo Stock</h2>

@@ -41,7 +41,7 @@ export async function validateTaxId(taxId) {
     return { valid: true, type: "RUC", formatted: formatRUC(cleanTaxId) };
   }
 
-  if (cleanTaxId.length === 14 || cleanTaxId.length === 16) {
+  if (cleanTaxId.length === 13 || cleanTaxId.length === 16) {
     return { valid: true, type: "Cédula", formatted: cleanTaxId };
   }
 

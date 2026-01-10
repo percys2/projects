@@ -1,29 +1,18 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
+import { getOrgContext } from "@/src/lib/api/getOrgContext";
 
 export async function GET(req, { params }) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    }
-  );
-
-  const productId = params.id;
-  const orgId = req.headers.get("x-org-id");
-
-  if (!orgId) {
-    return NextResponse.json(
-      { error: "Missing orgId" },
-      { status: 400 }
-    );
-  }
-
   try {
+    const context = await getOrgContext(req);
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
+    }
+    const { orgId } = context;
+    const supabase = supabaseAdmin;
+
+    const productId = params.id;
+
     const { data, error } = await supabase
       .from("products")
       .select(`

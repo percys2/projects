@@ -18,6 +18,20 @@ export async function GET(req) {
     const branchId = searchParams.get("branchId");
     const limit = Number(searchParams.get("limit") || 100);
     const offset = Number(searchParams.get("offset") || 0);
+   // Helper to convert local Managua date to UTC boundaries
+    // Managua is UTC-6, so we need to add 6 hours to get UTC time
+    const managua_to_utc_start = (localDate) => {
+      // Local midnight in Managua = 06:00 UTC same day
+      return `${localDate}T06:00:00.000Z`;
+    };
+    const managua_to_utc_end = (localDate) => {
+      // Local 23:59:59 in Managua = 05:59:59 UTC next day
+      const d = new Date(localDate);
+      d.setDate(d.getDate() + 1);
+      const nextDay = d.toISOString().split('T')[0];
+      return `${nextDay}T05:59:59.999Z`;
+    };
+
    let query = supabase
       .from("sales")
       .select(`*, clients(*), sales_items(*, products:product_id(id, name, sku, category)), branches:branch_id(id, name)`)
@@ -25,10 +39,11 @@ export async function GET(req) {
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
    if (date) {
-      query = query.gte("created_at", `${date}T00:00:00`).lte("created_at", `${date}T23:59:59`);
+      // Convert Managua local date to UTC boundaries for filtering
+      query = query.gte("created_at", managua_to_utc_start(date)).lte("created_at", managua_to_utc_end(date));
     } else {
-      if (startDate) query = query.gte("created_at", `${startDate}T00:00:00`);
-      if (endDate) query = query.lte("created_at", `${endDate}T23:59:59`);
+      if (startDate) query = query.gte("created_at", managua_to_utc_start(startDate));
+      if (endDate) query = query.lte("created_at", managua_to_utc_end(endDate));
     }
     if (branchId) query = query.eq("branch_id", branchId);
 

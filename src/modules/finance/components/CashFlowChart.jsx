@@ -38,22 +38,25 @@ export default function CashFlowChart({ payments, sales = [] }) {
     sales.forEach((s) => {
       if (s.status === "canceled" || s.status === "refunded") return;
       
-      const date = parseDateFlexible(s.fecha);
+      // Use created_at or fecha (API returns created_at, some places use fecha)
+      const date = parseDateFlexible(s.created_at || s.fecha);
       if (!date) return;
       
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
       
       if (!monthlyData[monthKey]) {
-        monthlyData[monthKey] = { month: monthKey, ingresos: 0, gastos: 0 };
+        monthlyData[monthKey] = { month: monthKey, ingresos: 0, costoVentas: 0, gastos: 0 };
       }
       
+      // Ingresos = Total de ventas (revenue)
       const saleTotal = parseFloat(s.total) || 0;
       monthlyData[monthKey].ingresos += saleTotal;
       
+      // Costo de ventas = Costo de los productos vendidos
       if (s.sales_items && Array.isArray(s.sales_items)) {
         s.sales_items.forEach((item) => {
           const itemCost = (parseFloat(item.cost) || 0) * (parseInt(item.quantity) || 0);
-          monthlyData[monthKey].ingresos -= itemCost;
+          monthlyData[monthKey].costoVentas += itemCost;
         });
       }
     });
@@ -67,7 +70,7 @@ export default function CashFlowChart({ payments, sales = [] }) {
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
       
       if (!monthlyData[monthKey]) {
-        monthlyData[monthKey] = { month: monthKey, ingresos: 0, gastos: 0 };
+        monthlyData[monthKey] = { month: monthKey, ingresos: 0, costoVentas: 0, gastos: 0 };
       }
       
       monthlyData[monthKey].gastos += p.amount || 0;
@@ -79,7 +82,10 @@ export default function CashFlowChart({ payments, sales = [] }) {
       .map((item) => ({
         ...item,
         monthLabel: formatMonth(item.month),
-        utilidadNeta: item.ingresos - item.gastos,
+        // Utilidad Bruta = Ingresos - Costo de Ventas
+        utilidadBruta: item.ingresos - item.costoVentas,
+        // Utilidad Neta = Utilidad Bruta - Gastos Operativos
+        utilidadNeta: item.ingresos - item.costoVentas - item.gastos,
       }));
   }, [payments, sales]);
 
@@ -116,7 +122,16 @@ export default function CashFlowChart({ payments, sales = [] }) {
           <Line 
             type="monotone" 
             dataKey="ingresos" 
-            name="Ingresos (Utilidad Bruta)" 
+            name="Ingresos (Ventas)" 
+            stroke="#3b82f6" 
+            strokeWidth={2}
+            dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6 }}
+          />
+          <Line 
+            type="monotone" 
+            dataKey="utilidadBruta" 
+            name="Utilidad Bruta" 
             stroke="#10b981" 
             strokeWidth={2}
             dot={{ fill: "#10b981", strokeWidth: 2, r: 4 }}
@@ -125,7 +140,7 @@ export default function CashFlowChart({ payments, sales = [] }) {
           <Line 
             type="monotone" 
             dataKey="gastos" 
-            name="Gastos" 
+            name="Gastos Operativos" 
             stroke="#ef4444" 
             strokeWidth={2}
             dot={{ fill: "#ef4444", strokeWidth: 2, r: 4 }}

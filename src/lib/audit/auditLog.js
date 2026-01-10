@@ -1,14 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 
 /**
  * Audit logging for critical operations
  * Logs important actions for security and compliance
  */
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const supabase = supabaseAdmin;
 
 /**
  * Log an audit event

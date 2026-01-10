@@ -32,7 +32,7 @@ export default function PosScreen({ orgSlug }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Cart store
-  const cart = usePosStore((s) => s.cart);
+  const cart = usePosStore((s) => s.carts[branch]) || [];
   const addToCart = usePosStore((s) => s.addToCart);
   const removeFromCart = usePosStore((s) => s.removeFromCart);
   const decreaseQty = usePosStore((s) => s.decreaseQty);
@@ -42,15 +42,25 @@ export default function PosScreen({ orgSlug }) {
   const selectedClient = usePosStore((s) => s.selectedClient);
   const customerForm = usePosStore((s) => s.customerForm);
 
-  // Cash register store
-  const isCashOpen = useCashRegisterStore((s) => s.isOpen);
-  const addMovement = useCashRegisterStore((s) => s.addMovement);
-  const movements = useCashRegisterStore((s) => s.movements);
-  const openingAmount = useCashRegisterStore((s) => s.openingAmount);
-  const getTotal = useCashRegisterStore((s) => s.getTotal);
-  const checkAndResetForNewDay = useCashRegisterStore((s) => s.checkAndResetForNewDay);
-  const dayChangedWhileOpen = useCashRegisterStore((s) => s.dayChangedWhileOpen);
-  const clearDayChangedWarning = useCashRegisterStore((s) => s.clearDayChangedWarning);
+  // Cash register store - use branch-based state with direct subscription to branch data
+  const defaultBranchState = { isOpen: false, openingAmount: 0, movements: [], dayChangedWhileOpen: false };
+  const branchState = useCashRegisterStore((s) => s.branches[branch] || defaultBranchState);
+  const addMovementStore = useCashRegisterStore((s) => s.addMovement);
+  const getTotalStore = useCashRegisterStore((s) => s.getTotal);
+  const checkAndResetForNewDayStore = useCashRegisterStore((s) => s.checkAndResetForNewDay);
+  const clearDayChangedWarningStore = useCashRegisterStore((s) => s.clearDayChangedWarning);
+  
+  // Get branch-specific state from the subscribed branchState
+  const isCashOpen = branchState.isOpen;
+  const movements = branchState.movements || [];
+  const openingAmount = branchState.openingAmount || 0;
+  const dayChangedWhileOpen = branchState.dayChangedWhileOpen;
+  
+  // Wrapper functions that pass branchId
+  const addMovement = (movement) => addMovementStore(branch, movement);
+  const getTotal = () => getTotalStore(branch);
+  const checkAndResetForNewDay = () => checkAndResetForNewDayStore(branch);
+  const clearDayChangedWarning = () => clearDayChangedWarningStore(branch);
 
     const [showDayDetail, setShowDayDetail] = useState(false);
     const [daySales, setDaySales] = useState([]);
@@ -229,6 +239,9 @@ export default function PosScreen({ orgSlug }) {
 
       clearCart();
       toast.success(`Venta realizada. Factura: ${sale.invoice}`);
+      
+      // Refresh sales total from database to update cash register display
+      loadDaySales();
     } catch (error) {
       const { toast } = require("@/src/lib/notifications/toast");
       toast.error(error.message || "Error al realizar la venta");
@@ -722,7 +735,7 @@ export default function PosScreen({ orgSlug }) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="fixed inset-0 bg-black/50" onClick={() => setShowMobileCart(false)} />
           <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl">
-            <CartSidebar orgSlug={orgSlug} onClose={() => { setShowMobileCart(false); searchInputRef.current?.focus(); }} />
+            <CartSidebar orgSlug={orgSlug} onClose={() => { setShowMobileCart(false); searchInputRef.current?.focus(); }} onSaleSuccess={loadDaySales} />
           </div>
         </div>
       )}

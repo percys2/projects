@@ -25,6 +25,15 @@ export async function GET(req) {
     const limit = Number(url.searchParams.get("limit") || 50);
     const offset = Number(url.searchParams.get("offset") || 0);
 
+    // Map UI filter values (Spanish lowercase) to database values (English uppercase)
+    const movementTypeMap = {
+      entrada: ["ENTRY", "ADJUSTMENT_IN", "PURCHASE"],
+      salida: ["EXIT", "ADJUSTMENT_OUT"],
+      transferencia: ["TRANSFER", "TRANSFER_OUT", "TRANSFER_IN"],
+      venta: ["SALE", "SALE_CANCEL"],
+      ajuste: ["ADJUSTMENT_IN", "ADJUSTMENT_OUT", "ADJUSTMENT", "RESET"],
+    };
+
     let query = supabase
       .from("kardex_view")
       .select("*")
@@ -36,10 +45,15 @@ export async function GET(req) {
     if (branchId && branchId !== "all") {
       query = query.or(`from_branch.eq.${branchId},to_branch.eq.${branchId},branch_id.eq.${branchId}`);
     }
-    if (movementType && movementType !== "all") query = query.eq("movement_type", movementType);
+    if (movementType && movementType !== "all") {
+      const dbTypes = movementTypeMap[movementType];
+      if (dbTypes && dbTypes.length > 0) {
+        query = query.in("movement_type", dbTypes);
+      }
+    }
     if (search) query = query.or(`product_name.ilike.%${search}%,reference.ilike.%${search}%,user_email.ilike.%${search}%`);
-    if (startDate) query = query.gte("created_at", `${startDate} 00:00:00`);
-    if (endDate) query = query.lte("created_at", `${endDate} 23:59:59`);
+    if (startDate) query = query.gte("created_at", `${startDate}T00:00:00`);
+    if (endDate) query = query.lte("created_at", `${endDate}T23:59:59`);
 
     const { data, error } = await query;
     if (error) throw error;
