@@ -14,6 +14,9 @@ export function useOdontology(orgSlug) {
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState(null);
 
+  const [isOdontogramModalOpen, setIsOdontogramModalOpen] = useState(false);
+  const [odontogramPatient, setOdontogramPatient] = useState(null);
+
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState(null);
 
@@ -63,6 +66,17 @@ export function useOdontology(orgSlug) {
     setEditingPatient(null);
   }, []);
 
+  // Odontogram modal
+  const openOdontogram = useCallback((patient) => {
+    setOdontogramPatient(patient);
+    setIsOdontogramModalOpen(true);
+  }, []);
+
+  const closeOdontogram = useCallback(() => {
+    setIsOdontogramModalOpen(false);
+    setOdontogramPatient(null);
+  }, []);
+
   // Appointments modal
   const openNewAppointment = useCallback(() => {
     setEditingAppointment(null);
@@ -102,6 +116,41 @@ export function useOdontology(orgSlug) {
       return { success: true };
     },
     [orgSlug, closePatientModal]
+  );
+
+  const saveOdontogram = useCallback(
+    async ({ patientId, odontogram }) => {
+      const base = patients.find((p) => p.id === patientId) || odontogramPatient;
+      if (!base?.first_name) throw new Error("Paciente inválido");
+
+      const res = await fetch("/api/odontology/patients", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "x-org-slug": orgSlug },
+        body: JSON.stringify({
+          id: patientId,
+          first_name: base.first_name,
+          last_name: base.last_name || null,
+          phone: base.phone || null,
+          email: base.email || null,
+          dob: base.dob || null,
+          sex: base.sex || null,
+          address: base.address || null,
+          emergency_contact_name: base.emergency_contact_name || null,
+          emergency_contact_phone: base.emergency_contact_phone || null,
+          notes: base.notes || null,
+          odontogram,
+        }),
+      });
+
+      const payload = await res.json();
+      if (!res.ok) throw new Error(payload.error || "Error al guardar odontograma");
+
+      const saved = payload.patient || payload;
+      setPatients((prev) => prev.map((p) => (p.id === saved.id ? saved : p)));
+      setOdontogramPatient(saved);
+      return { success: true, patient: saved };
+    },
+    [orgSlug, odontogramPatient, patients]
   );
 
   const deletePatient = useCallback(
@@ -191,6 +240,12 @@ export function useOdontology(orgSlug) {
     closePatientModal,
     savePatient,
     deletePatient,
+
+    isOdontogramModalOpen,
+    odontogramPatient,
+    openOdontogram,
+    closeOdontogram,
+    saveOdontogram,
 
     isAppointmentModalOpen,
     editingAppointment,

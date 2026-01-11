@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import { useOdontology } from "./hooks/useOdontology";
 import PatientModal from "./components/PatientModal";
 import AppointmentModal from "./components/AppointmentModal";
+import OdontogramModal from "./components/OdontogramModal";
 
 export default function OdontologyScreen({ orgSlug }) {
   const od = useOdontology(orgSlug);
@@ -135,6 +136,12 @@ export default function OdontologyScreen({ orgSlug }) {
                       </td>
                       <td className="p-3 text-center">
                         <button
+                          onClick={() => od.openOdontogram(p)}
+                          className="text-slate-900 hover:underline text-xs mr-3"
+                        >
+                          Odontograma
+                        </button>
+                        <button
                           onClick={() => od.openEditPatient(p)}
                           className="text-blue-600 hover:underline text-xs mr-3"
                         >
@@ -256,6 +263,13 @@ export default function OdontologyScreen({ orgSlug }) {
         onSave={od.saveAppointment}
         appointment={od.editingAppointment}
         patients={od.patients}
+      />
+
+      <OdontogramModal
+        isOpen={od.isOdontogramModalOpen}
+        onClose={od.closeOdontogram}
+        patient={od.odontogramPatient}
+        onSaveOdontogram={od.saveOdontogram}
       />
     </div>
   );

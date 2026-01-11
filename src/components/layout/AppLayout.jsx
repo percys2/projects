@@ -12,7 +12,7 @@ import {
   Receipt,
   Wallet,
   Users2,
-  Tooth,
+  Sparkles,
   Settings,
   LogOut,
   Menu,
@@ -39,7 +39,7 @@ const menuItems = [
   {
     section: "Clínica",
     items: [
-      { key: "odontology", label: "Odontología", icon: Tooth, module: "odontology" },
+      { key: "odontology", label: "Odontología", icon: Sparkles, module: "odontology" },
     ],
   },
   {

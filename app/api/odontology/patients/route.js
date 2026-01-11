@@ -66,6 +66,7 @@ export async function POST(req) {
       emergency_contact_name: validation.data.emergency_contact_name || null,
       emergency_contact_phone: validation.data.emergency_contact_phone || null,
       notes: validation.data.notes || null,
+      odontogram: validation.data.odontogram || null,
     };
 
     const { data: patient, error } = await supabaseAdmin
@@ -129,6 +130,10 @@ export async function PUT(req) {
       notes: validation.data.notes || null,
       updated_at: new Date().toISOString(),
     };
+
+    if (validation.data.odontogram !== undefined) {
+      updateData.odontogram = validation.data.odontogram;
+    }
 
     const { data: patient, error } = await supabaseAdmin
       .from("odontology_patients")

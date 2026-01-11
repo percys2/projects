@@ -248,6 +248,7 @@ export const odontPatientSchema = z.object({
   emergency_contact_name: optionalString,
   emergency_contact_phone: optionalString,
   notes: optionalString,
+  odontogram: z.any().optional().nullable(),
 });
 
 export const odontPatientUpdateSchema = odontPatientSchema.extend({

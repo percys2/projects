@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS odontology_patients (
   emergency_contact_phone TEXT,
 
   notes TEXT,
+  odontogram JSONB,
 
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
