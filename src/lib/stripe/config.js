@@ -1,8 +1,21 @@
 import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-});
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+// Avoid failing `next build` when STRIPE_SECRET_KEY isn't set (fail only when used).
+export const stripe =
+  stripeSecretKey && stripeSecretKey.trim()
+    ? new Stripe(stripeSecretKey, { apiVersion: "2023-10-16" })
+    : new Proxy(
+        {},
+        {
+          get() {
+            throw new Error(
+              "Stripe env vars missing. Set STRIPE_SECRET_KEY (and price IDs) to use billing features."
+            );
+          },
+        }
+      );
 
 export const PLANS = {
   free: {

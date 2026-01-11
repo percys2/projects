@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-);
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 
 export async function GET(req) {
   try {
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
     const clientId = req.nextUrl.searchParams.get("clientId");
 
@@ -67,6 +62,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
     const branchId = req.headers.get("x-branch-id");
     const body = await req.json();
@@ -94,7 +90,7 @@ export async function POST(req) {
         p_branch_id: branchId || null,
         p_amount: Number(amount),
         p_payment_method: paymentMethod || "cash",
-        p_notes: notes || null,
+        p_description: notes || null,
       });
 
       if (error) {
@@ -113,6 +109,7 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
+    const supabase = supabaseAdmin;
     const orgSlug = req.headers.get("x-org-slug");
     const body = await req.json();
 

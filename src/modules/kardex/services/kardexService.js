@@ -2,7 +2,8 @@ export const kardexService = {
   async getKardex(orgSlug, productId) {
     const res = await fetch(`/api/kardex`, {
       headers: {
-        "x-org-id": orgSlug,          // ⚠ en tu ERP orgSlug == orgId
+        // API derives org_id from authenticated session + x-org-slug
+        "x-org-slug": orgSlug,
         "x-product-id": productId
       }
     });

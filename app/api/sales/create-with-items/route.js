@@ -1,23 +1,21 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { createSaleSchema, validateRequest } from "@/src/lib/validation/schemas";
 import { rateLimit } from "@/src/lib/middleware/rateLimit";
 import { logAuditEvent, AuditActions } from "@/src/lib/audit/auditLog";
 import { postSaleToGL } from "@/src/lib/services/journalService";
+import { getOrgContextWithBranch } from "@/src/lib/api/getOrgContext";
+import { supabaseAdmin } from "@/src/lib/supabase/server";
 import * as Sentry from "@sentry/nextjs";
 
 export async function POST(req) {
   try {
-    const orgId = req.headers.get("x-org-id");
-    const userId = req.headers.get("x-user-id");
-    const branchId = req.headers.get("x-branch-id"); // POS SELECTS THIS
-
-    if (!orgId || !branchId) {
-      return NextResponse.json(
-        { error: "Missing org ID or branch ID" },
-        { status: 400 }
-      );
+    // Use authenticated session + x-org-slug header (consistent across the app)
+    const context = await getOrgContextWithBranch(req);
+    if (!context.success) {
+      return NextResponse.json({ error: context.error }, { status: context.status });
     }
+
+    const { orgId, userId, branchId } = context;
 
     // Rate limit
     const rateLimitResult = rateLimit(`sales:${orgId}`, 50, 60000);
@@ -50,12 +48,8 @@ export async function POST(req) {
 
     const { client_id, total, payment_method, items, notes } = validation.data;
 
-    // Supabase client
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY,
-      { auth: { autoRefreshToken: false, persistSession: false } }
-    );
+    // Service-role client (trusted server-side)
+    const supabase = supabaseAdmin;
 
     // 1. Crear venta
     const { data: sale, error: saleError } = await supabase
@@ -64,6 +58,8 @@ export async function POST(req) {
         org_id: orgId,
         branch_id: branchId,
         client_id,
+        client_name: validation.data.client_name || null,
+        factura: validation.data.factura || null,
         total,
         payment_method: payment_method || "cash",
         notes: notes || null,
