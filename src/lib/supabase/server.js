@@ -2,6 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
+function getRequiredEnv(name) {
+  const value = process.env[name];
+  return value && value.trim() ? value : null;
+}
+
 /**
  * Creates a Supabase client for use in API routes and Server Components.
  * Uses the user's session via cookies for RLS.
@@ -15,8 +20,8 @@ export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL") || "",
+    getRequiredEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY") || "",
     {
       cookies: {
         getAll() {
@@ -42,16 +47,32 @@ export async function createServerSupabaseClient() {
  * 
  * WARNING: This client has full database access. Never expose to client.
  */
-export const supabaseAdmin = createSupabaseClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+const supabaseUrl = getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");
+const serviceRoleKey = getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY");
+
+const _supabaseAdmin =
+  supabaseUrl && serviceRoleKey
+    ? createSupabaseClient(supabaseUrl, serviceRoleKey, {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      })
+    : null;
+
+// Avoid failing `next build` when env vars are not set; fail only when actually used.
+export const supabaseAdmin =
+  _supabaseAdmin ??
+  new Proxy(
+    {},
+    {
+      get() {
+        throw new Error(
+          "Supabase env vars missing. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
+        );
+      },
+    }
+  );
 
 // Aliases for backwards compatibility
 export const createClient = createServerSupabaseClient;

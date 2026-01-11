@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { stripe, getPlanByPriceId } from "@/src/lib/stripe/config";
 import { supabaseAdmin } from "@/src/lib/supabase/server";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function POST(req) {
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
@@ -219,9 +222,3 @@ async function handlePaymentFailed(invoice) {
     });
   }
 }
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};

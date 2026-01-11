@@ -31,28 +31,18 @@ NEXT_PUBLIC_SENTRY_DSN=your_sentry_dsn_here
 
 ### 1. Run All Migrations
 
-Execute these SQL migrations in your Supabase SQL Editor in order:
+Execute the SQL migrations in `supabase/migrations/` in order (oldest → newest).
 
-1. **001_add_org_id_to_sales_items.sql**
-   - Adds org_id column to sales_items table
-   - Backfills data from sales table
-   - Creates RLS policies for tenant isolation
+At minimum you should run:
 
-2. **002_create_inventory_functions.sql**
-   - Creates decrease_inventory() function
-   - Creates increase_inventory() function
-   - Creates create_sale_with_items() function for atomic transactions
+1. **`supabase/migrations/001_core_schema.sql`**
+   - Creates the core tables for organizations, branches, products, inventory, sales, POS helpers
+   - Creates views: `current_stock`, `kardex_view`
+   - Creates RPCs: `increase_inventory`, `decrease_inventory`, `transfer_inventory`, `get_next_invoice_number`, credit RPCs
+   - Enables basic RLS policies
 
-3. **003_add_remaining_rls_policies.sql**
-   - Adds RLS policies for branches
-   - Adds RLS policies for organization_members
-   - Adds RLS policies for profiles
-   - Adds RLS policies for organizations
-
-4. **004_create_audit_logs_table.sql**
-   - Creates audit_logs table
-   - Creates indexes for performance
-   - Adds RLS policies (admin-only access)
+2. **`supabase/migrations/20241227_subscription_tables.sql`** (optional)
+   - Adds Stripe subscription/billing tables and helper function for plan limits
 
 ### 2. Verify RLS Policies
 
