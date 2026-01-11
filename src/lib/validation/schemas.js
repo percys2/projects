@@ -234,6 +234,41 @@ export const deleteSchema = z.object({
   id: z.string().uuid('ID inválido'),
 });
 
+// ============================================================
+// Odontology (Patients + Appointments)
+// ============================================================
+export const odontPatientSchema = z.object({
+  first_name: z.string().min(1, "El nombre es requerido"),
+  last_name: z.string().optional().nullable(),
+  phone: optionalString,
+  email: optionalEmail,
+  dob: optionalString, // YYYY-MM-DD or ISO string
+  sex: optionalString, // 'F' | 'M' | 'O' (validated in DB/app logic)
+  address: optionalString,
+  emergency_contact_name: optionalString,
+  emergency_contact_phone: optionalString,
+  notes: optionalString,
+  odontogram: z.any().optional().nullable(),
+});
+
+export const odontPatientUpdateSchema = odontPatientSchema.extend({
+  id: z.string().uuid("ID de paciente inválido"),
+});
+
+export const odontAppointmentSchema = z.object({
+  patient_id: z.string().uuid("ID de paciente inválido"),
+  dentist_name: optionalString,
+  scheduled_at: z.string().min(1, "La fecha/hora es requerida"),
+  duration_minutes: z.coerce.number().int().min(5).max(480).optional(),
+  status: z.enum(["scheduled", "confirmed", "completed", "cancelled", "no_show"]).optional(),
+  reason: optionalString,
+  notes: optionalString,
+});
+
+export const odontAppointmentUpdateSchema = odontAppointmentSchema.extend({
+  id: z.string().uuid("ID de cita inválido"),
+});
+
 // Product Delete Schema
 export const productDeleteSchema = z.object({
   productId: z.string().uuid('ID de producto inválido'),
