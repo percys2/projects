@@ -75,6 +75,9 @@ export async function POST(req) {
       sales_stage: validation.data.sales_stage || "prospecto",
       latitude: validation.data.latitude || null,
       longitude: validation.data.longitude || null,
+      is_credit_client: validation.data.is_credit_client || false,
+      credit_limit: validation.data.credit_limit || 0,
+      credit_balance: 0,
     };
 
     const { data: client, error } = await supabase
@@ -144,6 +147,13 @@ export async function PUT(req) {
       latitude: validation.data.latitude || null,
       longitude: validation.data.longitude || null,
     };
+
+    if (validation.data.is_credit_client !== undefined) {
+      updateData.is_credit_client = validation.data.is_credit_client;
+    }
+    if (validation.data.credit_limit !== undefined) {
+      updateData.credit_limit = validation.data.credit_limit;
+    }
 
     const { data: client, error } = await supabase
       .from("clients")

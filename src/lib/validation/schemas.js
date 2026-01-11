@@ -70,7 +70,10 @@ export const clientSchema = z.object({
   sales_stage: z.string().optional().nullable(),
   latitude: optionalNumberFromString,
   longitude: optionalNumberFromString,
+  is_credit_client: z.boolean().optional().default(false),
+  credit_limit: z.number().nonnegative('El límite de crédito no puede ser negativo').optional().default(0),
 });
+
 
 // Client Update Schema (includes id)
 export const clientUpdateSchema = clientSchema.extend({

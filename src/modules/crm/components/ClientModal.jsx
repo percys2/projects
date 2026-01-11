@@ -12,8 +12,8 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
     municipio: "",
     animal_type: "",
     sales_stage: "prospecto",
-    latitude: "",
-    longitude: "",
+    is_credit_client: false,
+    credit_limit: 0,
   });
   const [saving, setSaving] = useState(false);
 
@@ -28,8 +28,8 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
         municipio: client.municipio || "",
         animal_type: client.animal_type || "",
         sales_stage: client.sales_stage || "prospecto",
-        latitude: client.latitude || "",
-        longitude: client.longitude || "",
+        is_credit_client: client.is_credit_client || false,
+        credit_limit: client.credit_limit || 0,
       });
     } else {
       setForm({
@@ -41,8 +41,8 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
         municipio: "",
         animal_type: "",
         sales_stage: "prospecto",
-        latitude: "",
-        longitude: "",
+        is_credit_client: false,
+        credit_limit: 0,
       });
     }
   }, [client, isOpen]);
@@ -66,17 +66,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
     }
   };
 
-  const animalTypes = [
-    "Bovino", 
-    "Porcino", 
-    "Avícola", 
-    "Equino", 
-    "Caprino", 
-    "Ovino", 
-    "Punto de Venta",
-    "Otro"
-  ];
-  
+  const animalTypes = ["Bovino", "Porcino", "Avícola", "Equino", "Caprino", "Ovino", "Otro"];
   const salesStages = [
     { value: "prospecto", label: "Prospecto" },
     { value: "contacto", label: "Contacto Inicial" },
@@ -85,6 +75,14 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
     { value: "negociacion", label: "En Negociación" },
     { value: "cliente", label: "Cliente Activo" },
   ];
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("es-NI", {
+      style: "currency",
+      currency: "NIO",
+      minimumFractionDigits: 2,
+    }).format(amount || 0);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
@@ -166,7 +164,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-medium text-slate-600">Tipo de Cliente</label>
+              <label className="text-xs font-medium text-slate-600">Tipo de Animal</label>
               <select
                 value={form.animal_type}
                 onChange={(e) => setForm({ ...form, animal_type: e.target.value })}
@@ -192,34 +190,77 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-medium text-slate-600">Latitud</label>
-              <input
-                type="text"
-                value={form.latitude}
-                onChange={(e) => setForm({ ...form, latitude: e.target.value })}
-                className="w-full p-2 text-sm border rounded-lg"
-                placeholder="Ej: 12.1364"
-              />
+          <div className="border-t pt-4 mt-4">
+            <h3 className="text-sm font-semibold text-slate-700 mb-3">Configuración de Crédito</h3>
+            
+            <div className="flex items-center gap-3 mb-4">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.is_credit_client}
+                  onChange={(e) => setForm({ ...form, is_credit_client: e.target.checked })}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+              </label>
+              <span className="text-sm text-slate-700">Cliente de Crédito</span>
+              {form.is_credit_client && (
+                <span className="ml-auto px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
+                  CRÉDITO ACTIVO
+                </span>
+              )}
             </div>
-            <div>
-              <label className="text-xs font-medium text-slate-600">Longitud</label>
-              <input
-                type="text"
-                value={form.longitude}
-                onChange={(e) => setForm({ ...form, longitude: e.target.value })}
-                className="w-full p-2 text-sm border rounded-lg"
-                placeholder="Ej: -86.2518"
-              />
-            </div>
+
+            {form.is_credit_client && (
+              <div className="space-y-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                <div>
+                  <label className="text-xs font-medium text-slate-600">Límite de Crédito (C$)</label>
+                  <input
+                    type="number"
+                    value={form.credit_limit}
+                    onChange={(e) => setForm({ ...form, credit_limit: parseFloat(e.target.value) || 0 })}
+                    className="w-full p-2 text-sm border rounded-lg mt-1"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+
+                {client && (
+                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-purple-200">
+                    <div>
+                      <p className="text-xs text-slate-500">Saldo Actual</p>
+                      <p className="text-sm font-bold text-red-600">
+                        {formatCurrency(client.credit_balance || 0)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Disponible</p>
+                      <p className="text-sm font-bold text-green-600">
+                        {formatCurrency((form.credit_limit || 0) - (client.credit_balance || 0))}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {client && (client.credit_balance || 0) > form.credit_limit && (
+                  <p className="text-xs text-red-600 bg-red-50 p-2 rounded">
+                    El límite no puede ser menor al saldo actual ({formatCurrency(client.credit_balance)})
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-2 pt-4 border-t">
             <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">
               Cancelar
             </button>
-            <button type="submit" disabled={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50">
+            <button 
+              type="submit" 
+              disabled={saving || (form.is_credit_client && client && (client.credit_balance || 0) > form.credit_limit)} 
+              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50"
+            >
               {saving ? "Guardando..." : client ? "Actualizar" : "Crear Cliente"}
             </button>
           </div>
