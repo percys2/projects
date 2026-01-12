@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 
 export default function ClientModal({ isOpen, onClose, onSave, client }) {
   const [form, setForm] = useState({
+    account_number: "",
     first_name: "",
     last_name: "",
     phone: "",
@@ -20,6 +21,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
   useEffect(() => {
     if (client) {
       setForm({
+        account_number: client.account_number || "",
         first_name: client.first_name || "",
         last_name: client.last_name || "",
         phone: client.phone || "",
@@ -33,6 +35,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
       });
     } else {
       setForm({
+        account_number: "",
         first_name: "",
         last_name: "",
         phone: "",
@@ -66,13 +69,13 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
     }
   };
 
-  const animalTypes = ["Bovino", "Porcino", "Avícola", "Equino", "Caprino", "Ovino", "Otro"];
+  const animalTypes = ["Bovino", "Porcino", "Avicola", "Equino", "Caprino", "Ovino", "Otro"];
   const salesStages = [
     { value: "prospecto", label: "Prospecto" },
     { value: "contacto", label: "Contacto Inicial" },
     { value: "visita", label: "Visita Programada" },
-    { value: "cotizacion", label: "Cotización Enviada" },
-    { value: "negociacion", label: "En Negociación" },
+    { value: "cotizacion", label: "Cotizacion Enviada" },
+    { value: "negociacion", label: "En Negociacion" },
     { value: "cliente", label: "Cliente Activo" },
   ];
 
@@ -93,6 +96,21 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          {/* Account Number */}
+          <div className="bg-slate-50 p-3 rounded-lg border">
+            <label className="text-xs font-medium text-slate-600">Numero de Cuenta</label>
+            <input
+              type="number"
+              value={form.account_number}
+              onChange={(e) => setForm({ ...form, account_number: e.target.value ? parseInt(e.target.value) : "" })}
+              className="w-full p-2 text-sm border rounded-lg mt-1 font-bold text-lg"
+              placeholder="Ej: 1, 2, 3..."
+              min="1"
+              max="999"
+            />
+            <p className="text-[10px] text-slate-400 mt-1">Numero unico para identificar al cliente (1-217)</p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-medium text-slate-600">Nombre *</label>
@@ -118,7 +136,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">Teléfono</label>
+            <label className="text-xs font-medium text-slate-600">Telefono</label>
             <input
               type="tel"
               value={form.phone}
@@ -129,13 +147,13 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">Dirección</label>
+            <label className="text-xs font-medium text-slate-600">Direccion</label>
             <input
               type="text"
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               className="w-full p-2 text-sm border rounded-lg"
-              placeholder="Dirección completa"
+              placeholder="Direccion completa"
             />
           </div>
 
@@ -191,7 +209,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
           </div>
 
           <div className="border-t pt-4 mt-4">
-            <h3 className="text-sm font-semibold text-slate-700 mb-3">Configuración de Crédito</h3>
+            <h3 className="text-sm font-semibold text-slate-700 mb-3">Configuracion de Credito</h3>
             
             <div className="flex items-center gap-3 mb-4">
               <label className="relative inline-flex items-center cursor-pointer">
@@ -203,10 +221,10 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
-              <span className="text-sm text-slate-700">Cliente de Crédito</span>
+              <span className="text-sm text-slate-700">Cliente de Credito</span>
               {form.is_credit_client && (
                 <span className="ml-auto px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
-                  CRÉDITO ACTIVO
+                  CREDITO ACTIVO
                 </span>
               )}
             </div>
@@ -214,7 +232,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
             {form.is_credit_client && (
               <div className="space-y-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
                 <div>
-                  <label className="text-xs font-medium text-slate-600">Límite de Crédito (C$)</label>
+                  <label className="text-xs font-medium text-slate-600">Limite de Credito (C$)</label>
                   <input
                     type="number"
                     value={form.credit_limit}
@@ -245,7 +263,7 @@ export default function ClientModal({ isOpen, onClose, onSave, client }) {
 
                 {client && (client.credit_balance || 0) > form.credit_limit && (
                   <p className="text-xs text-red-600 bg-red-50 p-2 rounded">
-                    El límite no puede ser menor al saldo actual ({formatCurrency(client.credit_balance)})
+                    El limite no puede ser menor al saldo actual ({formatCurrency(client.credit_balance)})
                   </p>
                 )}
               </div>

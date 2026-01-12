@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { useCrm } from "./hooks/useCrm";
 import CrmStats from "./components/CrmStats";
-import CrmFilters from "./components/CrmFilters";
 import PipelineBoard from "./components/PipelineBoard";
-import ClientStagesTable from "./components/ClientStagesTable";
 import OpportunityModal from "./components/OpportunityModal";
 import ActivityModal from "./components/ActivityModal";
 import SalesFunnel from "./components/SalesFunnel";
 import ClientModal from "./components/ClientModal";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function CrmScreen({ orgSlug }) {
   const crm = useCrm(orgSlug);
@@ -25,6 +27,175 @@ export default function CrmScreen({ orgSlug }) {
 
   const creditClients = crm.clients.filter(c => c.is_credit_client);
   const totalCreditBalance = creditClients.reduce((sum, c) => sum + (c.credit_balance || 0), 0);
+
+  // AG Grid column definitions for All Clients
+  const allClientsColumnDefs = useMemo(() => [
+    {
+      field: "account_number",
+      headerName: "#",
+      filter: "agNumberColumnFilter",
+      width: 70,
+      cellStyle: { fontWeight: "600" },
+    },
+    {
+      field: "full_name",
+      headerName: "Nombre",
+      filter: "agTextColumnFilter",
+      minWidth: 180,
+      flex: 1,
+      valueGetter: (params) => `${params.data.first_name || ""} ${params.data.last_name || ""}`.trim(),
+      cellRenderer: (params) => {
+        const isCredit = params.data.is_credit_client;
+        return (
+          <div className="flex items-center gap-2">
+            <span>{params.value}</span>
+            {isCredit && (
+              <span className="px-1.5 py-0.5 text-[10px] bg-purple-100 text-purple-700 rounded-full">CREDITO</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      field: "phone",
+      headerName: "Telefono",
+      filter: "agTextColumnFilter",
+      width: 120,
+      valueFormatter: (params) => params.value || "-",
+    },
+    {
+      field: "city",
+      headerName: "Ciudad",
+      filter: "agTextColumnFilter",
+      width: 120,
+      valueFormatter: (params) => params.value || "-",
+    },
+    {
+      field: "animal_type",
+      headerName: "Tipo Animal",
+      filter: "agTextColumnFilter",
+      width: 110,
+      valueFormatter: (params) => params.value || "-",
+    },
+    {
+      field: "sales_stage",
+      headerName: "Etapa",
+      filter: "agTextColumnFilter",
+      width: 120,
+      cellRenderer: (params) => (
+        <span className="px-2 py-1 text-xs rounded-full bg-slate-100 text-slate-700">
+          {params.value || "prospecto"}
+        </span>
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Acciones",
+      width: 140,
+      sortable: false,
+      filter: false,
+      cellRenderer: (params) => (
+        <div className="flex gap-2 items-center h-full">
+          <button
+            onClick={() => crm.openEditClient(params.data)}
+            className="text-blue-600 hover:underline text-xs"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => {
+              if (confirm("Eliminar este cliente?")) {
+                crm.deleteClient(params.data.id);
+              }
+            }}
+            className="text-red-600 hover:underline text-xs"
+          >
+            Eliminar
+          </button>
+        </div>
+      ),
+    },
+  ], [crm]);
+
+  // AG Grid column definitions for Credit Clients
+  const creditClientsColumnDefs = useMemo(() => [
+    {
+      field: "account_number",
+      headerName: "#",
+      filter: "agNumberColumnFilter",
+      width: 70,
+      cellStyle: { fontWeight: "600" },
+    },
+    {
+      field: "full_name",
+      headerName: "Cliente",
+      filter: "agTextColumnFilter",
+      minWidth: 180,
+      flex: 1,
+      valueGetter: (params) => `${params.data.first_name || ""} ${params.data.last_name || ""}`.trim(),
+    },
+    {
+      field: "phone",
+      headerName: "Telefono",
+      filter: "agTextColumnFilter",
+      width: 120,
+      valueFormatter: (params) => params.value || "-",
+    },
+    {
+      field: "credit_limit",
+      headerName: "Limite",
+      filter: "agNumberColumnFilter",
+      width: 120,
+      type: "numericColumn",
+      valueFormatter: (params) => formatCurrency(params.value),
+    },
+    {
+      field: "credit_balance",
+      headerName: "Saldo",
+      filter: "agNumberColumnFilter",
+      width: 120,
+      type: "numericColumn",
+      cellStyle: (params) => ({
+        color: (params.value || 0) > 0 ? "#dc2626" : "#16a34a",
+        fontWeight: "600",
+      }),
+      valueFormatter: (params) => formatCurrency(params.value),
+    },
+    {
+      field: "available",
+      headerName: "Disponible",
+      filter: "agNumberColumnFilter",
+      width: 120,
+      type: "numericColumn",
+      valueGetter: (params) => (params.data.credit_limit || 0) - (params.data.credit_balance || 0),
+      cellStyle: (params) => ({
+        color: params.value > 0 ? "#16a34a" : "#dc2626",
+        fontWeight: "600",
+      }),
+      valueFormatter: (params) => formatCurrency(params.value),
+    },
+    {
+      field: "actions",
+      headerName: "Acciones",
+      width: 100,
+      sortable: false,
+      filter: false,
+      cellRenderer: (params) => (
+        <button
+          onClick={() => crm.openEditClient(params.data)}
+          className="text-blue-600 hover:underline text-xs"
+        >
+          Editar
+        </button>
+      ),
+    },
+  ], [crm, formatCurrency]);
+
+  const defaultColDef = useMemo(() => ({
+    sortable: true,
+    resizable: true,
+    filter: true,
+  }), []);
 
   if (crm.loading) {
     return (
@@ -50,7 +221,7 @@ export default function CrmScreen({ orgSlug }) {
             CRM - Pipeline de Ventas
           </h1>
           <p className="text-xs text-slate-500">
-            Gestión del ciclo de ventas y seguimiento de clientes
+            Gestion del ciclo de ventas y seguimiento de clientes
           </p>
         </div>
 
@@ -86,16 +257,6 @@ export default function CrmScreen({ orgSlug }) {
               Pipeline
             </button>
             <button
-              onClick={() => setActiveTab("clients")}
-              className={`px-4 py-3 text-sm font-medium ${
-                activeTab === "clients"
-                  ? "border-b-2 border-slate-900 text-slate-900"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              Clientes por Etapa
-            </button>
-            <button
               onClick={() => setActiveTab("all-clients")}
               className={`px-4 py-3 text-sm font-medium ${
                 activeTab === "all-clients"
@@ -113,7 +274,7 @@ export default function CrmScreen({ orgSlug }) {
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              Clientes Crédito ({creditClients.length})
+              Clientes Credito ({creditClients.length})
             </button>
             <button
               onClick={() => setActiveTab("funnel")}
@@ -142,102 +303,21 @@ export default function CrmScreen({ orgSlug }) {
           </div>
         )}
 
-        {activeTab === "clients" && (
-          <>
-            <div className="px-4 py-3 border-b">
-              <CrmFilters
-                search={crm.search}
-                setSearch={crm.setSearch}
-                stageFilter={crm.stageFilter}
-                setStageFilter={crm.setStageFilter}
-                stages={crm.stages}
-              />
-            </div>
-            <div className="p-4">
-              <ClientStagesTable
-                clientsByStage={crm.clientsByStage}
-                stages={crm.stages}
-                onViewOpportunities={crm.openEditOpportunity}
-              />
-            </div>
-          </>
-        )}
-
         {activeTab === "all-clients" && (
           <div className="p-4">
-            <div className="mb-4">
-              <input
-                type="text"
-                placeholder="Buscar cliente..."
-                value={crm.search}
-                onChange={(e) => crm.setSearch(e.target.value)}
-                className="w-full max-w-md p-2 text-sm border rounded-lg"
+            <div className="ag-theme-alpine w-full" style={{ height: "calc(100vh - 350px)", minHeight: 400 }}>
+              <AgGridReact
+                rowData={crm.clients}
+                columnDefs={allClientsColumnDefs}
+                defaultColDef={defaultColDef}
+                pagination={true}
+                paginationPageSize={50}
+                paginationPageSizeSelector={[25, 50, 100, 200]}
+                animateRows={true}
+                enableCellTextSelection={true}
+                rowHeight={40}
               />
             </div>
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 border-b">
-                <tr>
-                  <th className="text-left p-3 font-medium text-slate-600">Nombre</th>
-                  <th className="text-left p-3 font-medium text-slate-600">Teléfono</th>
-                  <th className="text-left p-3 font-medium text-slate-600">Ciudad</th>
-                  <th className="text-left p-3 font-medium text-slate-600">Tipo Animal</th>
-                  <th className="text-left p-3 font-medium text-slate-600">Etapa</th>
-                  <th className="text-center p-3 font-medium text-slate-600">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {crm.clients
-                  .filter((c) => {
-                    if (!crm.search) return true;
-                    const term = crm.search.toLowerCase();
-                    const name = `${c.first_name || ""} ${c.last_name || ""}`.toLowerCase();
-                    return name.includes(term) || c.phone?.includes(term) || c.city?.toLowerCase().includes(term);
-                  })
-                  .map((client) => (
-                    <tr key={client.id} className="border-b hover:bg-slate-50">
-                      <td className="p-3 font-medium">
-                        {client.first_name} {client.last_name}
-                        {client.is_credit_client && (
-                          <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-purple-100 text-purple-700 rounded-full">CRÉDITO</span>
-                        )}
-                      </td>
-                      <td className="p-3 text-slate-500">{client.phone || "-"}</td>
-                      <td className="p-3 text-slate-500">{client.city || "-"}</td>
-                      <td className="p-3 text-slate-500">{client.animal_type || "-"}</td>
-                      <td className="p-3">
-                        <span className="px-2 py-1 text-xs rounded-full bg-slate-100 text-slate-700">
-                          {client.sales_stage || "prospecto"}
-                        </span>
-                      </td>
-                      <td className="p-3 text-center">
-                        <button
-                          onClick={() => crm.openEditClient(client)}
-                          className="text-blue-600 hover:underline text-xs mr-2"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (confirm("¿Eliminar este cliente?")) {
-                              crm.deleteClient(client.id);
-                            }
-                          }}
-                          className="text-red-600 hover:underline text-xs"
-                        >
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                {crm.clients.length === 0 && (
-                  <tr>
-                    <td colSpan="6" className="p-8 text-center text-slate-400">
-                      No hay clientes. Haz clic en "+ Nuevo Cliente" para agregar uno.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
           </div>
         )}
 
@@ -246,7 +326,7 @@ export default function CrmScreen({ orgSlug }) {
             <div className="mb-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs text-slate-500">Clientes de Crédito</p>
+                  <p className="text-xs text-slate-500">Clientes de Credito</p>
                   <p className="text-xl font-bold text-purple-700">{creditClients.length}</p>
                 </div>
                 <div>
@@ -254,7 +334,7 @@ export default function CrmScreen({ orgSlug }) {
                   <p className="text-xl font-bold text-red-600">{formatCurrency(totalCreditBalance)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Límite Total Otorgado</p>
+                  <p className="text-xs text-slate-500">Limite Total Otorgado</p>
                   <p className="text-xl font-bold text-slate-700">
                     {formatCurrency(creditClients.reduce((sum, c) => sum + (c.credit_limit || 0), 0))}
                   </p>
@@ -262,55 +342,19 @@ export default function CrmScreen({ orgSlug }) {
               </div>
             </div>
 
-            <table className="w-full text-sm">
-              <thead className="bg-purple-50 border-b">
-                <tr>
-                  <th className="text-left p-3 font-medium text-slate-600">Cliente</th>
-                  <th className="text-left p-3 font-medium text-slate-600">Teléfono</th>
-                  <th className="text-right p-3 font-medium text-slate-600">Límite</th>
-                  <th className="text-right p-3 font-medium text-slate-600">Saldo</th>
-                  <th className="text-right p-3 font-medium text-slate-600">Disponible</th>
-                  <th className="text-center p-3 font-medium text-slate-600">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {creditClients.map((client) => {
-                  const available = (client.credit_limit || 0) - (client.credit_balance || 0);
-                  return (
-                    <tr key={client.id} className="border-b hover:bg-purple-50/50">
-                      <td className="p-3 font-medium">{client.first_name} {client.last_name}</td>
-                      <td className="p-3 text-slate-500">{client.phone || "-"}</td>
-                      <td className="p-3 text-right font-medium">{formatCurrency(client.credit_limit)}</td>
-                      <td className="p-3 text-right">
-                        <span className={`font-medium ${(client.credit_balance || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                          {formatCurrency(client.credit_balance)}
-                        </span>
-                      </td>
-                      <td className="p-3 text-right">
-                        <span className={`font-medium ${available > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {formatCurrency(available)}
-                        </span>
-                      </td>
-                      <td className="p-3 text-center">
-                        <button
-                          onClick={() => crm.openEditClient(client)}
-                          className="text-blue-600 hover:underline text-xs"
-                        >
-                          Editar
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {creditClients.length === 0 && (
-                  <tr>
-                    <td colSpan="6" className="p-8 text-center text-slate-400">
-                      No hay clientes de crédito. Edita un cliente y activa la opción de crédito.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            <div className="ag-theme-alpine w-full" style={{ height: "calc(100vh - 450px)", minHeight: 300 }}>
+              <AgGridReact
+                rowData={creditClients}
+                columnDefs={creditClientsColumnDefs}
+                defaultColDef={defaultColDef}
+                pagination={true}
+                paginationPageSize={50}
+                paginationPageSizeSelector={[25, 50, 100, 200]}
+                animateRows={true}
+                enableCellTextSelection={true}
+                rowHeight={40}
+              />
+            </div>
           </div>
         )}
 

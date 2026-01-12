@@ -24,6 +24,8 @@ export default function CartSidebar({ orgSlug }) {
   const isCashOpen = useCashRegisterStore((s) => s.isOpen);
   const addMovement = useCashRegisterStore((s) => s.addMovement);
 
+  const customerForm = usePosStore((s) => s.customerForm);
+
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("efectivo");
 
@@ -32,8 +34,6 @@ export default function CartSidebar({ orgSlug }) {
   const isMenudeoClient = client?.id === MENUDEO_CLIENT_ID || 
     client?.first_name?.toLowerCase() === "menudeo";
 
-  const hasValidClient = client && client.id;
-
   const handleSale = async () => {
     try {
       if (!isCashOpen) {
@@ -41,13 +41,8 @@ export default function CartSidebar({ orgSlug }) {
         return;
       }
 
-      if (!hasValidClient) {
-        alert("Debe seleccionar un cliente antes de facturar.");
-        return;
-      }
-
-      if (cart.length === 0) {
-        alert("El carrito está vacío.");
+      if (!client && !customerForm?.firstName) {
+        alert("Seleccione un cliente antes de vender.");
         return;
       }
 
@@ -55,7 +50,7 @@ export default function CartSidebar({ orgSlug }) {
 
       const sale = await salesService.makeSale({
         orgSlug,
-        client: client,
+        client: client || customerForm,
         cart,
         paymentType: paymentMethod,
         branchId: branch,
@@ -130,6 +125,7 @@ export default function CartSidebar({ orgSlug }) {
 
       <CustomerHeader />
       <CustomerSelector orgSlug={orgSlug} />
+      <CustomerForm />
 
       <div className="flex-1 overflow-y-auto mt-2 space-y-2 pr-1">
         {cart.length === 0 ? (
@@ -164,13 +160,7 @@ export default function CartSidebar({ orgSlug }) {
           <span>{formatCurrency(total)}</span>
         </div>
 
-        {!hasValidClient && cart.length > 0 && (
-          <p className="text-[10px] text-red-500 mb-2 text-center">
-            Seleccione un cliente para facturar
-          </p>
-        )}
-
-        {hasValidClient && (
+        {client && (
           <div className="mb-3">
             <label className="text-[10px] text-slate-500 block mb-1">Método de Pago</label>
             <div className="flex gap-2">
@@ -206,13 +196,9 @@ export default function CartSidebar({ orgSlug }) {
         )}
 
         <button
-          className={`w-full py-2 rounded-lg text-xs font-semibold ${
-            hasValidClient && cart.length > 0 && !loading
-              ? "bg-green-600 hover:bg-green-700 text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs font-semibold disabled:opacity-50"
           onClick={handleSale}
-          disabled={!hasValidClient || cart.length === 0 || loading}
+          disabled={cart.length === 0 || loading || (!client && !customerForm?.firstName)}
         >
           {loading ? "Procesando..." : "Finalizar Venta"}
         </button>
