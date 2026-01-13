@@ -1,51 +1,47 @@
-// Helper para obtener el nombre de display del cliente
-function getClientDisplayName(c) {
-  // Prioridad: nombre completo > nombre > business_name > telefono > id
-  if (c.first_name || c.last_name) {
-    return `${c.first_name || ''} ${c.last_name || ''}`.trim();
-  }
-  if (c.name && typeof c.name === 'string' && !c.name.match(/^[0-9-]+$/)) {
-    return c.name;
-  }
-  if (c.business_name) return c.business_name;
-  if (c.nombre) return c.nombre;
-  if (c.razon_social) return c.razon_social;
-  if (c.phone) return `Cliente ${c.phone}`;
-  return `Cliente #${String(c.id).slice(0, 8)}`;
-}
-
 export const clientsService = {
-  async searchClients(orgSlug, query = "") {
-    if (!orgSlug) return [];
-
+  async searchClients(orgSlug, query) {
+    console.log("[clientsService] searchClients called with:", { orgSlug, query });
+    
+    if (!orgSlug) {
+      console.log("[clientsService] No orgSlug provided");
+      return [];
+    }
+    
     const res = await fetch(`/api/clients`, {
       method: "GET",
       headers: { "x-org-slug": orgSlug },
     });
 
-    if (!res.ok) return [];
+    console.log("[clientsService] API response status:", res.status);
 
-    const list = await res.json();
-    
-    // Normalize clients to always have display_name and name
-    const normalized = (Array.isArray(list) ? list : []).map(c => ({
-      ...c,
-      display_name: getClientDisplayName(c),
-      name: getClientDisplayName(c),
-    }));
-
-    // If no query, return first 50 clients
-    if (!query || query.length < 2) {
-      return normalized.slice(0, 50);
+    if (!res.ok) {
+      console.log("[clientsService] API error");
+      return [];
     }
 
-    // Filter by name, phone, or ruc
+    const list = await res.json();
+    console.log("[clientsService] Got clients:", list.length);
+    
+    if (!query || query.length < 2) {
+      console.log("[clientsService] No query, returning first 20");
+      return list.slice(0, 20);
+    }
+
     const q = query.toLowerCase();
-    return normalized.filter(c => 
-      c.display_name.toLowerCase().includes(q) ||
-      c.phone?.toLowerCase().includes(q) ||
-      c.ruc?.toLowerCase().includes(q)
-    );
+
+    const filtered = list.filter(c => {
+      const fullName = `${c.first_name || ""} ${c.last_name || ""}`.toLowerCase();
+      return (
+        fullName.includes(q) ||
+        c.first_name?.toLowerCase().includes(q) ||
+        c.last_name?.toLowerCase().includes(q) ||
+        c.phone?.includes(q) ||
+        c.ruc?.toLowerCase().includes(q)
+      );
+    });
+    
+    console.log("[clientsService] Filtered clients:", filtered.length);
+    return filtered;
   },
 
   async getClientById(orgSlug, id) {
@@ -53,14 +49,7 @@ export const clientsService = {
       headers: { "x-org-slug": orgSlug },
     });
 
-    if (!res.ok) return null;
-
-    const client = await res.json();
-    return {
-      ...client,
-      display_name: getClientDisplayName(client),
-      name: getClientDisplayName(client),
-    };
+    return await res.json();
   },
 
   async createClient(orgSlug, data) {
@@ -73,16 +62,6 @@ export const clientsService = {
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Error creando cliente");
-    }
-
-    const client = await res.json();
-    return {
-      ...client,
-      display_name: getClientDisplayName(client),
-      name: getClientDisplayName(client),
-    };
+    return await res.json();
   },
 };

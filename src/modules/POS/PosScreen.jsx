@@ -86,7 +86,7 @@ export default function PosScreen({ orgSlug }) {
       const [isPastClosingTime, setIsPastClosingTime] = useState(false);
       const [showMenudeoModal, setShowMenudeoModal] = useState(false);
 
-    const CLOSING_HOUR = 19; // 7:00 PM
+    const CLOSING_HOUR = 24; // 7:00 PM
 
     const getTodayManagua = () => {
       return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Managua" }).format(new Date());
@@ -264,12 +264,24 @@ export default function PosScreen({ orgSlug }) {
           return;
         }
 
+        let clientToUse = null;
+        
+        if (selectedClient?.id) {
+          clientToUse = selectedClient;
+        } else if (customerForm?.first_name || customerForm?.name || customerForm?.phone) {
+          clientToUse = customerForm;
+        }
+
         if (useCredit) {
-          if (!selectedClient?.is_credit_client) {
+          if (!clientToUse?.id) {
+            toast.error("Seleccione un cliente para venta a credito.");
+            return;
+          }
+          if (!clientToUse.is_credit_client) {
             toast.error("Seleccione un cliente de credito.");
             return;
           }
-          const available = (selectedClient.credit_limit || 0) - (selectedClient.credit_balance || 0);
+          const available = (clientToUse.credit_limit || 0) - (clientToUse.credit_balance || 0);
           if (total > available) {
             toast.error(`Credito insuficiente. Disponible: C$ ${available.toFixed(2)}`);
             return;
@@ -278,7 +290,7 @@ export default function PosScreen({ orgSlug }) {
 
         const sale = await salesService.makeSale({
           orgSlug,
-          client: selectedClient || customerForm,
+          client: clientToUse,
           cart,
           paymentType: useCredit ? "credit" : "cash",
           branchId: branch,
@@ -378,7 +390,7 @@ export default function PosScreen({ orgSlug }) {
               <div className="absolute top-full left-0 right-0 bg-white border border-slate-300 rounded-b shadow-lg z-50 max-h-64 overflow-y-auto">
                 {searchResults.map((product, index) => (
                   <div
-                    key={product.id || product.product_id || index}
+                    key={`${product.id || product.product_id}-${index}`}
                     onClick={() => handleSelectProduct(product)}
                     className="px-4 py-3 lg:py-2 hover:bg-blue-50 cursor-pointer border-b border-slate-100 last:border-b-0"
                   >

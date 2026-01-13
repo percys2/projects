@@ -22,6 +22,8 @@ export const creditService = {
   },
 
   async registerPayment(orgSlug, branchId, clientId, amount, paymentMethod, notes) {
+    console.log("[creditService] registerPayment:", { orgSlug, branchId, clientId, amount });
+    
     const res = await fetch("/api/credits", {
       method: "POST",
       headers: {

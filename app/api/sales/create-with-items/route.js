@@ -10,7 +10,7 @@ export async function POST(req) {
   try {
     const orgId = req.headers.get("x-org-id");
     const userId = req.headers.get("x-user-id");
-    const branchId = req.headers.get("x-branch-id");
+    const branchId = req.headers.get("x-branch-id"); // POS SELECTS THIS
 
     if (!orgId || !branchId) {
       return NextResponse.json(
@@ -19,6 +19,7 @@ export async function POST(req) {
       );
     }
 
+    // Rate limit
     const rateLimitResult = rateLimit(`sales:${orgId}`, 50, 60000);
     if (!rateLimitResult.success) {
       return NextResponse.json(
@@ -49,11 +50,27 @@ export async function POST(req) {
 
     const { client_id, total, payment_method, items, notes } = validation.data;
 
+    // Supabase client
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
+
+    // 0. Get next invoice number for this branch
+    const { data: invoiceData, error: invoiceError } = await supabase.rpc(
+      "get_next_invoice_number",
+      {
+        p_org_id: orgId,
+        p_branch_id: branchId,
+      }
+    );
+
+    if (invoiceError) {
+      console.error("[create-with-items] Invoice number error:", invoiceError);
+    }
+
+    const invoiceNumber = invoiceData || null;
 
     // 1. Crear venta
     const { data: sale, error: saleError } = await supabase
@@ -66,6 +83,7 @@ export async function POST(req) {
         payment_method: payment_method || "cash",
         notes: notes || null,
         user_id: userId || null,
+        invoice_number: invoiceNumber,
       })
       .select()
       .single();
@@ -114,6 +132,7 @@ export async function POST(req) {
       });
 
       if (error) {
+        // rollback
         await supabase.from("sales_items").delete().eq("sale_id", sale.id);
         await supabase.from("sales").delete().eq("id", sale.id);
 
@@ -132,13 +151,17 @@ export async function POST(req) {
       await supabase.from("kardex").insert({
         org_id: orgId,
         product_id: item.product_id,
+
         movement_type: "SALE",
         quantity: Number(item.quantity) * -1,
+
         branch_id: branchId,
         from_branch: branchId,
         to_branch: null,
+
         cost_unit: Number(item.cost) || 0,
         total: Number(item.cost) * Number(item.quantity),
+
         reference: `Venta #${sale.id}`,
         created_by: userId || null,
       });
@@ -160,48 +183,14 @@ export async function POST(req) {
       });
     }
 
-    // 6. Si es venta a credito, aumentar deuda del cliente
-    if (payment_method === "credito" || payment_method === "credit") {
-      const { data: clientData } = await supabase
-        .from("clients")
-        .select("credit_balance, is_credit_client")
-        .eq("id", client_id)
-        .single();
-
-      if (clientData?.is_credit_client) {
-        const currentBalance = clientData.credit_balance || 0;
-        const newBalance = currentBalance + total;
-
-        await supabase
-          .from("credit_transactions")
-          .insert({
-            org_id: orgId,
-            client_id: client_id,
-            branch_id: branchId,
-            type: "purchase",
-            amount: total,
-            balance_before: currentBalance,
-            balance_after: newBalance,
-            sale_id: sale.id,
-            notes: `Venta a crédito #${sale.id}`,
-            created_by: userId || null,
-          });
-
-        await supabase
-          .from("clients")
-          .update({ credit_balance: newBalance })
-          .eq("id", client_id);
-      }
-    }
-
-    // 7. Contabilidad (no bloquea)
+    // 6. Contabilidad (no bloquea)
     try {
       await postSaleToGL(orgId, sale, createdItems);
     } catch (err) {
       console.error("GL posting error:", err);
     }
 
-    // 8. Auditoria
+    // 7. Auditoría
     await logAuditEvent({
       userId,
       orgId,
@@ -211,7 +200,6 @@ export async function POST(req) {
       metadata: {
         total: sale.total,
         items: createdItems.length,
-        payment_method: payment_method,
       },
     });
 
