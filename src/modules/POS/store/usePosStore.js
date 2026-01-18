@@ -1,121 +1,15 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { salesService } from "../services/salesService";
 
-const getProductId = (product) => product.id || product.product_id;
+export const usePosStore = create(
+  persist(
+    (set, get) => ({
+      carts: {},
+      selectedClient: null,
 
-export const usePosStore = create((set, get) => ({
-  carts: {},
-  selectedClient: null,
-
-  customerForm: {
-    firstName: "",
-    lastName: "",
-    address: "",
-    city: "",
-    state: "",
-    country: "",
-    phone: "",
-    ruc: "",
-  },
-
-  getCart: (branchId) => {
-    const state = get();
-    return state.carts[branchId] || [];
-  },
-
-  setCustomerField: (field, value) =>
-    set((state) => ({
-      customerForm: { ...state.customerForm, [field]: value },
-    })),
-
-  setClient: (client) => set({ selectedClient: client }),
-  clearClient: () => set({ selectedClient: null }),
-
-  addToCart: (branchId, product) =>
-    set((state) => {
-      const currentCart = state.carts[branchId] || [];
-      const productId = getProductId(product);
-      const exists = currentCart.find((c) => getProductId(c) === productId);
-
-      let newCart;
-      if (exists) {
-        newCart = currentCart.map((c) =>
-          getProductId(c) === productId ? { ...c, qty: (c.qty || 1) + 1 } : c
-        );
-      } else {
-        newCart = [...currentCart, { ...product, qty: 1 }];
-      }
-
-      return {
-        carts: {
-          ...state.carts,
-          [branchId]: newCart,
-        },
-      };
-    }),
-
-  removeFromCart: (branchId, productId) =>
-    set((state) => {
-      const currentCart = state.carts[branchId] || [];
-      return {
-        carts: {
-          ...state.carts,
-          [branchId]: currentCart.filter((c) => getProductId(c) !== productId),
-        },
-      };
-    }),
-
-  decreaseQty: (branchId, productId) =>
-    set((state) => {
-      const currentCart = state.carts[branchId] || [];
-      return {
-        carts: {
-          ...state.carts,
-          [branchId]: currentCart.map((c) =>
-            getProductId(c) === productId ? { ...c, qty: Math.max(1, (c.qty || 1) - 1) } : c
-          ),
-        },
-      };
-    }),
-
-  increaseQty: (branchId, productId) =>
-    set((state) => {
-      const currentCart = state.carts[branchId] || [];
-      return {
-        carts: {
-          ...state.carts,
-          [branchId]: currentCart.map((c) =>
-            getProductId(c) === productId ? { ...c, qty: (c.qty || 1) + 1 } : c
-          ),
-        },
-      };
-    }),
-
-  updateCartQty: (branchId, productId, qty) =>
-    set((state) => {
-      const currentCart = state.carts[branchId] || [];
-      return {
-        carts: {
-          ...state.carts,
-          [branchId]: currentCart.map((c) =>
-            getProductId(c) === productId ? { ...c, qty: Math.max(1, qty) } : c
-          ),
-        },
-      };
-    }),
-
-  clearCart: (branchId) =>
-    set((state) => ({
-      carts: {
-        ...state.carts,
-        [branchId]: [],
-      },
-    })),
-
-  resetCustomerForm: () =>
-    set({
       customerForm: {
         firstName: "",
         lastName: "",
@@ -126,46 +20,162 @@ export const usePosStore = create((set, get) => ({
         phone: "",
         ruc: "",
       },
-    }),
 
-  checkout: async ({ paymentMethod, discount, received, change, branchId }) => {
-    const state = get();
-    const cart = state.carts[branchId] || [];
+      setCustomerField: (field, value) =>
+        set((state) => ({
+          customerForm: { ...state.customerForm, [field]: value },
+        })),
 
-    if (!state.selectedClient)
-      throw new Error("Seleccione un cliente antes de finalizar.");
+      setClient: (client) => set({ selectedClient: client }),
+      clearClient: () => set({ selectedClient: null }),
 
-    if (cart.length === 0)
-      throw new Error("El carrito está vacío.");
+      addToCart: (branch, product) =>
+        set((state) => {
+          const branchCart = state.carts[branch] || [];
+          const exists = branchCart.find((c) => (c.id || c.product_id) === (product.id || product.product_id));
 
-    const orgSlug = localStorage.getItem("activeOrgSlug");
-    const orgId = localStorage.getItem("activeOrgId");
+          if (exists) {
+            return {
+              carts: {
+                ...state.carts,
+                [branch]: branchCart.map((c) =>
+                  (c.id || c.product_id) === (product.id || product.product_id) 
+                    ? { ...c, qty: c.qty + 1 } 
+                    : c
+                ),
+              },
+            };
+          }
 
-    if (!orgSlug || !orgId || !branchId)
-      throw new Error("Faltan datos de organización o sucursal.");
+          return {
+            carts: {
+              ...state.carts,
+              [branch]: [...branchCart, { ...product, qty: 1 }],
+            },
+          };
+        }),
 
-    const saleData = {
-      orgSlug,
-      orgId,
-      client: state.selectedClient,
-      cart: cart,
-      paymentType: paymentMethod,
-      discount,
-      received,
-      change,
-      branch: state.selectedClient?.branch,
-      branchId,
-    };
+      removeFromCart: (branch, id) =>
+        set((state) => ({
+          carts: {
+            ...state.carts,
+            [branch]: (state.carts[branch] || []).filter((c) => (c.id || c.product_id) !== id),
+          },
+        })),
 
-    const sale = await salesService.makeSale(saleData);
+      decreaseQty: (branch, id) =>
+        set((state) => {
+          const branchCart = state.carts[branch] || [];
+          const item = branchCart.find((c) => (c.id || c.product_id) === id);
+          
+          if (!item) return state;
+          
+          if (item.qty <= 1) {
+            return {
+              carts: {
+                ...state.carts,
+                [branch]: branchCart.filter((c) => (c.id || c.product_id) !== id),
+              },
+            };
+          }
+          
+          return {
+            carts: {
+              ...state.carts,
+              [branch]: branchCart.map((c) =>
+                (c.id || c.product_id) === id ? { ...c, qty: c.qty - 1 } : c
+              ),
+            },
+          };
+        }),
 
-    set((s) => ({
-      carts: {
-        ...s.carts,
-        [branchId]: [],
+      increaseQty: (branch, id) =>
+        set((state) => {
+          const branchCart = state.carts[branch] || [];
+          return {
+            carts: {
+              ...state.carts,
+              [branch]: branchCart.map((c) =>
+                (c.id || c.product_id) === id ? { ...c, qty: c.qty + 1 } : c
+              ),
+            },
+          };
+        }),
+
+      updateCartQty: (branch, id, qty) =>
+        set((state) => {
+          const branchCart = state.carts[branch] || [];
+          if (qty <= 0) {
+            return {
+              carts: {
+                ...state.carts,
+                [branch]: branchCart.filter((c) => (c.id || c.product_id) !== id),
+              },
+            };
+          }
+          return {
+            carts: {
+              ...state.carts,
+              [branch]: branchCart.map((c) =>
+                (c.id || c.product_id) === id ? { ...c, qty } : c
+              ),
+            },
+          };
+        }),
+
+      clearCart: (branch) =>
+        set((state) => ({
+          carts: {
+            ...state.carts,
+            [branch]: [],
+          },
+        })),
+
+      checkout: async ({ branch, paymentMethod, discount, received, change }) => {
+        const state = get();
+        const cart = state.carts[branch] || [];
+
+        if (cart.length === 0)
+          throw new Error("El carrito esta vacio.");
+
+        const orgSlug = localStorage.getItem("activeOrgSlug");
+        const orgId = localStorage.getItem("activeOrgId");
+        const branchId = branch || localStorage.getItem("activeBranchId");
+
+        if (!orgSlug || !orgId || !branchId)
+          throw new Error("Faltan datos de organizacion o sucursal.");
+
+        const saleData = {
+          orgSlug,
+          orgId,
+          client: state.selectedClient,
+          cart: cart,
+          paymentType: paymentMethod,
+          discount,
+          received,
+          change,
+          branch: state.selectedClient?.branch,
+          branchId,
+        };
+
+        const sale = await salesService.makeSale(saleData);
+
+        set((state) => ({
+          carts: {
+            ...state.carts,
+            [branch]: [],
+          },
+        }));
+
+        return sale.id;
       },
-    }));
-
-    return sale.id;
-  },
-}));
+    }),
+    {
+      name: "pos-cart-storage",
+      partialize: (state) => ({
+        carts: state.carts,
+        selectedClient: state.selectedClient,
+      }),
+    }
+  )
+);

@@ -72,7 +72,15 @@ export async function POST(req) {
 
     const invoiceNumber = invoiceData || null;
 
-    // 1. Crear venta
+    // Calcular margen total: suma de (precio - costo) * cantidad
+    const margenTotal = items.reduce((sum, item) => {
+      const precio = Number(item.price) || 0;
+      const costo = Number(item.cost) || 0;
+      const cantidad = Number(item.quantity) || 0;
+      return sum + (precio - costo) * cantidad;
+    }, 0);
+
+    // 1. Crear venta con margen
     const { data: sale, error: saleError } = await supabase
       .from("sales")
       .insert({
@@ -80,10 +88,11 @@ export async function POST(req) {
         branch_id: branchId,
         client_id,
         total,
+        margen: margenTotal,
         payment_method: payment_method || "cash",
         notes: notes || null,
         user_id: userId || null,
-        invoice_number: invoiceNumber,
+        factura: invoiceNumber,
       })
       .select()
       .single();
@@ -95,7 +104,7 @@ export async function POST(req) {
       );
     }
 
-    // 2. Guardar items de venta
+    // 2. Guardar items de venta (sin margin - es columna calculada)
     const salesItems = items.map((item) => ({
       sale_id: sale.id,
       org_id: orgId,
@@ -104,9 +113,6 @@ export async function POST(req) {
       price: Number(item.price),
       cost: Number(item.cost) || 0,
       subtotal: Number(item.quantity) * Number(item.price),
-      margin:
-        (Number(item.price) - Number(item.cost || 0)) *
-        Number(item.quantity),
     }));
 
     const { data: createdItems, error: itemsError } = await supabase

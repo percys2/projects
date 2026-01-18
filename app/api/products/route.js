@@ -102,6 +102,7 @@ export async function PUT(req) {
       return NextResponse.json({ error: "No fields to update" }, { status: 400 });
     }
 
+    // 1. Actualizar tabla products
     const { data: product, error } = await supabase
       .from("products")
       .update(updateData)
@@ -111,6 +112,20 @@ export async function PUT(req) {
       .maybeSingle();
 
     if (error) throw error;
+
+    // 2. Si se actualizó precio o costo, también actualizar en inventory
+    if (body.cost !== undefined || body.price !== undefined) {
+      const inventoryUpdate = {};
+      if (body.cost !== undefined) inventoryUpdate.cost = body.cost;
+      if (body.price !== undefined) inventoryUpdate.price = body.price;
+
+      await supabase
+        .from("inventory")
+        .update(inventoryUpdate)
+        .eq("product_id", body.id)
+        .eq("org_id", orgId);
+    }
+
     return NextResponse.json({ product });
   } catch (err) {
     console.error("Products PUT error:", err);

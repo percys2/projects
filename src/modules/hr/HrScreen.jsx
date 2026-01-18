@@ -6,15 +6,17 @@ import EmployeeList from "./components/EmployeeList";
 import EmployeeFormModal from "./components/EmployeeFormModal";
 import PayrollModal from "./components/PayrollModal";
 import PayrollCalculator from "./components/PayrollCalculator";
-import PayrollSheet from "./components/PayrollSheet";
-import PayrollHistory from "./components/PayrollHistory";
-import LoansDeductions from "./components/LoansDeductions";
-import AttendanceTracker from "./components/AttendanceTracker";
-import VacationRequests from "./components/VacationRequests";
-import ComplianceReports from "./components/ComplianceReports";
-import EmployeeDocuments from "./components/EmployeeDocuments";
 import HrStats from "./components/HrStats";
 import HrFilters from "./components/HrFilters";
+import DgiReports from "./components/DgiReports";
+import SettlementsManager from "./components/SettlementsManager";
+import AttendanceTracker from "./components/AttendanceTracker";
+import ComplianceReports from "./components/ComplianceReports";
+import EmployeeDocuments from "./components/EmployeeDocuments";
+import LoansDeductions from "./components/LoansDeductions";
+import PayrollHistory from "./components/PayrollHistory";
+import PayrollSheet from "./components/PayrollSheet";
+import VacationRequests from "./components/VacationRequests";
 
 export default function HrScreen({ orgSlug }) {
   const hr = useHr(orgSlug);
@@ -36,14 +38,36 @@ export default function HrScreen({ orgSlug }) {
     );
   }
 
+  const tabs = [
+    { id: "employees", label: "Empleados" },
+    { id: "payroll", label: "Calculadora" },
+    { id: "payrollSheet", label: "Planilla" },
+    { id: "payrollHistory", label: "Historial Nomina" },
+    { id: "attendance", label: "Asistencia" },
+    { id: "vacations", label: "Vacaciones" },
+    { id: "loans", label: "Prestamos" },
+    { id: "documents", label: "Documentos" },
+    { id: "reports", label: "Informes DGI" },
+    { id: "compliance", label: "Cumplimiento" },
+    { id: "settlements", label: "Liquidaciones" },
+  ];
+
   return (
-    <div className="space-y-4 sm:space-y-5 max-w-6xl mx-auto px-2 sm:px-0">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+    <div className="space-y-5 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-lg font-semibold text-slate-800">Recursos Humanos</h1>
-          <p className="text-xs text-slate-500">Gestion de empleados, nomina y prestaciones segun ley nicaraguense</p>
+          <h1 className="text-lg font-semibold text-slate-800">
+            Recursos Humanos
+          </h1>
+          <p className="text-xs text-slate-500">
+            Gestion de empleados, nomina y prestaciones segun ley nicaraguense
+          </p>
         </div>
-        <button onClick={hr.openNewEmployee} className="w-full sm:w-auto px-3 py-2 bg-slate-900 text-white rounded-lg text-xs hover:bg-slate-800 min-h-[44px]">
+
+        <button
+          onClick={hr.openNewEmployee}
+          className="px-3 py-2 bg-slate-900 text-white rounded-lg text-xs hover:bg-slate-800"
+        >
           + Agregar empleado
         </button>
       </div>
@@ -53,21 +77,11 @@ export default function HrScreen({ orgSlug }) {
       <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
         <div className="border-b overflow-x-auto">
           <nav className="flex min-w-max">
-            {[
-              { id: "employees", label: "Empleados" },
-              { id: "planilla", label: "Planilla" },
-              { id: "history", label: "Historial" },
-              { id: "loans", label: "Prestamos" },
-              { id: "attendance", label: "Asistencia" },
-              { id: "vacations", label: "Vacaciones" },
-              { id: "compliance", label: "Reportes" },
-              { id: "documents", label: "Documentos" },
-              { id: "payroll", label: "Calculadora" },
-            ].map((tab) => (
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-3 py-3 text-xs font-medium whitespace-nowrap ${
+                className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
                   activeTab === tab.id
                     ? "border-b-2 border-slate-900 text-slate-900"
                     : "text-slate-500 hover:text-slate-700"
@@ -81,7 +95,7 @@ export default function HrScreen({ orgSlug }) {
 
         {activeTab === "employees" && (
           <>
-            <div className="px-3 sm:px-4 py-3 border-b">
+            <div className="px-4 py-3 border-b">
               <HrFilters
                 search={hr.search}
                 setSearch={hr.setSearch}
@@ -92,7 +106,8 @@ export default function HrScreen({ orgSlug }) {
                 setStatus={hr.setStatus}
               />
             </div>
-            <div className="px-2 sm:px-4 py-3">
+
+            <div className="px-4 py-3">
               <EmployeeList
                 employees={hr.filteredEmployees}
                 onEdit={hr.openEditEmployee}
@@ -106,50 +121,62 @@ export default function HrScreen({ orgSlug }) {
         )}
 
         {activeTab === "payroll" && (
-          <div className="px-3 sm:px-4 py-3">
+          <div className="px-4 py-3">
             <PayrollCalculator />
           </div>
         )}
 
-        {activeTab === "planilla" && (
-          <div className="px-3 sm:px-4 py-3">
-            <PayrollSheet employees={hr.employees} />
+        {activeTab === "payrollSheet" && (
+          <div className="px-4 py-3">
+            <PayrollSheet orgSlug={orgSlug} employees={hr.employees} />
           </div>
         )}
 
-        {activeTab === "history" && (
-          <div className="px-3 sm:px-4 py-3">
-            <PayrollHistory employees={hr.employees} orgSlug={orgSlug} />
-          </div>
-        )}
-
-        {activeTab === "loans" && (
-          <div className="px-3 sm:px-4 py-3">
-            <LoansDeductions employees={hr.employees} orgSlug={orgSlug} />
+        {activeTab === "payrollHistory" && (
+          <div className="px-4 py-3">
+            <PayrollHistory orgSlug={orgSlug} employees={hr.employees} />
           </div>
         )}
 
         {activeTab === "attendance" && (
-          <div className="px-3 sm:px-4 py-3">
-            <AttendanceTracker employees={hr.employees} orgSlug={orgSlug} />
+          <div className="px-4 py-3">
+            <AttendanceTracker orgSlug={orgSlug} employees={hr.employees} />
           </div>
         )}
 
         {activeTab === "vacations" && (
-          <div className="px-3 sm:px-4 py-3">
-            <VacationRequests employees={hr.employees} orgSlug={orgSlug} />
+          <div className="px-4 py-3">
+            <VacationRequests orgSlug={orgSlug} employees={hr.employees} />
           </div>
         )}
 
-        {activeTab === "compliance" && (
-          <div className="px-3 sm:px-4 py-3">
-            <ComplianceReports employees={hr.employees} />
+        {activeTab === "loans" && (
+          <div className="px-4 py-3">
+            <LoansDeductions orgSlug={orgSlug} employees={hr.employees} />
           </div>
         )}
 
         {activeTab === "documents" && (
-          <div className="px-3 sm:px-4 py-3">
-            <EmployeeDocuments employees={hr.employees} orgSlug={orgSlug} />
+          <div className="px-4 py-3">
+            <EmployeeDocuments orgSlug={orgSlug} employees={hr.employees} />
+          </div>
+        )}
+
+        {activeTab === "reports" && (
+          <div className="px-4 py-3">
+            <DgiReports orgSlug={orgSlug} />
+          </div>
+        )}
+
+        {activeTab === "compliance" && (
+          <div className="px-4 py-3">
+            <ComplianceReports orgSlug={orgSlug} employees={hr.employees} />
+          </div>
+        )}
+
+        {activeTab === "settlements" && (
+          <div className="px-4 py-3">
+            <SettlementsManager orgSlug={orgSlug} employees={hr.employees} />
           </div>
         )}
       </div>

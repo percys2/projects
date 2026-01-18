@@ -17,7 +17,7 @@ export const LABOR_CONFIG = {
   vacation: {
     daysPerMonth: 2.5,
     maxAccumulated: 30,
-    bonusRate: 0.25,
+    bonusRate: 0.30,
   },
   aguinaldo: {
     monthsRequired: 12,
@@ -99,7 +99,20 @@ export function calculateAguinaldo(monthlySalary, monthsWorked) {
 
 export function calculateSeverance(monthlySalary, yearsWorked) {
   const cappedYears = Math.min(yearsWorked, LABOR_CONFIG.severance.maxYears);
-  return Math.round(monthlySalary * cappedYears * 100) / 100;
+  const grossSeverance = monthlySalary * cappedYears;
+  
+  // Impuesto del 15% sobre indemnizaciones mayores a C$500,000
+  const taxThreshold = 500000;
+  let tax = 0;
+  if (grossSeverance > taxThreshold) {
+    tax = (grossSeverance - taxThreshold) * 0.15;
+  }
+  
+  return {
+    gross: Math.round(grossSeverance * 100) / 100,
+    tax: Math.round(tax * 100) / 100,
+    net: Math.round((grossSeverance - tax) * 100) / 100,
+  };
 }
 
 export function calculateLiquidation(monthlySalary, hireDate, vacationDaysUsed = 0, aguinaldoPaid = false) {
@@ -119,9 +132,12 @@ export function calculateLiquidation(monthlySalary, hireDate, vacationDaysUsed =
   const monthsForAguinaldo = monthsWorked % 12;
   const proportionalAguinaldo = aguinaldoPaid ? 0 : calculateAguinaldo(monthlySalary, monthsForAguinaldo);
   
-  const severancePay = calculateSeverance(monthlySalary, yearsWorked);
+  const severance = calculateSeverance(monthlySalary, yearsWorked);
   
-  const total = vacationPay + proportionalAguinaldo + severancePay;
+  // Total bruto (antes de impuesto sobre indemnizacion)
+  const totalGross = vacationPay + proportionalAguinaldo + severance.gross;
+  // Total neto (despues de impuesto sobre indemnizacion si aplica)
+  const totalNet = vacationPay + proportionalAguinaldo + severance.net;
   
   return {
     monthsWorked,
@@ -132,7 +148,10 @@ export function calculateLiquidation(monthlySalary, hireDate, vacationDaysUsed =
     vacationPay,
     monthsForAguinaldo,
     proportionalAguinaldo,
-    severancePay,
-    total: Math.round(total * 100) / 100,
+    severancePay: severance.gross,
+    severanceTax: severance.tax,
+    severanceNet: severance.net,
+    totalGross: Math.round(totalGross * 100) / 100,
+    total: Math.round(totalNet * 100) / 100,
   };
 }

@@ -17,7 +17,7 @@ export const createSaleSchema = z.object({
   client_name: z.string().optional().nullable(),
   factura: z.string().optional().nullable(),
   total: z.number().positive('El total debe ser mayor a 0'),
-  payment_method: z.enum(['cash', 'card', 'transfer', 'credit']).default('cash'),
+  payment_method: z.enum(['cash', 'card', 'transfer', 'credit', 'efectivo', 'credito', 'tarjeta', 'transferencia']).default('cash'),
   notes: z.string().optional().nullable(),
   items: z.array(z.object({
     product_id: z.string().uuid('ID de producto inválido'),
