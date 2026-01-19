@@ -12,6 +12,7 @@ import {
   Receipt,
   Wallet,
   Users2,
+  Sparkles,
   Settings,
   LogOut,
   Menu,
@@ -36,6 +37,12 @@ const menuItems = [
     ],
   },
   {
+    section: "Clínica",
+    items: [
+      { key: "odontology", label: "Odontología", icon: Sparkles, module: "odontology" },
+    ],
+  },
+  {
     section: "Comercial",
     items: [
       { key: "crm", label: "CRM Ventas", icon: TrendingUp, module: "crm" },
@@ -52,14 +59,14 @@ const menuItems = [
 ];
 
 const ROLE_MODULES = {
-  admin: ["dashboard", "inventory", "kardex", "pos", "sales", "crm", "finance", "hr", "settings"],
-  manager: ["dashboard", "inventory", "kardex", "pos", "sales", "crm", "finance", "hr", "settings"],
-  accountant: ["dashboard", "inventory", "finance", "hr", "settings"],
-  cajero: ["inventory", "pos", "sales"],
-  cashier: ["inventory", "pos", "sales"],
-  seller: ["inventory", "pos", "sales"],
+  admin: ["dashboard", "inventory", "kardex", "pos", "sales", "odontology", "crm", "finance", "hr", "settings"],
+  manager: ["dashboard", "inventory", "kardex", "pos", "sales", "odontology", "crm", "finance", "hr", "settings"],
+  accountant: ["dashboard", "inventory", "odontology", "finance", "hr", "settings"],
+  cajero: ["inventory", "pos", "sales", "odontology"],
+  cashier: ["inventory", "pos", "sales", "odontology"],
+  seller: ["inventory", "pos", "sales", "odontology"],
   warehouse: ["dashboard", "inventory", "kardex"],
-  viewer: ["dashboard", "inventory", "sales"],
+  viewer: ["dashboard", "inventory", "sales", "odontology"],
 };
 
 export default function AppLayout({ children, orgSlug }) {
@@ -149,7 +156,7 @@ export default function AppLayout({ children, orgSlug }) {
               </div>
               <div>
                 <h1 className="text-sm font-bold tracking-wide text-white">{orgSlug}</h1>
-                <p className="text-[11px] text-gray-400">Gestion para agroservicios</p>
+                <p className="text-[11px] text-gray-400">Gestión para clínicas odontológicas</p>
               </div>
             </div>
             <div className="hidden md:block">

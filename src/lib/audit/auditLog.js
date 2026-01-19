@@ -150,4 +150,12 @@ export const AuditActions = {
   BRANCH_CREATE: 'branch_create',
   BRANCH_UPDATE: 'branch_update',
   BRANCH_DELETE: 'branch_delete',
+
+  // Odontology actions
+  PATIENT_CREATE: 'patient_create',
+  PATIENT_UPDATE: 'patient_update',
+  PATIENT_DELETE: 'patient_delete',
+  APPOINTMENT_CREATE: 'appointment_create',
+  APPOINTMENT_UPDATE: 'appointment_update',
+  APPOINTMENT_DELETE: 'appointment_delete',
 };
